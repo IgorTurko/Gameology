@@ -42,7 +42,10 @@
     <Content Include="README.md" />
     <Content Include="server\tsconfig.json" />
     <Content Include="server\typings.json" />
+    <Content Include="server\typings\globals\express-serve-static-core\typings.json" />
+    <Content Include="server\typings\globals\express\typings.json" />
     <Content Include="server\typings\globals\node\typings.json" />
+    <Content Include="server\typings\globals\serve-static\typings.json" />
     <Content Include="server\typings\modules\mime\typings.json" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
@@ -54,13 +57,19 @@
     <Folder Include="server\" />
     <Folder Include="server\typings\" />
     <Folder Include="server\typings\globals\" />
+    <Folder Include="server\typings\globals\express-serve-static-core\" />
+    <Folder Include="server\typings\globals\express\" />
     <Folder Include="server\typings\globals\node\" />
+    <Folder Include="server\typings\globals\serve-static\" />
     <Folder Include="server\typings\modules\" />
     <Folder Include="server\typings\modules\mime\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="server\app.ts" />
+    <TypeScriptCompile Include="server\typings\globals\express-serve-static-core\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\globals\express\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\node\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\globals\serve-static\index.d.ts" />
     <TypeScriptCompile Include="server\typings\index.d.ts" />
     <TypeScriptCompile Include="server\typings\modules\mime\index.d.ts" />
   </ItemGroup>
