@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/ScrapingApp/.vs/ScrapingApp/v14
+/ScrapingApp/bin
+/ScrapingApp/node_modules
+/ScrapingApp/obj/Debug

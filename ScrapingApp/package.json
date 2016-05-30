@@ -1,0 +1,13 @@
+{
+  "name": "scraping-app",
+  "version": "0.0.0",
+  "description": "ScrapingApp",
+  "main": "server.js",
+  "author": {
+    "name": "admin",
+    "email": "sales@rd-dev.net"
+  },
+  "dependencies": {
+    "ts-loader": "^0.8.2"
+  }
+}
