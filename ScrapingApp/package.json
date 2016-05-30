@@ -8,6 +8,7 @@
     "email": "sales@rd-dev.net"
   },
   "dependencies": {
-    "ts-loader": "^0.8.2"
+    "ts-loader": "^0.8.2",
+    "react": "^15.1.0"
   }
 }

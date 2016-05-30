@@ -32,15 +32,26 @@
   <ItemGroup>
     <Compile Include="server.ts" />
     <Compile Include="webpack.config.js" />
+    <Content Include="client\typings.json" />
+    <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="package.json" />
-    <Content Include="README.md" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
+    <Folder Include="client\typings\" />
+    <Folder Include="client\typings\globals\" />
+    <Folder Include="client\typings\globals\react\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="server\" />
+    <Folder Include="typings\" />
+    <Folder Include="typings\node\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="client\typings\globals\react\index.d.ts" />
+    <TypeScriptCompile Include="client\typings\index.d.ts" />
+    <TypeScriptCompile Include="typings\node\node.d.ts" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
