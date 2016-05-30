@@ -33,9 +33,12 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="out\app.js" />
     <Compile Include="server.ts" />
     <Compile Include="webpack.config.js" />
+    <Content Include="out\app.js.map" />
     <Content Include="package.json" />
+    <Content Include="public\index.html" />
     <Content Include="README.md" />
     <Content Include="server\tsconfig.json" />
     <Content Include="server\typings.json" />
@@ -44,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
+    <Folder Include="out\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="server\" />
