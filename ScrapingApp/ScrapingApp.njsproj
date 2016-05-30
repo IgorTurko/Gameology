@@ -43,6 +43,7 @@
     <Content Include="server\tsconfig.json" />
     <Content Include="server\typings.json" />
     <Content Include="server\typings\globals\node\typings.json" />
+    <Content Include="server\typings\modules\mime\typings.json" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
@@ -54,11 +55,14 @@
     <Folder Include="server\typings\" />
     <Folder Include="server\typings\globals\" />
     <Folder Include="server\typings\globals\node\" />
+    <Folder Include="server\typings\modules\" />
+    <Folder Include="server\typings\modules\mime\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="server\typings\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\modules\mime\index.d.ts" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
