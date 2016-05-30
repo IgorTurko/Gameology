@@ -5,6 +5,9 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>ScrapingApp</Name>
     <RootNamespace>ScrapingApp</RootNamespace>
+    <EnableTypeScript>true</EnableTypeScript>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -30,21 +33,40 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="out\app.js" />
     <Compile Include="server.ts" />
     <Compile Include="webpack.config.js" />
+    <Content Include="out\app.js.map" />
     <Content Include="client\typings.json" />
     <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="package.json" />
+    <Content Include="public\index.html" />
+    <Content Include="server\tsconfig.json" />
+    <Content Include="server\typings.json" />
+    <Content Include="server\typings\globals\node\typings.json" />
+    <Content Include="server\typings\modules\mime\typings.json" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
+    <Folder Include="out\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
     <Folder Include="client\typings\globals\react\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="server\" />
+    <Folder Include="server\typings\" />
+    <Folder Include="server\typings\globals\" />
+    <Folder Include="server\typings\globals\node\" />
+    <Folder Include="server\typings\modules\" />
+    <Folder Include="server\typings\modules\mime\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="server\app.ts" />
+    <TypeScriptCompile Include="server\typings\globals\node\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\modules\mime\index.d.ts" />
     <Folder Include="typings\" />
     <Folder Include="typings\node\" />
   </ItemGroup>

@@ -6,3 +6,5 @@
 /ScrapingApp/bin
 /ScrapingApp/node_modules
 /ScrapingApp/obj/Debug
+/ScrapingApp/.ntvs_analysis.dat
+/ScrapingApp/npm-debug.log
