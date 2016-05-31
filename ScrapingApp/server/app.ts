@@ -2,12 +2,15 @@
 import http = require("http");
 import express = require("express");
 
+import config = require("./config");
+
 let server = express();
 
 server.use("/", express.static("./public", {
     index: "index.html"
 }));
 
-server.listen(3000, () => {
-    console.log("Web server started at http://localhost:3000/");
+const port = process.env.PORT || config.fallbackPort;
+server.listen(port, () => {
+    console.log(`Web server started at http://localhost:${port}/`);
 });

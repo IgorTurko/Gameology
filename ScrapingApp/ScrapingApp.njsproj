@@ -15,7 +15,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66f36103-1e49-4124-827c-2fb3db3aeecc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>out/app.js</StartupFile>
+    <StartupFile>out\app.js</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -34,9 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="out\app.js" />
+    <Compile Include="out\config.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\tsconfig.json" />
-    <Content Include="out\app.js.map" />
+    <Content Include="config.json" />
     <Content Include="client\typings.json" />
     <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="package.json" />
@@ -58,6 +59,7 @@
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="server\" />
+    <Folder Include="server\data-access\" />
     <Folder Include="server\typings\" />
     <Folder Include="server\typings\globals\" />
     <Folder Include="server\typings\globals\express-serve-static-core\" />
@@ -72,6 +74,8 @@
     <TypeScriptCompile Include="client\first.ts" />
     <TypeScriptCompile Include="client\second.ts" />
     <TypeScriptCompile Include="server\app.ts" />
+    <TypeScriptCompile Include="server\config.ts" />
+    <TypeScriptCompile Include="server\typings\app.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express-serve-static-core\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\node\index.d.ts" />

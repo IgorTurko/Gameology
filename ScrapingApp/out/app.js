@@ -1,10 +1,12 @@
 "use strict";
 var express = require("express");
+var config = require("./config");
 var server = express();
 server.use("/", express.static("./public", {
     index: "index.html"
 }));
-server.listen(3000, function () {
-    console.log("Web server started at http://localhost:3000/");
+var port = process.env.PORT || config.fallbackPort;
+server.listen(port, function () {
+    console.log("Web server started at http://localhost:" + port + "/");
 });
-//# sourceMappingURL=app.js.map
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYXBwLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vc2VydmVyL2FwcC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBRUEsSUFBTyxPQUFPLFdBQVcsU0FBUyxDQUFDLENBQUM7QUFFcEMsSUFBTyxNQUFNLFdBQVcsVUFBVSxDQUFDLENBQUM7QUFFcEMsSUFBSSxNQUFNLEdBQUcsT0FBTyxFQUFFLENBQUM7QUFFdkIsTUFBTSxDQUFDLEdBQUcsQ0FBQyxHQUFHLEVBQUUsT0FBTyxDQUFDLE1BQU0sQ0FBQyxVQUFVLEVBQUU7SUFDdkMsS0FBSyxFQUFFLFlBQVk7Q0FDdEIsQ0FBQyxDQUFDLENBQUM7QUFFSixJQUFNLElBQUksR0FBRyxPQUFPLENBQUMsR0FBRyxDQUFDLElBQUksSUFBSSxNQUFNLENBQUMsWUFBWSxDQUFDO0FBQ3JELE1BQU0sQ0FBQyxNQUFNLENBQUMsSUFBSSxFQUFFO0lBQ2hCLE9BQU8sQ0FBQyxHQUFHLENBQUMsNENBQTBDLElBQUksTUFBRyxDQUFDLENBQUM7QUFDbkUsQ0FBQyxDQUFDLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyLvu78vLy8gPHJlZmVyZW5jZSBwYXRoPVwiLi90eXBpbmdzL2luZGV4LmQudHNcIi8+XHJcbmltcG9ydCBodHRwID0gcmVxdWlyZShcImh0dHBcIik7XHJcbmltcG9ydCBleHByZXNzID0gcmVxdWlyZShcImV4cHJlc3NcIik7XHJcblxyXG5pbXBvcnQgY29uZmlnID0gcmVxdWlyZShcIi4vY29uZmlnXCIpO1xyXG5cclxubGV0IHNlcnZlciA9IGV4cHJlc3MoKTtcclxuXHJcbnNlcnZlci51c2UoXCIvXCIsIGV4cHJlc3Muc3RhdGljKFwiLi9wdWJsaWNcIiwge1xyXG4gICAgaW5kZXg6IFwiaW5kZXguaHRtbFwiXHJcbn0pKTtcclxuXHJcbmNvbnN0IHBvcnQgPSBwcm9jZXNzLmVudi5QT1JUIHx8IGNvbmZpZy5mYWxsYmFja1BvcnQ7XHJcbnNlcnZlci5saXN0ZW4ocG9ydCwgKCkgPT4ge1xyXG4gICAgY29uc29sZS5sb2coYFdlYiBzZXJ2ZXIgc3RhcnRlZCBhdCBodHRwOi8vbG9jYWxob3N0OiR7cG9ydH0vYCk7XHJcbn0pOyJdfQ==

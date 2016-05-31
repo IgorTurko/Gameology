@@ -1,7 +1,8 @@
 ﻿{
   "compilerOptions": {
     "module": "commonjs",
-    "sourceMap": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
     "outDir": "../out",
     "target": "ES5"
   }

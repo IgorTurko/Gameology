@@ -5,3 +5,4 @@
 /// <reference path="modules/es6-promise/index.d.ts" />
 /// <reference path="modules/mime/index.d.ts" />
 /// <reference path="modules/mongodb/index.d.ts" />
+/// <reference path="app.d.ts"/>
