@@ -2,7 +2,7 @@
 
 import * as express from "express";
 
-class AuthenticationMiddleware {
+export default class AuthenticationMiddleware {
     static authenticationCookieName = "auth";
 
     constructor(private authenticationTokenProvider: Authentication.IAuthenticationTokenProvider) {

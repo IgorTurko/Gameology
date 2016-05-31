@@ -1,4 +1,4 @@
-﻿/// <reference path="../typings/index.d.ts" />
+﻿/// <reference path="../../typings/index.d.ts" />
 import * as uuid from "node-uuid";
 import * as moment from "moment";
 
