@@ -1,7 +1,0 @@
-"use strict";
-function now() {
-    return new Date();
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = now;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibm93LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc2VydmVyL3NlcnZpY2VzL25vdy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUE7SUFDSSxNQUFNLENBQUMsSUFBSSxJQUFJLEVBQUUsQ0FBQztBQUN0QixDQUFDO0FBRkQ7cUJBRUMsQ0FBQSIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIG5vdygpOiBEYXRlIHtcclxuICAgIHJldHVybiBuZXcgRGF0ZSgpO1xyXG59Il19

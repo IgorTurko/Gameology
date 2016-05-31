@@ -15,7 +15,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66f36103-1e49-4124-827c-2fb3db3aeecc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>out\app.js</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -37,8 +38,6 @@
     <Compile Include="out\config.js" />
     <Compile Include="out\data-access\db.js" />
     <Compile Include="out\services\authentication-token-provider.js" />
-    <Compile Include="out\services\authentication-token-storage.js" />
-    <Compile Include="out\services\now.js" />
     <Compile Include="out\web\authentication-middleware.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\tsconfig.json" />
