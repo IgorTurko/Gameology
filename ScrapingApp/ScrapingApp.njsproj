@@ -66,6 +66,7 @@
     <Folder Include="public\assets\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
+    <Folder Include="server\services\" />
     <Folder Include="server\typings\globals\es6-promise\" />
     <Folder Include="server\web\" />
     <Folder Include="server\typings\" />
@@ -85,6 +86,8 @@
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
+    <TypeScriptCompile Include="server\services\authentication-token-provider.ts" />
+    <TypeScriptCompile Include="server\services\now.ts" />
     <TypeScriptCompile Include="server\typings\globals\app.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\es6-promise\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express-serve-static-core\index.d.ts" />

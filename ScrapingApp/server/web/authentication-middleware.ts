@@ -5,15 +5,15 @@ import * as express from "express";
 class AuthenticationMiddleware {
     static authenticationCookieName = "auth";
 
-    constructor(private authenticationTokenStorage: AuthenticationTokenStorage) {
-        if (!authenticationTokenStorage)
-            throw new Error("authenticationTokenStorage is undefined");
+    constructor(private authenticationTokenProvider: Authentication.IAuthenticationTokenProvider) {
+        if (!authenticationTokenProvider)
+            throw new Error("authenticationTokenProvider is undefined");
     }
 
     run(request: express.Request, response: express.Response, next: express.NextFunction) {
         const authenticationToken = request.cookies[AuthenticationMiddleware.authenticationCookieName];
 
-        this.authenticationTokenStorage
+        this.authenticationTokenProvider
             .validate(authenticationToken)
             .then(_ => next())
             .catch(err => response.sendStatus(401).end());
@@ -31,7 +31,7 @@ class AuthenticationMiddleware {
         if (!userId)
             throw new Error("userId is undefined");
 
-        return this.authenticationTokenStorage
+        return this.authenticationTokenProvider
             .generate(userId)
             .then(info => {
                 response.cookie(AuthenticationMiddleware.authenticationCookieName,

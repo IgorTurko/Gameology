@@ -3,23 +3,35 @@
     mongoUrl: string;
 }
 
-declare interface AuthenticationInfo {
-    token: string;
-    userId: string;
-    expiresAt: Date;
-}
+declare module Authentication {
 
-declare interface AuthenticationTokenStorage {
-    /**
-     * Validates given authentication token and returns authentication information.
-     * If token is not valid resulting promise will be rejected.
-     * 
-     */
-    validate(authenticationToken: string): Promise<AuthenticationInfo>;
+    interface AuthenticationInfo {
+        token: string;
+        userId: string;
+        expiresAt: Date;
+    }
 
-    /**
-     * Generates and stores authentication info for specified user.
-     * 
-     */
-    generate(userId: string): Promise<AuthenticationInfo>;
+    interface IAuthenticationTokenProvider {
+        /**
+         * Validates given authentication token and returns authentication information.
+         * If token is not valid resulting promise will be rejected.
+         * 
+         */
+        validate(authenticationToken: string): Promise<AuthenticationInfo>;
+
+        /**
+         * Generates and stores authentication info for specified user.
+         * 
+         */
+        generate(userId: string): Promise<AuthenticationInfo>;
+    }
+
+    interface IAuthenticationTokenStorage {
+
+        find(authenticationToken: string): Promise<AuthenticationInfo>;
+
+        save(authenticationInfo: AuthenticationInfo): Promise<any>;
+
+        remove(authenticationToken: string): Promise<any>;
+    }
 }
