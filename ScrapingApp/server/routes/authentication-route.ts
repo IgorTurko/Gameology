@@ -1,4 +1,4 @@
-﻿/// <reference path="../typings/index.d.ts"/>
+﻿/// <reference path="../typings/index.d.ts" />
 import * as express from "express";
 
 import Db from "../data-access/db";
@@ -15,13 +15,18 @@ const authenticationMiddleware = new AuthenticationMiddleware(tokenProvider);
 const router = express.Router();
 
 router.post("/login", (req, res, next) => {
+
     const info = req.body;
     if (info.login) {
         authenticationMiddleware.signIn(res, info.login);
+        res.sendStatus(200)
+            .end();
+    } else {
+        res.sendStatus(400)
+            .end();
     }
 });
 
 router.use("*", (res, req, next) => authenticationMiddleware.run(res, req, next));
-
 
 export default router;

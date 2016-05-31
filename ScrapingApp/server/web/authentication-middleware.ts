@@ -11,7 +11,7 @@ export default class AuthenticationMiddleware {
     }
 
     run(request: express.Request, response: express.Response, next: express.NextFunction) {
-        const authenticationToken = request.cookies[AuthenticationMiddleware.authenticationCookieName];
+        const authenticationToken = (request.cookies || {})[AuthenticationMiddleware.authenticationCookieName];
 
         this.authenticationTokenProvider
             .validate(authenticationToken)
