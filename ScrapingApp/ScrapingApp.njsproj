@@ -49,6 +49,7 @@
     <Content Include="server\typings\globals\node\typings.json" />
     <Content Include="server\typings\globals\serve-static\typings.json" />
     <Content Include="server\typings\modules\mime\typings.json" />
+    <Content Include="server\typings\modules\mongodb\typings.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
@@ -68,6 +69,7 @@
     <Folder Include="server\typings\globals\serve-static\" />
     <Folder Include="server\typings\modules\" />
     <Folder Include="server\typings\modules\mime\" />
+    <Folder Include="server\typings\modules\mongodb\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="client\app.ts" />
@@ -75,6 +77,7 @@
     <TypeScriptCompile Include="client\second.ts" />
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
+    <TypeScriptCompile Include="server\data-access\db.ts" />
     <TypeScriptCompile Include="server\typings\app.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express-serve-static-core\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express\index.d.ts" />
@@ -82,6 +85,7 @@
     <TypeScriptCompile Include="server\typings\globals\serve-static\index.d.ts" />
     <TypeScriptCompile Include="server\typings\index.d.ts" />
     <TypeScriptCompile Include="server\typings\modules\mime\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\modules\mongodb\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="client\typings\globals\react\index.d.ts" />
