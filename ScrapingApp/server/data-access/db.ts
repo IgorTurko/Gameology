@@ -1,8 +1,17 @@
 ﻿/// <reference path="../typings/index.d.ts"/>
-import mongodb = require("mongodb");
-import config = require("../config");
+import { Db, MongoClient } from "mongodb";
+import config from "../config";
+
+
+let db: Promise<Db> = new Promise((res, rej) => {
+    MongoClient
+});
 
 export class Database {
-    private connect(): Promise<T> {
+    constructor() {
+    }
+
+    private connect(): Promise<Db> {
+        return db;
     }
 }

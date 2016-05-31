@@ -1,8 +1,8 @@
 ﻿/// <reference path="./typings/index.d.ts"/>
-import http = require("http");
-import express = require("express");
+import * as http  from "http";
+import * as express  from "express";
 
-import config = require("./config");
+import config from "./config";
 
 let server = express();
 
