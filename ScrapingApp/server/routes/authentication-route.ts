@@ -16,6 +16,9 @@ const router = express.Router();
 
 router.post("/login", (req, res, next) => {
     const info = req.body;
+    if (info.login) {
+        authenticationMiddleware.signIn(res, info.login);
+    }
 });
 
 router.use("*", (res, req, next) => authenticationMiddleware.run(res, req, next));
