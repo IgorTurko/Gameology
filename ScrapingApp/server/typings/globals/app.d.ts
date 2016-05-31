@@ -30,7 +30,7 @@ declare module Authentication {
 
         find(authenticationToken: string): Promise<AuthenticationInfo>;
 
-        save(authenticationInfo: AuthenticationInfo): Promise<any>;
+        save(authenticationInfo: AuthenticationInfo): Promise<AuthenticationInfo>;
 
         remove(authenticationToken: string): Promise<any>;
     }

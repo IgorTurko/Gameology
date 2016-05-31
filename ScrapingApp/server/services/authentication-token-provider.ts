@@ -1,5 +1,6 @@
 ﻿/// <reference path="../typings/index.d.ts" />
-import now from "./now";
+import * as uuid from "node-uuid";
+import * as moment from "moment";
 
 export default class AuthenticationTokenProvider implements Authentication.IAuthenticationTokenProvider {
 
@@ -16,8 +17,9 @@ export default class AuthenticationTokenProvider implements Authentication.IAuth
             this.storage
                 .find(authenticationToken)
                 .then(info => {
+                    const now = moment.utc().toDate();
 
-                    if (info.expiresAt < now())
+                    if (info.expiresAt < now)
                         this.storage
                             .remove(authenticationToken)
                             .then(() => reject("Token is expired"))
@@ -33,6 +35,13 @@ export default class AuthenticationTokenProvider implements Authentication.IAuth
         if (!userId)
             throw new Error("userId is undefined");
 
+        const info: Authentication.AuthenticationInfo = {
+            userId: userId,
+            token: uuid.v1(),
+            expiresAt: moment.utc().add(moment.duration(1, "day")).toDate()
+        };
 
+        return this.storage
+            .save(info);
     }
 }

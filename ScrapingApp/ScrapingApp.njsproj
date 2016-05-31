@@ -55,7 +55,9 @@
     <Content Include="server\typings\globals\node\typings.json" />
     <Content Include="server\typings\globals\serve-static\typings.json" />
     <Content Include="server\typings\modules\mime\typings.json" />
+    <Content Include="server\typings\modules\moment\typings.json" />
     <Content Include="server\typings\modules\mongodb\typings.json" />
+    <Content Include="server\typings\modules\node-uuid\typings.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
@@ -72,6 +74,8 @@
     <Folder Include="server\data-access\" />
     <Folder Include="server\services\" />
     <Folder Include="server\typings\globals\es6-promise\" />
+    <Folder Include="server\typings\modules\moment\" />
+    <Folder Include="server\typings\modules\node-uuid\" />
     <Folder Include="server\web\" />
     <Folder Include="server\typings\" />
     <Folder Include="server\typings\globals\" />
@@ -91,7 +95,6 @@
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
     <TypeScriptCompile Include="server\services\authentication-token-provider.ts" />
-    <TypeScriptCompile Include="server\services\now.ts" />
     <TypeScriptCompile Include="server\typings\globals\app.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\es6-promise\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express-serve-static-core\index.d.ts" />
@@ -100,7 +103,9 @@
     <TypeScriptCompile Include="server\typings\globals\serve-static\index.d.ts" />
     <TypeScriptCompile Include="server\typings\index.d.ts" />
     <TypeScriptCompile Include="server\typings\modules\mime\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\modules\moment\index.d.ts" />
     <TypeScriptCompile Include="server\typings\modules\mongodb\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\modules\node-uuid\index.d.ts" />
     <TypeScriptCompile Include="server\web\authentication-middleware.ts" />
   </ItemGroup>
   <ItemGroup>

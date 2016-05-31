@@ -5,4 +5,6 @@
 /// <reference path="globals/node/index.d.ts" />
 /// <reference path="globals/serve-static/index.d.ts" />
 /// <reference path="modules/mime/index.d.ts" />
+/// <reference path="modules/moment/index.d.ts" />
 /// <reference path="modules/mongodb/index.d.ts" />
+/// <reference path="modules/node-uuid/index.d.ts" />
