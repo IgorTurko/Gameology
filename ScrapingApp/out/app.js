@@ -1,5 +1,4 @@
-/// <reference path="./typings/index.d.ts"/>
-var http = require("http");
+"use strict";
 var express = require("express");
 var server = express();
 server.use("/", express.static("./public", {

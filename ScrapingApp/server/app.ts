@@ -1,6 +1,6 @@
 ﻿/// <reference path="./typings/index.d.ts"/>
-const http = require("http");
-const express = require("express");
+import http = require("http");
+import express = require("express");
 
 let server = express();
 
