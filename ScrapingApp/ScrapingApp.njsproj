@@ -36,6 +36,7 @@
     <Compile Include="out\app.js" />
     <Compile Include="out\config.js" />
     <Compile Include="out\data-access\db.js" />
+    <Compile Include="out\web\authentication-middleware.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\tsconfig.json" />
     <Content Include="config.json" />
@@ -45,6 +46,7 @@
     <Content Include="public\index.html" />
     <Content Include="server\tsconfig.json" />
     <Content Include="server\typings.json" />
+    <Content Include="server\typings\globals\es6-promise\typings.json" />
     <Content Include="server\typings\globals\express-serve-static-core\typings.json" />
     <Content Include="server\typings\globals\express\typings.json" />
     <Content Include="server\typings\globals\node\typings.json" />
@@ -59,10 +61,13 @@
     <Folder Include="client\typings\globals\" />
     <Folder Include="client\typings\globals\react\" />
     <Folder Include="out\data-access\" />
+    <Folder Include="out\web\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
+    <Folder Include="server\typings\globals\es6-promise\" />
+    <Folder Include="server\web\" />
     <Folder Include="server\typings\" />
     <Folder Include="server\typings\globals\" />
     <Folder Include="server\typings\globals\express-serve-static-core\" />
@@ -80,7 +85,8 @@
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
-    <TypeScriptCompile Include="server\typings\app.d.ts" />
+    <TypeScriptCompile Include="server\typings\globals\app.d.ts" />
+    <TypeScriptCompile Include="server\typings\globals\es6-promise\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express-serve-static-core\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\node\index.d.ts" />
@@ -88,6 +94,7 @@
     <TypeScriptCompile Include="server\typings\index.d.ts" />
     <TypeScriptCompile Include="server\typings\modules\mime\index.d.ts" />
     <TypeScriptCompile Include="server\typings\modules\mongodb\index.d.ts" />
+    <TypeScriptCompile Include="server\web\authentication-middleware.ts" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="client\typings\globals\react\index.d.ts" />
