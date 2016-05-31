@@ -3,11 +3,18 @@ import { Db, MongoClient } from "mongodb";
 import config from "../config";
 
 
-let db: Promise<Db> = new Promise((res, rej) => {
-    MongoClient
+let db: Promise<Db> = new Promise((resolve, reject) => {
+    MongoClient.connect(config.mongoUrl, (err, db) => {
+        if (err) {
+            reject(err);
+        }
+        else {
+            resolve(db);
+        }
+    });
 });
 
-export class Database {
+export default class Database {
     constructor() {
     }
 
