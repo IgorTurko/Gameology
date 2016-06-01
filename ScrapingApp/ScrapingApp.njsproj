@@ -96,6 +96,7 @@
     <TypeScriptCompile Include="client\first.ts" />
     <TypeScriptCompile Include="client\second.ts" />
     <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />
+    <TypeScriptCompile Include="server-test\test-data\products.ts" />
     <TypeScriptCompile Include="server-test\test-data\web-shops.ts" />
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />

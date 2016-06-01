@@ -77,16 +77,17 @@ declare namespace Products {
     interface Product {
         id: string;
         title: string;
-        scrappingUrls: {
+        scrappingUrls?: {
             [webShopId: string]: string;
         };
-        scrappedData: {
+        scrappedData?: {
             [webShopId: string]: {
                 url: string;
                 scrappedAt: Date;
                 values: {
                     title: string;
                     price: number;
+                    image: string;
                     [key: string]: any;
                 };
             };
