@@ -33,12 +33,14 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="public\assets\app.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\tsconfig.json" />
     <Content Include="config.json" />
     <Content Include="client\typings.json" />
     <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="package.json" />
+    <Content Include="public\assets\app.js.map" />
     <Content Include="public\index.html" />
     <Content Include="server-test\tsconfig.json" />
     <Content Include="server\tsconfig.json" />
