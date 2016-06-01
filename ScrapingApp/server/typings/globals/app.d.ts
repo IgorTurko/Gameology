@@ -35,3 +35,46 @@ declare module Authentication {
         remove(authenticationToken: string): Promise<any>;
     }
 }
+
+declare module Scapping {
+    /**
+     * Setting for web shop scrapping.
+     * Includes common information like title and delivery prices and
+     * scrapper settings.
+     */
+    interface WebShop {
+        id: string;
+        title: string;
+        scrappingSettings: {
+            scrapper: string;
+        };
+        delivery: Array<{
+            deliveryMethod: string;
+            price: number;
+        }>;
+    }
+
+    /**
+     * Product for scrapping data.
+     * Includes common info like title and identifier,
+     * scrapping settings (URLs on each supported shop) and
+     * latest scrapped data for each shop.
+     */
+    interface Product {
+        id: string;
+        title: string;
+        scrappingUrls: {
+            [webShopId: string]: string;
+        };
+        scrappedData: Array<{
+            webShopId: string;
+            url: string;
+            scrappedAt: Date;
+            values: {
+                title: string;
+                price: number;
+                [key: string]: any;
+            }
+        }>;
+    }
+}
