@@ -3,12 +3,14 @@ import * as express from "express";
 
 import Db from "../data-access/db";
 import MongoAuthenticationTokenStorage from "../services/authentication/mongo-authentication-token-storage";
+import InMemoryAuthenticationTokenStorage from "../services/authentication/in-memory-authentication-token-storage";
 import AuthenticationTokenProvider from "../services/authentication/authentication-token-provider";
 import AuthenticationMiddleware from "../web/authentication-middleware";
 
 const db = new Db();
 
-const tokenStorage = new MongoAuthenticationTokenStorage(db);
+// const tokenStorage = new MongoAuthenticationTokenStorage(db);
+const tokenStorage = new InMemoryAuthenticationTokenStorage();
 const tokenProvider = new AuthenticationTokenProvider(tokenStorage);
 const authenticationMiddleware = new AuthenticationMiddleware(tokenProvider);
 

@@ -15,7 +15,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66f36103-1e49-4124-827c-2fb3db3aeecc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>out\app.js</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -33,13 +34,6 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="out\app.js" />
-    <Compile Include="out\config.js" />
-    <Compile Include="out\data-access\db.js" />
-    <Compile Include="out\routes\authentication-route.js" />
-    <Compile Include="out\services\authentication\authentication-token-provider.js" />
-    <Compile Include="out\services\authentication\mongo-authentication-token-storage.js" />
-    <Compile Include="out\web\authentication-middleware.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\tsconfig.json" />
     <Content Include="config.json" />
@@ -66,11 +60,6 @@
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
     <Folder Include="client\typings\globals\react\" />
-    <Folder Include="out\data-access\" />
-    <Folder Include="out\routes\" />
-    <Folder Include="out\services\" />
-    <Folder Include="out\services\authentication\" />
-    <Folder Include="out\web\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="server\" />
@@ -102,6 +91,7 @@
     <TypeScriptCompile Include="server\data-access\db.ts" />
     <TypeScriptCompile Include="server\routes\authentication-route.ts" />
     <TypeScriptCompile Include="server\services\authentication\authentication-token-provider.ts" />
+    <TypeScriptCompile Include="server\services\authentication\in-memory-authentication-token-storage.ts" />
     <TypeScriptCompile Include="server\services\authentication\mongo-authentication-token-storage.ts" />
     <TypeScriptCompile Include="server\typings\globals\app.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\body-parser\index.d.ts" />

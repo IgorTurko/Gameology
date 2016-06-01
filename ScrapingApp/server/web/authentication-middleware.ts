@@ -15,7 +15,10 @@ export default class AuthenticationMiddleware {
 
         this.authenticationTokenProvider
             .validate(authenticationToken)
-            .then(_ => next())
+            .then(user => {
+                request.user = user;
+                next();
+            })
             .catch(err => response.sendStatus(401).end());
     }
 
@@ -34,6 +37,7 @@ export default class AuthenticationMiddleware {
         return this.authenticationTokenProvider
             .generate(userId)
             .then(info => {
+                
                 response.cookie(AuthenticationMiddleware.authenticationCookieName,
                     info.token,
                     {
