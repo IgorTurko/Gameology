@@ -4,7 +4,6 @@ import * as validator from "node-validator";
 
 export default class WebShopValidator {
     private webShopValidator: validator.Validatable;
-    private scrappingSettingsValidator: validator.Validatable;
     private deliveryMethodValidator: validator.Validatable;
 
     constructor() {
@@ -12,12 +11,9 @@ export default class WebShopValidator {
             .withRequired("deliveryMethod", validator.isString())
             .withRequired("price", validator.isNumber({ min: 0 }));
 
-        this.scrappingSettingsValidator = validator.isAnyObject()
-            .withRequired("scrapper", validator.isString());
-
+        
         this.webShopValidator = validator.isAnyObject()
             .withRequired("title", validator.isString())
-            .withOptional("scrappingSettings", this.scrappingSettingsValidator)
             .withOptional("deliveryMethods", validator.isArray(this.deliveryMethodValidator));
     }
 

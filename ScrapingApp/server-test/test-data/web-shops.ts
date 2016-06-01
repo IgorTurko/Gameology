@@ -6,40 +6,116 @@ export const webShops: WebShops.WebShop[] =
         id: "gameology",
         isBase: true,
         title: "Gameology",
-        scrappingSettings: {
-            scrapper: "Gameology"
+        scrapingSettings: {
+            scraper: "jsdom",
+            values: {
+                title: {
+                    type: "string",
+                    elementSelector: "h1[itemprop='name']"
+                },
+                price: {
+                    type: "number",
+                    elementSelector: "#ProductPrice"
+                },
+                image: {
+                    type: "string",
+                    elementSelector: "#ProductPhotoImg",
+                    valueSelector: "@src"
+                }
+            }
         }
     },
     {
         id: "spieledeluxe",
         isBase: false,
         title: "Spiele-Deluxe",
-        scrappingSettings: {
-            scrapper: "spiele-deluxe"
+        scrapingSettings: {
+            scraper: "jsdom",
+            values: {
+                title: {
+                    type: "string",
+                    elementSelector: "h1[itemprop='name']"
+                },
+                price: {
+                    type: "number",
+                    elementSelector: "span[itemprop='price']",
+                    valueSelector: "@content"
+                },
+                image: {
+                    type: "string",
+                    elementSelector: "img[itemprop='image']",
+                    valueSelector: "@src"
+                }
+            }
         }
     },
     {
         id: "joedodgy",
         isBase: false,
         title: "Joe Dodgy",
-        scrappingSettings: {
-            scrapper: "joe-dodgy"
+        scrapingSettings: {
+            scraper: "jsdom",
+            values: {
+                title: {
+                    type: "string",
+                    elementSelector: "#productName"
+                },
+                price: {
+                    type: "number",
+                    elementSelector: "#productPrices"
+                },
+                image: {
+                    type: "relative-url",
+                    elementSelector: "#productMainImage img",
+                    valueSelector: "@src"
+                }
+            }
         }
     },
     {
         id: "mightyape",
         isBase: false,
         title: "Mighty Ape",
-        scrappingSettings: {
-            scrapper: "mighty-ape"
+        scrapingSettings: {
+            scraper: "jsdom",
+            values: {
+                title: {
+                    type: "string",
+                    elementSelector: "span[itemprop='name']"
+                },
+                price: {
+                    type: "number",
+                    elementSelector: "span[itemprop='price']",
+                    valueSelector: "@content"
+                },
+                image: {
+                    type: "string",
+                    elementSelector: ".main-image img",
+                    valueSelector: "@src"
+                }
+            }
         }
     },
     {
         id: "unhalfbricking",
         title: "Unhalfbricking",
         isBase: false,
-        scrappingSettings: {
-            scrapper: "un-half-bricking"
+        scrapingSettings: {
+            scraper: "regex",
+            values: {
+                title: {
+                    type: "string",
+                    elementSelector: "<font.*?>(.*?)<\/font>"
+                },
+                price: {
+                    type: "number",
+                    elementSelector: "\(\$(.*?)\)"
+                },
+                image: {
+                    type: "relative-url",
+                    elementSelector: '<img.*?src="(.*?)".*?\>'
+                }
+            }
         }
     }
 ];

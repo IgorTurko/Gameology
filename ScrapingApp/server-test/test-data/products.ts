@@ -4,7 +4,7 @@ export const products: Products.Product[] = [
     {
         id: "be81468f1c774f4c96e11d3e2c2df67e",
         title: "DIXIT",
-        scrappingUrls: {
+        scrapingUrls: {
             "gameology": "http://www.gameology.com.au/products/b157_dixit_b?variant=11511240901",
             "spieledeluxe": "http://spieledeluxe.com/products/dixit-2014-edition",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_373_374&products_id=1038",
@@ -15,7 +15,7 @@ export const products: Products.Product[] = [
     {
         id: "43e5dc04389047c580079af28cd03dc4",
         title: "King of Tokyo",
-        scrappingUrls: {
+        scrapingUrls: {
             "gameology": "http://www.gameology.com.au/products/b147_kingtok_b?variant=11511228037",
             "spieledeluxe": "http://spieledeluxe.com/products/king-of-tokyo",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_438_439&products_id=1092",
@@ -26,7 +26,7 @@ export const products: Products.Product[] = [
     {
         id: "893ce29ee2414a8fa9378a633c3909d5",
         title: "Talisman",
-        scrappingUrls: {
+        scrapingUrls: {
             "gameology": "http://www.gameology.com.au/products/b175_talisman_b?variant=11511245893",
             "spieledeluxe": "http://spieledeluxe.com/products/talisman-revised-4th-edition",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_28_66&products_id=49",
@@ -36,7 +36,7 @@ export const products: Products.Product[] = [
     {
         id: "0cdd314016294b369c48c10694928a46",
         title: "Takenoko",
-        scrappingUrls: {
+        scrapingUrls: {
             "gameology": "http://www.gameology.com.au/products/b174_takenoko_b?variant=11511245125",
             "spieledeluxe": "http://spieledeluxe.com/products/takenoko-1",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_373_376&products_id=1533",
@@ -47,7 +47,7 @@ export const products: Products.Product[] = [
     {
         id: "b0c45cf6a00e4ec493b2300d12be6a84",
         title: "Tokaido",
-        scrappingUrls: {
+        scrapingUrls: {
             "gameology": "http://www.gameology.com.au/products/tokaido?variant=16810693829",
             "spieledeluxe": "http://spieledeluxe.com/products/tokaido",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_276&products_id=1644",
