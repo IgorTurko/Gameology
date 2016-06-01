@@ -3,7 +3,7 @@
     mongoUrl: string;
 }
 
-declare module Authentication {
+declare namespace Authentication {
 
     interface AuthenticationInfo {
         token: string;
@@ -36,7 +36,7 @@ declare module Authentication {
     }
 }
 
-declare module WebShops {
+declare namespace WebShops {
     /**
      * Setting for web shop scrapping.
      * Includes common information like title and delivery prices and
@@ -66,7 +66,7 @@ declare module WebShops {
     }
 }
 
-declare module Products {
+declare namespace Products {
     /**
      * Product for scrapping data.
      * Includes common info like title and identifier,
@@ -90,5 +90,20 @@ declare module Products {
                 };
             };
         };
+    }
+}
+
+declare namespace Validator {
+
+    interface ValidationResult {
+        isValid: boolean;
+        errorCount: number;
+        errors: ValidationError[];
+    }
+
+    interface ValidationError {
+        parameter: string;
+        value: any;
+        message: string;
     }
 }
