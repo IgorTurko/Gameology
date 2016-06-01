@@ -16,11 +16,9 @@ let db: Promise<mongo.Db> = new Promise((resolve, reject) => {
 
 export default class Database {
     static Collections = {
-        sessions: "sessions"
+        sessions: "sessions",
+        webshops: "webshops"
     };
-
-    constructor() {
-    }
 
     collection(collection: string): Promise<mongo.Collection> {
         if (!collection)

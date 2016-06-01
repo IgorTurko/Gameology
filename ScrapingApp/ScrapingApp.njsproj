@@ -15,8 +15,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66f36103-1e49-4124-827c-2fb3db3aeecc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>server-test\test-data\import-test-data.ts</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -34,14 +33,6 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="out\app.js" />
-    <Compile Include="out\config.js" />
-    <Compile Include="out\data-access\db.js" />
-    <Compile Include="out\routes\authentication-route.js" />
-    <Compile Include="out\services\authentication\authentication-token-provider.js" />
-    <Compile Include="out\services\authentication\in-memory-authentication-token-storage.js" />
-    <Compile Include="out\services\authentication\mongo-authentication-token-storage.js" />
-    <Compile Include="out\web\authentication-middleware.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\tsconfig.json" />
     <Content Include="config.json" />
@@ -68,15 +59,9 @@
   <ItemGroup>
     <Folder Include="client\" />
     <Folder Include="server-test\" />
-    <Folder Include="out\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
     <Folder Include="client\typings\globals\react\" />
-    <Folder Include="out\data-access\" />
-    <Folder Include="out\routes\" />
-    <Folder Include="out\services\" />
-    <Folder Include="out\services\authentication\" />
-    <Folder Include="out\web\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="server-test\test-data\" />
@@ -107,6 +92,7 @@
     <TypeScriptCompile Include="client\app.ts" />
     <TypeScriptCompile Include="client\first.ts" />
     <TypeScriptCompile Include="client\second.ts" />
+    <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />
     <TypeScriptCompile Include="server-test\test-data\web-shops.ts" />
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
@@ -115,6 +101,7 @@
     <TypeScriptCompile Include="server\services\authentication\authentication-token-provider.ts" />
     <TypeScriptCompile Include="server\services\authentication\in-memory-authentication-token-storage.ts" />
     <TypeScriptCompile Include="server\services\authentication\mongo-authentication-token-storage.ts" />
+    <TypeScriptCompile Include="server\services\web-shop\mongo-web-shop-storage.ts" />
     <TypeScriptCompile Include="server\services\web-shop\web-shop-service.ts" />
     <TypeScriptCompile Include="server\services\web-shop\web-shop-validator.ts" />
     <TypeScriptCompile Include="server\typings\globals\app.d.ts" />

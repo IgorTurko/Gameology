@@ -8,7 +8,6 @@ export default class WebShopValidator {
     private deliveryMethodValidator: validator.Validatable;
 
     constructor() {
-
         this.deliveryMethodValidator = validator.isAnyObject()
             .withRequired("deliveryMethod", validator.isString())
             .withRequired("price", validator.isNumber({ min: 0 }));
