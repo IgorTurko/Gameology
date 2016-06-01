@@ -69,6 +69,7 @@
     <Folder Include="server-test\test-data\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
+    <Folder Include="server\scrapers\" />
     <Folder Include="server\routes\" />
     <Folder Include="server\services\" />
     <Folder Include="server\services\authentication\" />

@@ -51,7 +51,18 @@ declare namespace Scraping {
          * Default is "string".
          */
         type?: "number" | "string" | "relative-url",
+        /**
+         * Boolean value indicates whether failing of value scraping leads to total scraping fail.
+         * Default true.
+         */
+        isOptional?: boolean;
+        /**
+         * Selector for element contains required data. Could be CSS for jsdom scraper or regex string for regex scraper.
+         */
         elementSelector: string;
+        /**
+         * Optional selector for value. Used by jsdom scraper if required data is in attribute.
+         */
         valueSelector?: string;
     }
 
@@ -66,6 +77,41 @@ declare namespace Scraping {
             image: ValueExtractingSettings;
             [valueName: string]: ValueExtractingSettings;
         }
+    }
+
+    interface ScrapingError {
+        errorMessage: string;
+        attemptedValue: string;
+    }
+    
+    interface ScrapingResult {
+        isSuccessful: boolean;
+        values: { [valueName: string]: any };
+        error: string;
+        valueErrors: {
+            [valueName: string]: ScrapingError;
+        }
+    }
+
+    /**
+     * Scraper contract.
+     */
+    interface IScraper {
+        /**
+         * Name of the scraper. Used to match name from scraping settings.
+         */
+        name: string;
+        /**
+         * Scrapes a data from a specified URL.
+         * Method returns a promise which resolves or rejects with ScrapingResult.
+         * Promise resolves if scraping on success or rejects on scraping error with the same value.
+         * Scraping fails if error occured or if any non-optional value scraping fails.
+         * 
+         * @param url Url to scrape data from.
+         * @param values Settings for scraping individual values from the page.
+         * @returns Promise which resolves or rejects with ScrapingResult.
+         */
+        scrape(url: string, values: { [valueName: string]: ValueExtractingSettings }): Promise<ScrapingResult>;
     }
 }
 
