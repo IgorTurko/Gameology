@@ -33,6 +33,14 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="out\app.js" />
+    <Compile Include="out\config.js" />
+    <Compile Include="out\data-access\db.js" />
+    <Compile Include="out\routes\authentication-route.js" />
+    <Compile Include="out\services\authentication\authentication-token-provider.js" />
+    <Compile Include="out\services\authentication\in-memory-authentication-token-storage.js" />
+    <Compile Include="out\services\authentication\mongo-authentication-token-storage.js" />
+    <Compile Include="out\web\authentication-middleware.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\tsconfig.json" />
     <Content Include="config.json" />
@@ -60,6 +68,11 @@
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
     <Folder Include="client\typings\globals\react\" />
+    <Folder Include="out\data-access\" />
+    <Folder Include="out\routes\" />
+    <Folder Include="out\services\" />
+    <Folder Include="out\services\authentication\" />
+    <Folder Include="out\web\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="server\" />
