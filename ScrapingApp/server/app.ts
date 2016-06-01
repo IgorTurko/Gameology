@@ -1,12 +1,16 @@
 ﻿/// <reference path="./typings/index.d.ts"/>
 import * as http  from "http";
 import * as express  from "express";
+
 import * as bodyparser from "body-parser";
+import * as cookieparser from "cookie-parser";
 
 import config from "./config";
 import authenticationRouter from "./routes/authentication-route";
 
 let server = express();
+
+server.use(cookieparser());
 
 server.use("/api", bodyparser());
 server.use("/api", authenticationRouter);

@@ -38,7 +38,7 @@ export default class AuthenticationTokenProvider implements Authentication.IAuth
         const info: Authentication.AuthenticationInfo = {
             userId: userId,
             token: uuid.v1(),
-            expiresAt: moment.utc().add(moment.duration(1, "day")).toDate()
+            expiresAt: moment.utc().add(moment.duration(5, "day")).toDate()
         };
 
         return this.storage

@@ -44,6 +44,7 @@
     <Content Include="server\tsconfig.json" />
     <Content Include="server\typings.json" />
     <Content Include="server\typings\globals\body-parser\typings.json" />
+    <Content Include="server\typings\globals\cookie-parser\typings.json" />
     <Content Include="server\typings\globals\es6-promise\typings.json" />
     <Content Include="server\typings\globals\express-serve-static-core\typings.json" />
     <Content Include="server\typings\globals\express\typings.json" />
@@ -68,6 +69,7 @@
     <Folder Include="server\services\" />
     <Folder Include="server\services\authentication\" />
     <Folder Include="server\typings\globals\body-parser\" />
+    <Folder Include="server\typings\globals\cookie-parser\" />
     <Folder Include="server\typings\globals\es6-promise\" />
     <Folder Include="server\typings\modules\moment\" />
     <Folder Include="server\typings\modules\node-uuid\" />
@@ -95,6 +97,7 @@
     <TypeScriptCompile Include="server\services\authentication\mongo-authentication-token-storage.ts" />
     <TypeScriptCompile Include="server\typings\globals\app.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\body-parser\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\globals\cookie-parser\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\es6-promise\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express-serve-static-core\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express\index.d.ts" />

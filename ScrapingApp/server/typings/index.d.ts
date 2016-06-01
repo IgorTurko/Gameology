@@ -1,5 +1,6 @@
 /// <reference path="globals/app.d.ts" />
 /// <reference path="globals/body-parser/index.d.ts" />
+/// <reference path="globals/cookie-parser/index.d.ts" />
 /// <reference path="globals/es6-promise/index.d.ts" />
 /// <reference path="globals/express-serve-static-core/index.d.ts" />
 /// <reference path="globals/express/index.d.ts" />

@@ -18,10 +18,10 @@ const router = express.Router();
 
 router.post("/login",
 (req, res, next) => {
-
     const info = req.body;
+
     if (info.login) {
-        authenticationMiddleware.signIn(res, info.login)
+        authenticationMiddleware.signIn(req, res, info.login)
             .then(() => {
                 res.sendStatus(200)
                     .end();

@@ -9,7 +9,10 @@ export default class AuthenticationMiddleware {
         if (!authenticationTokenProvider)
             throw new Error("authenticationTokenProvider is undefined");
     }
-
+    /**
+     * Request handler which checks authentication and setups the request.user.
+     * If request is not authenticated the 401 Not authorized status will be returned to the client.
+     */
     run(request: express.Request, response: express.Response, next: express.NextFunction) {
         const authenticationToken = (request.cookies || {})[AuthenticationMiddleware.authenticationCookieName];
 
@@ -25,7 +28,7 @@ export default class AuthenticationMiddleware {
     /**
      * Adds authentication cookie to response.
      */
-    signIn(response: express.Response, userId: string): Promise<any> {
+    signIn(request: express.Request, response: express.Response, userId: string): Promise<any> {
         if (!response)
             throw new Error("response is undefined");
         if (!userId)
@@ -34,10 +37,8 @@ export default class AuthenticationMiddleware {
         return this.authenticationTokenProvider
             .generate(userId)
             .then(info => {
-                
                 response.cookie(AuthenticationMiddleware.authenticationCookieName,
-                    info.token,
-                    {
+                    info.token, {
                         httpOnly: true,
                         expires: info.expiresAt
                     });
