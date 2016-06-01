@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "ScrapingApp",
   "main": "server.js",
+  "private": true,
   "author": {
     "name": "admin",
     "email": "sales@rd-dev.net"
@@ -15,6 +16,8 @@
     "mongodb": "^2.1.21",
     "node-uuid": "^1.4.7",
     "node-validator": "^0.1.23",
+    "react": "^15.1.0",
+    "react-router": "^2.4.1",
     "ts-loader": "^0.8.2"
   },
   "scripts": {

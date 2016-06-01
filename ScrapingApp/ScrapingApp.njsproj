@@ -15,7 +15,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66f36103-1e49-4124-827c-2fb3db3aeecc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>server-test\test-data\import-test-data.ts</StartupFile>
+    <StartupFile>out/app.js</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
