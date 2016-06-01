@@ -19,6 +19,8 @@ export default class MongoAuthenticationTokenStorage implements Authentication.I
                 c.find({ token: authenticationToken })
                     .limit(1)
                     .next((err, doc) => {
+                        console.dir(doc);
+
                         if (err)
                             reject(err);
                         else
@@ -33,8 +35,20 @@ export default class MongoAuthenticationTokenStorage implements Authentication.I
 
         return this.db
             .collection(Database.Collections.sessions)
-            .then(c => c.replaceOne({ token: authenticationInfo.token }, authenticationInfo))
-            .then(r => authenticationInfo);
+            .then(c => c.updateOne(
+                {
+                    token: authenticationInfo.token
+                },
+                authenticationInfo,
+                {
+                    upsert: true
+                }))
+            .then(res => {
+
+                console.dir(res);
+
+                return authenticationInfo;
+            });
     }
 
     remove(authenticationToken: string): Promise<any> {

@@ -9,8 +9,8 @@ import AuthenticationMiddleware from "../web/authentication-middleware";
 
 const db = new Db();
 
-// const tokenStorage = new MongoAuthenticationTokenStorage(db);
-const tokenStorage = new InMemoryAuthenticationTokenStorage();
+const tokenStorage = new MongoAuthenticationTokenStorage(db);
+// const tokenStorage = new InMemoryAuthenticationTokenStorage();
 const tokenProvider = new AuthenticationTokenProvider(tokenStorage);
 const authenticationMiddleware = new AuthenticationMiddleware(tokenProvider);
 
