@@ -19,14 +19,17 @@ export default class WebShopService {
         if (!webShop)
             throw new Error("webShop is undefined");
 
-        return this.validator
-            .validate(webShop)
-            .then(validationResult => {
-                if (!validationResult.isValid)
-                    return validationResult;
-                return this.storage
-                    .save(webShop)
-                    .then(() => validationResult);
-            });
+        return new Promise((resolve, reject) => {
+            this.validator
+                .validate(webShop)
+                .then(validationResult => {
+                    if (!validationResult.isValid)
+                        reject(validationResult);
+                    else
+                        this.storage
+                            .save(webShop)
+                            .then(() => resolve(validationResult));
+                });
+        });
     }
 }

@@ -19,16 +19,17 @@ export default class ProductService {
         if (!product)
             throw new Error("product is undefined");
 
-        return this.validator
-            .validate(product)
-            .then(validationResult => {
-                if (validationResult.isValid)
-                    return validationResult;
-
-                return this.storage
-                    .save(product)
-                    .then(() => validationResult);
-
-            });
+        return new Promise((resolve, reject) => {
+            this.validator
+                .validate(product)
+                .then(validationResult => {
+                    if (!validationResult.isValid)
+                        reject(validationResult);
+                    else
+                    this.storage
+                        .save(product)
+                        .then(() => resolve(validationResult));
+                });
+        });
     }
 }
