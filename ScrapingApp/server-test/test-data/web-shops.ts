@@ -3,7 +3,7 @@
 export const webShops: WebShops.WebShop[] =
 [
     {
-        id: "72ff44c223264d85aec5655cd0ac7d2e",
+        id: "gameology",
         isBase: true,
         title: "Gameology",
         scrappingSettings: {
@@ -11,7 +11,7 @@ export const webShops: WebShops.WebShop[] =
         }
     },
     {
-        id: "136b1111a75b480f90f3f0bd4e0b99d8",
+        id: "spieledeluxe",
         isBase: false,
         title: "Spiele-Deluxe",
         scrappingSettings: {
@@ -19,7 +19,7 @@ export const webShops: WebShops.WebShop[] =
         }
     },
     {
-        id: "f02774ed99ec4ea18e96d8ded5567942",
+        id: "joedodgy",
         isBase: false,
         title: "Joe Dodgy",
         scrappingSettings: {
@@ -27,7 +27,7 @@ export const webShops: WebShops.WebShop[] =
         }
     },
     {
-        id: "f87ad574ea154baebd74ff1e1820093e",
+        id: "mightyape",
         isBase: false,
         title: "Mighty Ape",
         scrappingSettings: {
@@ -35,7 +35,7 @@ export const webShops: WebShops.WebShop[] =
         }
     },
     {
-        id: "4c37039f45ce492289bde4614d481beb",
+        id: "unhalfbricking",
         title: "Unhalfbricking",
         isBase: false,
         scrappingSettings: {
