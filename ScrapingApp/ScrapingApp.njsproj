@@ -102,6 +102,7 @@
     <TypeScriptCompile Include="server\services\authentication\authentication-token-provider.ts" />
     <TypeScriptCompile Include="server\services\authentication\in-memory-authentication-token-storage.ts" />
     <TypeScriptCompile Include="server\services\authentication\mongo-authentication-token-storage.ts" />
+    <TypeScriptCompile Include="server\services\products\mongo-product-storage.ts" />
     <TypeScriptCompile Include="server\services\products\product-service.ts" />
     <TypeScriptCompile Include="server\services\products\product-validator.ts" />
     <TypeScriptCompile Include="server\services\web-shop\mongo-web-shop-storage.ts" />

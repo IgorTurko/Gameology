@@ -17,7 +17,8 @@ let db: Promise<mongo.Db> = new Promise((resolve, reject) => {
 export default class Database {
     static Collections = {
         sessions: "sessions",
-        webshops: "webshops"
+        webshops: "webshops",
+        products: "products"
     };
 
     collection(collection: string): Promise<mongo.Collection> {
