@@ -98,10 +98,6 @@ declare namespace Scraping {
      */
     interface IScraper {
         /**
-         * Name of the scraper. Used to match name from scraping settings.
-         */
-        name: string;
-        /**
          * Scrapes a data from a specified URL.
          * Method returns a promise which resolves or rejects with ScrapingResult.
          * Promise resolves if scraping on success or rejects on scraping error with the same value.
@@ -112,6 +108,22 @@ declare namespace Scraping {
          * @returns Promise which resolves or rejects with ScrapingResult.
          */
         scrape(url: string, values: { [valueName: string]: ValueExtractingSettings }): Promise<ScrapingResult>;
+    }
+
+    /**
+     * Converts a value to specified type.
+     */
+    interface ValueParser {
+        /**
+         * Converts a value to a specified format.
+         * Returns promise wich resolves with value on parsing success or fails with error message.
+         * 
+         */
+        (input: string): Promise<any>;
+    }
+
+    interface IValueParserHash {
+        [parser: string]: ValueParser;
     }
 }
 
