@@ -16,13 +16,16 @@ const authenticationMiddleware = new AuthenticationMiddleware(tokenProvider);
 
 const router = express.Router();
 
-router.post("/login", (req, res, next) => {
+router.post("/login",
+(req, res, next) => {
 
     const info = req.body;
     if (info.login) {
-        authenticationMiddleware.signIn(res, info.login);
-        res.sendStatus(200)
-            .end();
+        authenticationMiddleware.signIn(res, info.login)
+            .then(() => {
+                res.sendStatus(200)
+                    .end();
+            });
     } else {
         res.sendStatus(400)
             .end();

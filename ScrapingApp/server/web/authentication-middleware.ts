@@ -19,14 +19,11 @@ export default class AuthenticationMiddleware {
                 request.user = user;
                 next();
             })
-            .catch(err => response.sendStatus(401).end());
+            .catch(() => response.sendStatus(401).end());
     }
 
     /**
      * Adds authentication cookie to response.
-     * 
-     * @param response
-     * @param userId
      */
     signIn(response: express.Response, userId: string): Promise<any> {
         if (!response)
@@ -42,7 +39,7 @@ export default class AuthenticationMiddleware {
                     info.token,
                     {
                         httpOnly: true,
-                        expires: info.expiresAt,
+                        expires: info.expiresAt
                     });
             });
     }
