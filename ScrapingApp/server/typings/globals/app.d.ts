@@ -44,11 +44,12 @@ declare namespace WebShops {
      */
     interface WebShop {
         id: string;
+        isBase: boolean;
         title: string;
         scrappingSettings: {
             scrapper: string;
         };
-        delivery: Array<{
+        delivery?: Array<{
             deliveryMethod: string;
             price: number;
         }>;

@@ -1,0 +1,7 @@
+﻿{
+  "compilerOptions": {
+    "module": "commonjs",
+    "pretty": true,
+    "target": "ES5"
+  }
+}

@@ -49,6 +49,7 @@
     <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="package.json" />
     <Content Include="public\index.html" />
+    <Content Include="server-test\tsconfig.json" />
     <Content Include="server\tsconfig.json" />
     <Content Include="server\typings.json" />
     <Content Include="server\typings\globals\body-parser\typings.json" />
@@ -66,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
+    <Folder Include="server-test\" />
     <Folder Include="out\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
@@ -77,6 +79,7 @@
     <Folder Include="out\web\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
+    <Folder Include="server-test\test-data\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
     <Folder Include="server\routes\" />
@@ -104,6 +107,7 @@
     <TypeScriptCompile Include="client\app.ts" />
     <TypeScriptCompile Include="client\first.ts" />
     <TypeScriptCompile Include="client\second.ts" />
+    <TypeScriptCompile Include="server-test\test-data\web-shops.ts" />
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
