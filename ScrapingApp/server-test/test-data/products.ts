@@ -24,17 +24,6 @@ export const products: Products.Product[] = [
         }
     },
     {
-        id: "43e5dc04389047c580079af28cd03dc4",
-        title: "King of Tokyo",
-        scrappingUrls: {
-            "gameology": "http://www.gameology.com.au/products/b147_kingtok_b?variant=11511228037",
-            "spieledeluxe": "http://spieledeluxe.com/products/king-of-tokyo",
-            "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_438_439&products_id=1092",
-            "mightyape": "https://www.mightyape.com.au/product/King-of-New-York/22831407",
-            "unhalfbricking": "http://www.unhalfbricking.com/display_game.php?gameid=747"
-        }
-    },
-    {
         id: "893ce29ee2414a8fa9378a633c3909d5",
         title: "Talisman",
         scrappingUrls: {
