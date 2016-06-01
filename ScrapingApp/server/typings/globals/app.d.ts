@@ -92,6 +92,17 @@ declare namespace Products {
             };
         };
     }
+
+    /**
+    * Persistent storage for web shop.
+    */
+    interface IProductStorage {
+        all(): Promise<Product[]>;
+
+        one(id: string): Promise<Product>;
+
+        save(product: Product): Promise<Product>;
+    }
 }
 
 declare namespace Validator {

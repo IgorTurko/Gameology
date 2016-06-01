@@ -70,6 +70,7 @@
     <Folder Include="server\routes\" />
     <Folder Include="server\services\" />
     <Folder Include="server\services\authentication\" />
+    <Folder Include="server\services\products\" />
     <Folder Include="server\services\web-shop\" />
     <Folder Include="server\typings\globals\body-parser\" />
     <Folder Include="server\typings\globals\cookie-parser\" />
@@ -101,6 +102,8 @@
     <TypeScriptCompile Include="server\services\authentication\authentication-token-provider.ts" />
     <TypeScriptCompile Include="server\services\authentication\in-memory-authentication-token-storage.ts" />
     <TypeScriptCompile Include="server\services\authentication\mongo-authentication-token-storage.ts" />
+    <TypeScriptCompile Include="server\services\products\product-service.ts" />
+    <TypeScriptCompile Include="server\services\products\product-validator.ts" />
     <TypeScriptCompile Include="server\services\web-shop\mongo-web-shop-storage.ts" />
     <TypeScriptCompile Include="server\services\web-shop\web-shop-service.ts" />
     <TypeScriptCompile Include="server\services\web-shop\web-shop-validator.ts" />

@@ -22,6 +22,9 @@ export default class WebShopValidator {
     }
 
     validate(webShop: WebShops.WebShop): Promise<Validator.ValidationResult> {
+        if (!webShop)
+            throw new Error("webShop is undefined");
+
         return new Promise(resolve => {
             validator.run(this.webShopValidator,
                 webShop,
