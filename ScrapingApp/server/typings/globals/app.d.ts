@@ -36,7 +36,7 @@ declare module Authentication {
     }
 }
 
-declare module Scapping {
+declare module WebShops {
     /**
      * Setting for web shop scrapping.
      * Includes common information like title and delivery prices and
@@ -55,6 +55,19 @@ declare module Scapping {
     }
 
     /**
+     * Persistent storage for web shop.
+     */
+    interface IWebShopStorage {
+        all(): Promise<WebShop[]>;
+
+        one(id: string): Promise<WebShop>;
+
+        save(webShop: WebShop): Promise<WebShop>;
+    }
+}
+
+declare module Products {
+    /**
      * Product for scrapping data.
      * Includes common info like title and identifier,
      * scrapping settings (URLs on each supported shop) and
@@ -66,15 +79,16 @@ declare module Scapping {
         scrappingUrls: {
             [webShopId: string]: string;
         };
-        scrappedData: Array<{
-            webShopId: string;
-            url: string;
-            scrappedAt: Date;
-            values: {
-                title: string;
-                price: number;
-                [key: string]: any;
-            }
-        }>;
+        scrappedData: {
+            [webShopId: string]: {
+                url: string;
+                scrappedAt: Date;
+                values: {
+                    title: string;
+                    price: number;
+                    [key: string]: any;
+                };
+            };
+        };
     }
 }
