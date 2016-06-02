@@ -111,7 +111,7 @@
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
     <TypeScriptCompile Include="server\routes\authentication-route.ts" />
-    <TypeScriptCompile Include="server\scrapers\jsdom-scrapper.ts" />
+    <TypeScriptCompile Include="server\scrapers\jsdom-scraper.ts" />
     <TypeScriptCompile Include="server\scrapers\value-parser.ts" />
     <TypeScriptCompile Include="server\services\authentication\authentication-token-provider.ts" />
     <TypeScriptCompile Include="server\services\authentication\in-memory-authentication-token-storage.ts" />
