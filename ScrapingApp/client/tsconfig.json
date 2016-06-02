@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
         "module": "commonjs",
+        "pretty": true,
+        "removeComments": false,
         "sourceMap": true,
         "outDir": "../public/assets",
         "target": "ES5",

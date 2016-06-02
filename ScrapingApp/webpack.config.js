@@ -1,7 +1,7 @@
 ﻿module.exports = {
     entry: './client/app.tsx',
     output: {
-        filename: 'all.js',
+        filename: 'app.js',
         path: './public/assets'
     },
     devtool: 'source-map',
