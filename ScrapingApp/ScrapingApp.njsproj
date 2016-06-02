@@ -35,6 +35,8 @@
   <ItemGroup>
     <Compile Include="public\assets\app.js" />
     <Compile Include="webpack.config.js" />
+    <Content Include="client\app.tsx" />
+    <Content Include="client\search\search-box.tsx" />
     <Content Include="client\tsconfig.json" />
     <Content Include="config.json" />
     <Content Include="client\typings.json" />
@@ -60,6 +62,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
+    <Folder Include="client\grid\" />
+    <Folder Include="client\search\" />
     <Folder Include="server-test\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
@@ -93,9 +97,7 @@
     <Folder Include="server\typings\modules\mongodb\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="client\app.ts" />
-    <TypeScriptCompile Include="client\first.ts" />
-    <TypeScriptCompile Include="client\second.ts" />
+    <TypeScriptCompile Include="client\grid\all-products.ts" />
     <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />
     <TypeScriptCompile Include="server-test\test-data\products.ts" />
     <TypeScriptCompile Include="server-test\test-data\web-shops.ts" />
