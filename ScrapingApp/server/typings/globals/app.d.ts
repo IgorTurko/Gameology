@@ -76,21 +76,27 @@ declare namespace Scraping {
             price: ValueExtractingSettings;
             image: ValueExtractingSettings;
             [valueName: string]: ValueExtractingSettings;
-        }
+        };
     }
 
     interface ScrapingError {
         errorMessage: string;
         attemptedValue: string;
     }
-    
+
+    interface ValueScrapingResult {
+        value: any;
+        isSuccessful: boolean;
+        error: any;
+        settings: ValueExtractingSettings;
+    }
+
     interface ScrapingResult {
         isSuccessful: boolean;
-        values: { [valueName: string]: any };
-        error: string;
-        valueErrors: {
-            [valueName: string]: ScrapingError;
-        }
+        error: any;
+        values: {
+            [valueName: string]: ValueScrapingResult;
+        };
     }
 
     /**
