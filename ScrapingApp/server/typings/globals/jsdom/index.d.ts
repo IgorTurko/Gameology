@@ -187,6 +187,7 @@ declare module "jsdom" {
 		/**
 		 * The created callback is called as soon as the window is created, or if that process fails. You may access all window properties here; however, window.document is not ready for use yet, as the HTML has not been parsed. The primary use-case for created is to modify the window object (e.g. add new functions on built-in prototypes) before any scripts execute. You can also set an event handler for 'load' or other events on the window if you wish. But the loaded callback, below, can be more useful, since it includes script errors. If the error argument is non-null, it will contain whatever loading error caused the window creation to fail; in that case window will not be passed.
 		 */
-		created?: (error: Error, window: Window) => void;
+        created?: (error: Error, window: Window) => void;
+        userAgent: string;
     }
 }

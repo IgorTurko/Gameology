@@ -19,10 +19,11 @@ export default class JsdomScraper implements Scraping.IScraper {
             error: null,
             values: {}
         };
-
+       // "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
         return new Promise((resolve, reject) => {
             jsdom.env({
                 url: url,
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36",
                 features: {
                     FetchExternalResources: false,
                     ProcessExternalResources: false
