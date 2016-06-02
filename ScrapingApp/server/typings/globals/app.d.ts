@@ -39,13 +39,9 @@ declare namespace Authentication {
 declare namespace Scraping {
 
     /**
-     * Configures how the value should be extracted from the document.
-     * element selector specifies CSS selector used to get element with value.
-     * value selector defines how to get value string from a selected element:
-     * - if valueSelector is not specified the value is got from elements text
-     * - if valueSelector started from @attribute the value is got from element's attribute 
+     * Value settings for the scraping
      */
-    interface ValueExtractingSettings {
+    interface ValueScrapingInfo {
         /**
          * Value type. Can be one of value "number", "string" or "relative-url".
          * Default is "string".
@@ -56,27 +52,37 @@ declare namespace Scraping {
          * Default true.
          */
         isOptional?: boolean;
+
         /**
-         * Selector for element contains required data. Could be CSS for jsdom scraper or regex string for regex scraper.
+         * How the value is extracted.
+         * There are two supported modes:
+         * - queryselector uses document.querySelector() method for finding element
+         * - regex - uses regular expression on document.innerHTML to capture data.
+         *
+         * Default mode is queryselector.
          */
-        elementSelector: string;
-        /**
-         * Optional selector for value. Used by jsdom scraper if required data is in attribute.
-         */
-        valueSelector?: string;
+        extract?: "queryselector" | "regex";
     }
+
+    interface QuerySelectorExtractSettings {
+        elementSelector: string;
+        attribute?: string;
+    }
+
+    interface RegexExtractSettings {
+        regex: string;
+    }
+
+    type ValueScrapingSettings = ValueScrapingInfo & (QuerySelectorExtractSettings | RegexExtractSettings);
 
     /**
      * Scraping settings defines how to extract data from pages of specified type.
      */
     interface ScrapingSettings {
-        scraper?: string;
-        values: {
-            title: ValueExtractingSettings;
-            price: ValueExtractingSettings;
-            image: ValueExtractingSettings;
-            [valueName: string]: ValueExtractingSettings;
-        };
+        title: ValueScrapingSettings[];
+        price: ValueScrapingSettings[];
+        image: ValueScrapingSettings[];
+        [valueName: string]: ValueScrapingSettings[];
     }
 
     interface ScrapingError {
@@ -88,7 +94,10 @@ declare namespace Scraping {
         value: any;
         isSuccessful: boolean;
         error: any;
-        settings: ValueExtractingSettings;
+        /**
+         * First setting correctly parses a document.
+         */
+        settings: ValueScrapingSettings;
     }
 
     interface ScrapingResult {
@@ -113,7 +122,7 @@ declare namespace Scraping {
          * @param values Settings for scraping individual values from the page.
          * @returns Promise which resolves or rejects with ScrapingResult.
          */
-        scrape(url: string, values: { [valueName: string]: ValueExtractingSettings }): Promise<ScrapingResult>;
+        scrape(url: string, values: ScrapingSettings): Promise<ScrapingResult>;
     }
 
     /**
