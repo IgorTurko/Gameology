@@ -14,7 +14,7 @@
         }],
     module: {
         loaders: [
-            { test: /\.tsx?$/, loader: 'ts-loader?configFileName="./client/tsconfig.json"' }
+            { test: /\.tsx?$/, loader: 'ts-loader' }
         ]
     }
 }

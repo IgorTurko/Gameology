@@ -33,16 +33,15 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="public\assets\app.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\app.tsx" />
     <Content Include="client\search\search-box.tsx" />
     <Content Include="client\tsconfig.json" />
+    <Content Include="client\typings\globals\react-dom\typings.json" />
     <Content Include="config.json" />
     <Content Include="client\typings.json" />
     <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="package.json" />
-    <Content Include="public\assets\app.js.map" />
     <Content Include="public\index.html" />
     <Content Include="server-test\tsconfig.json" />
     <Content Include="server\tsconfig.json" />
@@ -64,6 +63,7 @@
     <Folder Include="client\" />
     <Folder Include="client\grid\" />
     <Folder Include="client\search\" />
+    <Folder Include="client\typings\globals\react-dom\" />
     <Folder Include="server-test\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
@@ -98,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="client\grid\all-products.ts" />
+    <TypeScriptCompile Include="client\typings\globals\react-dom\index.d.ts" />
     <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />
     <TypeScriptCompile Include="server-test\test-data\products.ts" />
     <TypeScriptCompile Include="server-test\test-data\web-shops.ts" />

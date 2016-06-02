@@ -18,9 +18,13 @@
     "node-validator": "^0.1.23",
     "react": "^15.1.0",
     "react-router": "^2.4.1",
-    "ts-loader": "^0.8.2"
+    "ts-loader": "^0.8.2",
+    "typescript": "^1.8.10"
   },
   "scripts": {
     "start": "./out/app.js"
+  },
+  "devDependencies": {
+    "typescript": "^1.8.10"
   }
 }
