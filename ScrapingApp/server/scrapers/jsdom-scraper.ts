@@ -21,6 +21,10 @@ export default class JsdomScraper implements Scraping.IScraper {
         return new Promise((resolve, reject) => {
             jsdom.env({
                 url: url,
+                features: {
+                    FetchExternalResources: false,
+                    ProcessExternalResources: false
+                },
                 done: (err, window) => {
                     if (err && err.length) {
                         result.isSuccessful = false;
