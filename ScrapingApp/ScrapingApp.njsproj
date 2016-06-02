@@ -15,7 +15,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66f36103-1e49-4124-827c-2fb3db3aeecc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>out/app.js</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -73,7 +74,7 @@
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="server-test\test-data\" />
-    <Folder Include="server-test\test-import\" />
+    <Folder Include="server-test\test-parsing\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
     <Folder Include="server\scrapers\" />
@@ -106,7 +107,7 @@
     <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />
     <TypeScriptCompile Include="server-test\test-data\products.ts" />
     <TypeScriptCompile Include="server-test\test-data\web-shops.ts" />
-    <TypeScriptCompile Include="server-test\test-import\jsdom-parser-test-run.ts" />
+    <TypeScriptCompile Include="server-test\test-parsing\jsdom-parser-test-run.ts" />
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
