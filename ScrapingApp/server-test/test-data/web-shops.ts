@@ -93,17 +93,17 @@ export const webShops: WebShops.WebShop[] =
             title: [{
                 type: "string",
                 extract: "regex",
-                regex: "<font.*?>(.*?)<\/font>"
+                regex: "<font.*?>(.*?)<\\/font>"
             }],
             price: [{
                 type: "number",
                 extract: "regex",
-                regex: "\(\$(.*?)\)"
+                regex: "\\(\\$([\\d\\.]*?)\\)"
             }],
             image: [{
                 type: "string",
                 extract: "regex",
-                regex: '<img.*?src="(.*?)".*?\>'
+                regex: '<img.*?src="(.*?)".*?\\>'
             }]
         }
     }

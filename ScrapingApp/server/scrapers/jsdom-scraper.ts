@@ -113,7 +113,19 @@ export default class JsdomScraper implements Scraping.IScraper {
                     return elements[0].textContent;
             };
             case "regex": {
-                return "1";
+                const regexSettings = valueScrapingSetting as Scraping.RegexExtractSettings;
+                if (!regexSettings.regex)
+                    throw new Error("regex missing");
+
+                const text = document.querySelector("html").innerHTML;
+
+                const regex = new RegExp(regexSettings.regex, "gmi");
+
+                const matches = regex.exec(text);
+                if (!matches.length)
+                    throw new Error("No value matches");
+
+                return matches[1];
             };
             default: 
                 throw new Error("Unknown extract method");
