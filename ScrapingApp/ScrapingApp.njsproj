@@ -43,6 +43,7 @@
     <Compile Include="out\web\authentication-middleware.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\tsconfig.json" />
+    <Content Include="client\typings\globals\react-dom\typings.json" />
     <Content Include="config.json" />
     <Content Include="client\typings.json" />
     <Content Include="client\typings\globals\react\typings.json" />
@@ -64,6 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
+    <Folder Include="client\grid\" />
+    <Folder Include="client\search\" />
+    <Folder Include="client\typings\globals\react-dom\" />
     <Folder Include="out\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
@@ -97,9 +101,10 @@
     <Folder Include="server\typings\modules\mongodb\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="client\app.ts" />
-    <TypeScriptCompile Include="client\first.ts" />
-    <TypeScriptCompile Include="client\second.ts" />
+    <TypeScriptCompile Include="client\app.tsx" />
+    <TypeScriptCompile Include="client\grid\all-products.ts" />
+    <TypeScriptCompile Include="client\search\search-box.tsx" />
+    <TypeScriptCompile Include="client\typings\globals\react-dom\index.d.ts" />
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />

@@ -1,8 +1,9 @@
-﻿{
+{
     "compilerOptions": {
         "module": "commonjs",
         "sourceMap": true,
         "outDir": "../public/assets",
-        "target": "ES6"
+        "target": "ES6",
+        "jsx": "react"
     }
 }
