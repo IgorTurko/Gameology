@@ -1,4 +1,4 @@
-﻿/// <reference path="../../server/typings/index.d.ts"/>
+﻿/// <reference path="../../server/typings/index.d.ts" />
 
 import Database from "../../server/data-access/db";
 
@@ -30,10 +30,11 @@ webShopService.all()
                         .forEach(shopId => {
                             const shop = shops.filter(s => s.id === shopId)[0];
                             const url = productToScrape.scrapingUrls[shopId];
-                            
+
                             jsdomScraper.scrape(url, shop.scrapingSettings)
                                 .then(result => {
-                                    console.log(`Scrapping of ${productToScrape.title} successful for shop ${shop.title}`);
+                                    console
+                                        .log(`Scrapping of ${productToScrape.title} successful for shop ${shop.title}`);
 
                                     const out = {};
                                     Object.keys(result.values)
@@ -41,8 +42,7 @@ webShopService.all()
                                             const v = result.values[k];
                                             if (v.isSuccessful) {
                                                 out[k] = v.value;
-                                            }
-                                            else {
+                                            } else {
                                                 out[k] = { error: v.error };
                                             }
                                         });
@@ -50,18 +50,21 @@ webShopService.all()
                                     console.dir(out);
                                 })
                                 .catch((result: Scraping.ScrapingResult) => {
-                                    console.error(`Scrapping of ${productToScrape.title} failed for shop ${shop.title}`);
+                                    console
+                                        .error(`Scrapping of ${productToScrape.title} failed for shop ${shop.title}`);
                                     if (result.error) {
                                         console.error(result.error);
-                                    }
-                                    else {
+                                    } else {
                                         const out = Object.keys(result.values)
                                             .map(prop => ({ prop: prop, value: result.values[prop] }))
-                                            .filter(a => !a.value.isSuccessful)
                                             .reduce((hash, a) => {
-                                                hash[a.prop] = a.value.error;
+                                                if (a.value.isSuccessful)
+                                                    hash[a.prop] = a.value.value;
+                                                else
+                                                    hash[a.prop] = a.value.error;
                                                 return hash;
-                                            }, {});
+                                            },
+                                            {});
 
                                         console.dir(out);
                                     }

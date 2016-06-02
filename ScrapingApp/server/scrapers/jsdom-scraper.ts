@@ -64,12 +64,7 @@ export default class JsdomScraper implements Scraping.IScraper {
         if (!valueScrapingSettings)
             throw new Error("valueScrapingSettings is undefined");
 
-        const result: Scraping.ValueScrapingResult = {
-            value: null,
-            isSuccessful: true,
-            error: null,
-            settings: null
-        };
+        const result = this.emptyValueScrapingResult();
 
         for (let scrapingSetting of valueScrapingSettings) {
             try {
@@ -123,5 +118,14 @@ export default class JsdomScraper implements Scraping.IScraper {
             default: 
                 throw new Error("Unknown extract method");
         }
+    }
+
+    private emptyValueScrapingResult(): Scraping.ValueScrapingResult {
+        return {
+            value: null,
+            isSuccessful: true,
+            error: null,
+            settings: null
+        };
     }
 }

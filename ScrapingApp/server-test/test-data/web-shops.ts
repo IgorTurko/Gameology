@@ -71,17 +71,17 @@ export const webShops: WebShops.WebShop[] =
         scrapingSettings: {
             title: [{
                 type: "string",
-                elementSelector: "span[itemprop='name']"
+                elementSelector: "#product-main span[itemprop='name']"
             }],
             price: [{
                 type: "number",
-                elementSelector: "span[itemprop='price']",
+                elementSelector: "#summary meta[itemprop='price']",
                 attribute: "content"
             }],
             image: [{
                 type: "string",
-                elementSelector: ".main-image img",
-                attribute: "@src"
+                elementSelector: "#product-main .main-image img",
+                attribute: "src"
             }]
         }
     },
