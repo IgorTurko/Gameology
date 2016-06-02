@@ -33,22 +33,16 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="out\app.js" />
-    <Compile Include="out\config.js" />
-    <Compile Include="out\data-access\db.js" />
-    <Compile Include="out\routes\authentication-route.js" />
-    <Compile Include="out\services\authentication\authentication-token-provider.js" />
-    <Compile Include="out\services\authentication\in-memory-authentication-token-storage.js" />
-    <Compile Include="out\services\authentication\mongo-authentication-token-storage.js" />
-    <Compile Include="out\web\authentication-middleware.js" />
+    <Compile Include="public\assets\app.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\tsconfig.json" />
-    <Content Include="client\typings\globals\react-dom\typings.json" />
     <Content Include="config.json" />
     <Content Include="client\typings.json" />
     <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="package.json" />
+    <Content Include="public\assets\app.js.map" />
     <Content Include="public\index.html" />
+    <Content Include="server-test\tsconfig.json" />
     <Content Include="server\tsconfig.json" />
     <Content Include="server\typings.json" />
     <Content Include="server\typings\globals\body-parser\typings.json" />
@@ -56,6 +50,7 @@
     <Content Include="server\typings\globals\es6-promise\typings.json" />
     <Content Include="server\typings\globals\express-serve-static-core\typings.json" />
     <Content Include="server\typings\globals\express\typings.json" />
+    <Content Include="server\typings\globals\node-validator\typings.json" />
     <Content Include="server\typings\globals\node\typings.json" />
     <Content Include="server\typings\globals\serve-static\typings.json" />
     <Content Include="server\typings\modules\mime\typings.json" />
@@ -65,28 +60,25 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
-    <Folder Include="client\grid\" />
-    <Folder Include="client\search\" />
-    <Folder Include="client\typings\globals\react-dom\" />
-    <Folder Include="out\" />
+    <Folder Include="server-test\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
     <Folder Include="client\typings\globals\react\" />
-    <Folder Include="out\data-access\" />
-    <Folder Include="out\routes\" />
-    <Folder Include="out\services\" />
-    <Folder Include="out\services\authentication\" />
-    <Folder Include="out\web\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
+    <Folder Include="server-test\test-data\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
+    <Folder Include="server\scrapers\" />
     <Folder Include="server\routes\" />
     <Folder Include="server\services\" />
     <Folder Include="server\services\authentication\" />
+    <Folder Include="server\services\products\" />
+    <Folder Include="server\services\web-shop\" />
     <Folder Include="server\typings\globals\body-parser\" />
     <Folder Include="server\typings\globals\cookie-parser\" />
     <Folder Include="server\typings\globals\es6-promise\" />
+    <Folder Include="server\typings\globals\node-validator\" />
     <Folder Include="server\typings\modules\moment\" />
     <Folder Include="server\typings\modules\node-uuid\" />
     <Folder Include="server\web\" />
@@ -101,23 +93,33 @@
     <Folder Include="server\typings\modules\mongodb\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="client\app.tsx" />
-    <TypeScriptCompile Include="client\grid\all-products.ts" />
-    <TypeScriptCompile Include="client\search\search-box.tsx" />
-    <TypeScriptCompile Include="client\typings\globals\react-dom\index.d.ts" />
+    <TypeScriptCompile Include="client\app.ts" />
+    <TypeScriptCompile Include="client\first.ts" />
+    <TypeScriptCompile Include="client\second.ts" />
+    <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />
+    <TypeScriptCompile Include="server-test\test-data\products.ts" />
+    <TypeScriptCompile Include="server-test\test-data\web-shops.ts" />
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
     <TypeScriptCompile Include="server\routes\authentication-route.ts" />
+    <TypeScriptCompile Include="server\scrapers\value-parser.ts" />
     <TypeScriptCompile Include="server\services\authentication\authentication-token-provider.ts" />
     <TypeScriptCompile Include="server\services\authentication\in-memory-authentication-token-storage.ts" />
     <TypeScriptCompile Include="server\services\authentication\mongo-authentication-token-storage.ts" />
+    <TypeScriptCompile Include="server\services\products\mongo-product-storage.ts" />
+    <TypeScriptCompile Include="server\services\products\product-service.ts" />
+    <TypeScriptCompile Include="server\services\products\product-validator.ts" />
+    <TypeScriptCompile Include="server\services\web-shop\mongo-web-shop-storage.ts" />
+    <TypeScriptCompile Include="server\services\web-shop\web-shop-service.ts" />
+    <TypeScriptCompile Include="server\services\web-shop\web-shop-validator.ts" />
     <TypeScriptCompile Include="server\typings\globals\app.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\body-parser\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\cookie-parser\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\es6-promise\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express-serve-static-core\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\express\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\globals\node-validator\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\serve-static\index.d.ts" />
     <TypeScriptCompile Include="server\typings\index.d.ts" />
