@@ -37,11 +37,37 @@ webShopService.all()
                         jsdomScraper.scrape(url, shop.scrapingSettings.values)
                             .then(result => {
                                 console.log(`Scrapping successful for shop ${shop.title}`);
-                                console.dir(result);
+
+                                const out = {};
+                                Object.keys(result.values)
+                                    .forEach(k => {
+                                        const v = result.values[k];
+                                        if (v.isSuccessful) {
+                                            out[k] = v.value;
+                                        }
+                                        else {
+                                            out[k] = { error: v.error };
+                                        }
+                                    });
+
+                                console.dir(out);
                             })
-                            .catch(result => {
-                                console.log(`Scrapping failed for shop ${shop.title}`);
-                                console.dir(result);
+                            .catch((result: Scraping.ScrapingResult) => {
+                                console.error(`Scrapping failed for shop ${shop.title}`);
+                                if (result.error) {
+                                    console.error(result.error);
+                                }
+                                else {
+                                    const out = Object.keys(result.values)
+                                        .map(prop => ({ prop: prop, value: result.values[prop] }))
+                                        .filter(a => !a.value.isSuccessful)
+                                        .reduce((hash, a) => {
+                                            hash[a.prop] = a.value.error;
+                                            return hash;
+                                        }, {});
+
+                                    console.dir(out);
+                                }
                             });
                     });
             });
