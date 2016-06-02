@@ -58,7 +58,8 @@ export const webShops: WebShops.WebShop[] =
             values: {
                 title: {
                     type: "string",
-                    elementSelector: "#productName"
+                    elementSelector: "meta[itemprop='name']",
+                    valueSelector: "@content"
                 },
                 price: {
                     type: "number",
@@ -66,8 +67,8 @@ export const webShops: WebShops.WebShop[] =
                 },
                 image: {
                     type: "relative-url",
-                    elementSelector: "#productMainImage img",
-                    valueSelector: "@src"
+                    elementSelector: "meta[itemprop='image']",
+                    valueSelector: "@content"
                 }
             }
         }
