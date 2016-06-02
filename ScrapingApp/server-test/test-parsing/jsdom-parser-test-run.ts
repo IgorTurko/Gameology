@@ -31,6 +31,8 @@ webShopService.all()
                         const shop = shops.filter(s => s.id === shopId)[0];
                         const url = productToScrape.scrapingUrls[shopId];
 
+                        if (shop.scrapingSettings.scraper !== "jsdom")
+                            return;
 
                         jsdomScraper.scrape(url, shop.scrapingSettings.values)
                             .then(result => {
