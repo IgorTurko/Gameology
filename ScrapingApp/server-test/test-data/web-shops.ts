@@ -66,7 +66,7 @@ export const webShops: WebShops.WebShop[] =
                     elementSelector: "#productPrices"
                 },
                 image: {
-                    type: "relative-url",
+                    type: "string",
                     elementSelector: "meta[itemprop='image']",
                     valueSelector: "@content"
                 }
@@ -113,7 +113,7 @@ export const webShops: WebShops.WebShop[] =
                     elementSelector: "\(\$(.*?)\)"
                 },
                 image: {
-                    type: "relative-url",
+                    type: "string",
                     elementSelector: '<img.*?src="(.*?)".*?\>'
                 }
             }

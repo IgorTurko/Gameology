@@ -62,7 +62,8 @@ export default class JsdomScraper implements Scraping.IScraper {
 
                                 try {
                                     const textValue = this.valueFromElement(elem, settings.valueSelector);
-                                    valueResult.value = textValue;
+                                    const parsedValue = this.valueParser[settings.type](textValue);
+                                    valueResult.value = parsedValue;
                                     valueResult.isSuccessful = true;
                                 }
                                 catch (e) {

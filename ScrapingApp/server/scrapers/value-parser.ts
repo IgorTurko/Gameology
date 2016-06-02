@@ -1,24 +1,28 @@
 ﻿/// <reference path="../typings/index.d.ts"/>
 
-export default class ValueParserHash implements Scraping.IValueParserHash {
+export default class ValueParserHash {
+    parsers = {};
 
-    string(input: string): Promise<any> {
-        return Promise.resolve((input || "").trim());
+    constructor() {
+        this.parsers["string"] = this.string;
+        this.parsers["number"] = this.number;
     }
 
-    number(input: string): Promise<any> {
+    string(input: string): any {
+        return (input || "").trim();
+    }
+
+    number(input: string): any {
         if (!input)
-            return Promise.reject("Number is missing.");
+            throw new Error("Number is missing.");
 
         const src = input.replace(/[^0-9\.]/g, "");
 
         const number = parseFloat(src);
 
         if (number && !isNaN(number))
-            return Promise.resolve(number);
+            return number;
 
-        return Promise.reject("Number format is not valid.");
+        throw new Error("Number format is not valid.");
     }
-
-    [index: string]: Scraping.ValueParser;
 }

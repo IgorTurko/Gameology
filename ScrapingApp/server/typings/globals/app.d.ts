@@ -50,7 +50,7 @@ declare namespace Scraping {
          * Value type. Can be one of value "number", "string" or "relative-url".
          * Default is "string".
          */
-        type?: "number" | "string" | "relative-url",
+        type?: "number" | "string",
         /**
          * Boolean value indicates whether failing of value scraping leads to total scraping fail.
          * Default true.
@@ -125,7 +125,7 @@ declare namespace Scraping {
          * Returns promise wich resolves with value on parsing success or fails with error message.
          * 
          */
-        (input: string): Promise<any>;
+        (input: string): any;
     }
 
     interface IValueParserHash {
