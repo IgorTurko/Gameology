@@ -49,9 +49,9 @@ declare namespace Scraping {
         type?: "number" | "string",
         /**
          * Boolean value indicates whether failing of value scraping leads to total scraping fail.
-         * Default true.
+         * Default false.
          */
-        isOptional?: boolean;
+        failOnError?: boolean;
 
         /**
          * How the value is extracted.
@@ -77,6 +77,16 @@ declare namespace Scraping {
 
     /**
      * Scraping settings defines how to extract data from pages of specified type.
+     * Scraping settings is hash of value name and array of scraping settings.
+     *
+     * Each key in hash corresponds to scraped value.
+     * Scraping settings for value is array of objects.
+     *
+     * Scraper will try to extract value with each of setting.
+     * If extracting would be successful the next settings will not be tested.
+     *
+     * If any setting has failOnError === true and scraping would fail for this setting the value scraping would be error.
+     * Usually the last setting only should set failOnError to true.
      */
     interface ScrapingSettings {
         title: ValueScrapingSettings[];

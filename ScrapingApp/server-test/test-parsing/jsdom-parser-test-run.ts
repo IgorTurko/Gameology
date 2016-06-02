@@ -30,11 +30,8 @@ webShopService.all()
                         .forEach(shopId => {
                             const shop = shops.filter(s => s.id === shopId)[0];
                             const url = productToScrape.scrapingUrls[shopId];
-
-                            if (shop.scrapingSettings.scraper !== "jsdom")
-                                return;
-
-                            jsdomScraper.scrape(url, shop.scrapingSettings.values)
+                            
+                            jsdomScraper.scrape(url, shop.scrapingSettings)
                                 .then(result => {
                                     console.log(`Scrapping of ${productToScrape.title} successful for shop ${shop.title}`);
 

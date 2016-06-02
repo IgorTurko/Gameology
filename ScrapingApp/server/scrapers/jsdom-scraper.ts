@@ -5,11 +5,13 @@ import ValueParserHash from "./value-parser";
 export default class JsdomScraper implements Scraping.IScraper {
     private valueParser = new ValueParserHash();
 
-    scrape(url: string, values: { [index: string]: Scraping.ValueExtractingSettings; }): Promise<Scraping.ScrapingResult> {
+    scrape(url: string, values: Scraping.ScrapingSettings): Promise<Scraping.ScrapingResult> {
         if (!url)
             throw new Error("url is undefined");
-        if (!values || !Object.keys(values).length)
-            throw new Error("value extraction settings is missing.");
+        if (!values)
+            throw new Error("values is undefined.");
+        if (!Object.keys(values).length)
+            throw new Error("No values to extract");
 
 
         let result: Scraping.ScrapingResult = {
@@ -38,43 +40,12 @@ export default class JsdomScraper implements Scraping.IScraper {
                         Object.keys(values)
                             .forEach(valueName => {
                                 const settings = values[valueName];
-                                const valueResult: Scraping.ValueScrapingResult = {
-                                    value: null,
-                                    isSuccessful: false,
-                                    error: null,
-                                    settings: settings
-                                };
-
-                                result.values[valueName] = valueResult;
-
-                                if (!settings.elementSelector) {
-                                    valueResult.error = "Configuration error: element selector is missing.";
-                                    valueResult.isSuccessful = false;
-                                    return;
-                                }
-
-                                let elem = window.document.querySelector(settings.elementSelector);
-                                if (!elem) {
-                                    valueResult.error = "Element is missing";
-                                    valueResult.isSuccessful = false;
-                                    return;
-                                }
-
-                                try {
-                                    const textValue = this.valueFromElement(elem, settings.valueSelector);
-                                    const parsedValue = this.valueParser[settings.type](textValue);
-                                    valueResult.value = parsedValue;
-                                    valueResult.isSuccessful = true;
-                                }
-                                catch (e) {
-                                    valueResult.error = e;
-                                    valueResult.isSuccessful = false;
-                                }
+                                result.values[valueName] = this.scrapeValue(window.document, settings);
                             });
 
-                        result.isSuccessful = !Object.keys(result.values)
+                        result.isSuccessful = Object.keys(result.values)
                             .map(valueName => result.values[valueName])
-                            .some(v => !v.isSuccessful && !v.settings.isOptional);
+                            .every(v => v.isSuccessful);
 
 
                         if (result.isSuccessful)
@@ -87,17 +58,70 @@ export default class JsdomScraper implements Scraping.IScraper {
         });
     }
 
-    private valueFromElement(element: Element, valueSelector: string): string {
-        if (!element)
-            throw new Error("element is undefined");
+    private scrapeValue(document: Document, valueScrapingSettings: Scraping.ValueScrapingSettings[]): Scraping.ValueScrapingResult {
+        if (!document)
+            throw new Error("document is undefined");
+        if (!valueScrapingSettings)
+            throw new Error("valueScrapingSettings is undefined");
 
-        if (!valueSelector)
-            return element.textContent;
-        else {
-            if (valueSelector[0] === "@")
-                return element.getAttribute(valueSelector.substring(1));
+        const result: Scraping.ValueScrapingResult = {
+            value: null,
+            isSuccessful: true,
+            error: null,
+            settings: null
+        };
 
-            throw new Error("Unknown value selector format");
+        for (let scrapingSetting of valueScrapingSettings) {
+            try {
+                const rawValue = this.extractRawValueFromDocument(document, scrapingSetting);
+                const parsedValue = this.valueParser[scrapingSetting.type](rawValue);
+
+                result.isSuccessful = true;
+                result.error = null;
+                result.settings = scrapingSetting;
+                result.value = parsedValue;
+
+                return result;
+            }
+            catch (error) {
+                result.isSuccessful = false;
+                result.error = error;
+                result.settings = scrapingSetting;
+
+                if (scrapingSetting.failOnError === true)
+                    return result;
+            }
+        }
+
+        return result;
+    }
+
+    private extractRawValueFromDocument(document: Document, valueScrapingSetting: Scraping.ValueScrapingSettings): string {
+        const extractMethod = valueScrapingSetting.extract || "queryselector";
+
+        switch (extractMethod) {
+            case "queryselector": {
+                const querySelectorSettings = valueScrapingSetting as Scraping.QuerySelectorExtractSettings;
+
+                if (!querySelectorSettings.elementSelector)
+                    throw new Error(`elementSelector is missing`);
+
+                let elements = document.querySelectorAll(querySelectorSettings.elementSelector);
+                if (elements.length === 0)
+                    throw new Error(`Element with selector ${querySelectorSettings.elementSelector} is missing`);
+                if (elements.length > 1)
+                    throw new Error(`There are more than one element with selector ${querySelectorSettings.elementSelector}`);
+
+                if (querySelectorSettings.attribute)
+                    return elements[0].getAttribute(querySelectorSettings.attribute);
+                else
+                    return elements[0].textContent;
+            };
+            case "regex": {
+                return "1";
+            };
+            default: 
+                throw new Error("Unknown extract method");
         }
     }
 }
