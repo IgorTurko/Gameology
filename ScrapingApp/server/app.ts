@@ -11,11 +11,6 @@ import authenticationRouter from "./routes/authentication-route";
 let server = express();
 
 server.use(cookieparser());
-
-app.use(bodyParser.urlencoded());
-
-app.use(bodyParser.json());
-
 server.use("/api", bodyparser());
 server.use("/api", authenticationRouter);
 

@@ -1,3 +1,4 @@
+/// <reference path="./typings/index.d.ts" />
 "use strict";
 var React = require("react");
 var ReactDOM = require("react-dom");

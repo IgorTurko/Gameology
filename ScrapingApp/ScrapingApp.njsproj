@@ -15,8 +15,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66f36103-1e49-4124-827c-2fb3db3aeecc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>out/app.js</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -34,6 +33,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="public\assets\app.js" />
+    <Compile Include="public\assets\grid\all-products.js" />
+    <Compile Include="public\assets\search\search-box.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\app.tsx" />
     <Content Include="client\search\search-box.tsx" />
@@ -43,6 +45,9 @@
     <Content Include="client\typings.json" />
     <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="package.json" />
+    <Content Include="public\assets\app.js.map" />
+    <Content Include="public\assets\grid\all-products.js.map" />
+    <Content Include="public\assets\search\search-box.js.map" />
     <Content Include="public\index.html" />
     <Content Include="server-test\tsconfig.json" />
     <Content Include="server\tsconfig.json" />
@@ -67,6 +72,8 @@
     <Folder Include="client\grid\" />
     <Folder Include="client\search\" />
     <Folder Include="client\typings\globals\react-dom\" />
+    <Folder Include="public\assets\grid\" />
+    <Folder Include="public\assets\search\" />
     <Folder Include="server-test\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />

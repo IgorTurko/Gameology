@@ -4,6 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/// <reference path="./../typings/index.d.ts" />
 var React = require("react");
 var SearchBox = (function (_super) {
     __extends(SearchBox, _super);
