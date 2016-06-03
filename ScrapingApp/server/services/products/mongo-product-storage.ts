@@ -21,7 +21,9 @@ export default class MongoProductStorage implements Products.IProductStorage {
 
         return this.db
             .collection(Database.Collections.products)
-            .then(c => c.find({ id: id }))
+            .then(c => c.find({
+                id: id
+            }))
             .then(c => c.limit(1))
             .then(c => c.next());
     }
@@ -32,7 +34,31 @@ export default class MongoProductStorage implements Products.IProductStorage {
 
         return this.db
             .collection(Database.Collections.products)
-            .then(c => c.updateOne({ id: product.id }, product, { upsert: true }))
+            .then(c => c.updateOne({
+                    id: product.id
+                },
+                product,
+                {
+                    upsert: true
+                }))
             .then(() => product);
+    }
+
+    setScrapingData(productId: string, webShopId: string, scrapingData: Products.ProductScrapedData): Promise<Products.ProductScrapedData> {
+        return this.db
+            .collection(Database.Collections.products)
+            .then(c => c.updateOne(
+            {
+                id: productId
+            },
+            {
+                $set: {
+                    [`scrapedData.${webShopId}`]: scrapingData
+                }
+            },
+            {
+                upsert: true
+            }))
+            .then(() => scrapingData);
     }
 }

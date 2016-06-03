@@ -42,20 +42,23 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/*!***************************************************!*\
+  !*** ./server-test/test-data/import-test-data.ts ***!
+  \***************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../server/typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(1);
-	var mongo_web_shop_storage_1 = __webpack_require__(5);
-	var web_shop_service_1 = __webpack_require__(6);
-	var mongo_product_storage_1 = __webpack_require__(9);
-	var product_service_1 = __webpack_require__(10);
-	var web_shops_1 = __webpack_require__(12);
-	var products_1 = __webpack_require__(13);
+	var db_1 = __webpack_require__(/*! ../../server/data-access/db */ 1);
+	var mongo_web_shop_storage_1 = __webpack_require__(/*! ../../server/services/web-shop/mongo-web-shop-storage */ 5);
+	var web_shop_service_1 = __webpack_require__(/*! ../../server/services/web-shop/web-shop-service */ 6);
+	var mongo_product_storage_1 = __webpack_require__(/*! ../../server/services/products/mongo-product-storage */ 9);
+	var product_service_1 = __webpack_require__(/*! ../../server/services/products/product-service */ 10);
+	var web_shops_1 = __webpack_require__(/*! ./web-shops */ 13);
+	var products_1 = __webpack_require__(/*! ./products */ 14);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
-	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
+	var productService = new product_service_1.default(new mongo_product_storage_1.default(db), webShopService);
 	function addWebShop(webShop) {
 	    return webShopService.save(webShop)
 	        .then(function () {
@@ -92,12 +95,15 @@
 
 /***/ },
 /* 1 */
+/*!**********************************!*\
+  !*** ./server/data-access/db.ts ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	var mongo = __webpack_require__(2);
-	var config_1 = __webpack_require__(3);
+	var mongo = __webpack_require__(/*! mongodb */ 2);
+	var config_1 = __webpack_require__(/*! ../config */ 3);
 	var db = new Promise(function (resolve, reject) {
 	    mongo.MongoClient.connect(config_1.default.mongoUrl, function (err, db) {
 	        if (err) {
@@ -136,17 +142,23 @@
 
 /***/ },
 /* 2 */
+/*!**************************!*\
+  !*** external "mongodb" ***!
+  \**************************/
 /***/ function(module, exports) {
 
 	module.exports = require("mongodb");
 
 /***/ },
 /* 3 */
+/*!**************************!*\
+  !*** ./server/config.ts ***!
+  \**************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="typings/index.d.ts"/>
-	var fs = __webpack_require__(4);
+	var fs = __webpack_require__(/*! fs */ 4);
 	var configContent = fs.readFileSync("./config.json", "utf8");
 	var configuration = JSON.parse(configContent);
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -155,17 +167,23 @@
 
 /***/ },
 /* 4 */
+/*!*********************!*\
+  !*** external "fs" ***!
+  \*********************/
 /***/ function(module, exports) {
 
 	module.exports = require("fs");
 
 /***/ },
 /* 5 */
+/*!************************************************************!*\
+  !*** ./server/services/web-shop/mongo-web-shop-storage.ts ***!
+  \************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(1);
+	var db_1 = __webpack_require__(/*! ../../data-access/db */ 1);
 	var MongoWebShopStorage = (function () {
 	    function MongoWebShopStorage(db) {
 	        this.db = db;
@@ -203,11 +221,14 @@
 
 /***/ },
 /* 6 */
+/*!******************************************************!*\
+  !*** ./server/services/web-shop/web-shop-service.ts ***!
+  \******************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var web_shop_validator_1 = __webpack_require__(7);
+	var web_shop_validator_1 = __webpack_require__(/*! ./web-shop-validator */ 7);
 	var WebShopService = (function () {
 	    function WebShopService(storage) {
 	        this.storage = storage;
@@ -217,6 +238,11 @@
 	    }
 	    WebShopService.prototype.all = function () {
 	        return this.storage.all();
+	    };
+	    WebShopService.prototype.one = function (webShopId) {
+	        if (!webShopId)
+	            throw new Error("webShopId is undefined");
+	        return this.storage.one(webShopId);
 	    };
 	    WebShopService.prototype.save = function (webShop) {
 	        var _this = this;
@@ -243,11 +269,14 @@
 
 /***/ },
 /* 7 */
+/*!********************************************************!*\
+  !*** ./server/services/web-shop/web-shop-validator.ts ***!
+  \********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var validator = __webpack_require__(8);
+	var validator = __webpack_require__(/*! node-validator */ 8);
 	var WebShopValidator = (function () {
 	    function WebShopValidator() {
 	        this.deliveryMethodValidator = validator.isAnyObject()
@@ -279,17 +308,23 @@
 
 /***/ },
 /* 8 */
+/*!*********************************!*\
+  !*** external "node-validator" ***!
+  \*********************************/
 /***/ function(module, exports) {
 
 	module.exports = require("node-validator");
 
 /***/ },
 /* 9 */
+/*!***********************************************************!*\
+  !*** ./server/services/products/mongo-product-storage.ts ***!
+  \***********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(1);
+	var db_1 = __webpack_require__(/*! ../../data-access/db */ 1);
 	var MongoProductStorage = (function () {
 	    function MongoProductStorage(db) {
 	        this.db = db;
@@ -307,7 +342,9 @@
 	            throw new Error("id is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.products)
-	            .then(function (c) { return c.find({ id: id }); })
+	            .then(function (c) { return c.find({
+	            id: id
+	        }); })
 	            .then(function (c) { return c.limit(1); })
 	            .then(function (c) { return c.next(); });
 	    };
@@ -316,8 +353,27 @@
 	            throw new Error("product is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.products)
-	            .then(function (c) { return c.updateOne({ id: product.id }, product, { upsert: true }); })
+	            .then(function (c) { return c.updateOne({
+	            id: product.id
+	        }, product, {
+	            upsert: true
+	        }); })
 	            .then(function () { return product; });
+	    };
+	    MongoProductStorage.prototype.setScrapingData = function (productId, webShopId, scrapingData) {
+	        return this.db
+	            .collection(db_1.default.Collections.products)
+	            .then(function (c) { return c.updateOne({
+	            id: productId
+	        }, {
+	            $set: (_a = {},
+	                _a["scrapedData." + webShopId] = scrapingData,
+	                _a
+	            )
+	        }, {
+	            upsert: true
+	        }); var _a; })
+	            .then(function () { return scrapingData; });
 	    };
 	    return MongoProductStorage;
 	}());
@@ -327,21 +383,27 @@
 
 /***/ },
 /* 10 */
+/*!*****************************************************!*\
+  !*** ./server/services/products/product-service.ts ***!
+  \*****************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var product_validator_1 = __webpack_require__(11);
+	var product_validator_1 = __webpack_require__(/*! ./product-validator */ 11);
+	var moment = __webpack_require__(/*! moment */ 12);
 	var ProductService = (function () {
-	    function ProductService(storage) {
+	    function ProductService(storage, webShopService) {
 	        this.storage = storage;
+	        this.webShopService = webShopService;
 	        this.validator = new product_validator_1.default();
 	        if (!storage)
 	            throw new Error("storage is undefined");
+	        if (!webShopService)
+	            throw new Error("webShopService is undefined");
 	    }
 	    ProductService.prototype.all = function () {
-	        return this.storage
-	            .all();
+	        return this.storage.all();
 	    };
 	    ProductService.prototype.save = function (product) {
 	        var _this = this;
@@ -360,6 +422,51 @@
 	            });
 	        });
 	    };
+	    ProductService.prototype.one = function (productId) {
+	        if (!productId)
+	            throw new Error("productId is undefined");
+	        return this.storage.one(productId);
+	    };
+	    ProductService.prototype.updateScrapedData = function (productId, webshopId, data) {
+	        var _this = this;
+	        if (!productId)
+	            throw new Error("productId is undefined");
+	        if (!webshopId)
+	            throw new Error("webShopId is undefined");
+	        if (!data)
+	            throw new Error("data is undefined");
+	        return Promise.all([this.one(productId), this.webShopService.one(webshopId)])
+	            .then(function (_a) {
+	            var product = _a[0], webshop = _a[1];
+	            data.scrapedAt = moment().toDate();
+	            data.url = product.scrapingUrls[webshopId];
+	            return _this.storage.setScrapingData(productId, webshopId, data);
+	        });
+	    };
+	    ProductService.prototype.productScrapedDataFromScrapingResult = function (scrapingResult) {
+	        var result = {
+	            url: null,
+	            scrapedAt: null,
+	            error: null,
+	            values: {
+	                title: null,
+	                price: null,
+	                image: null
+	            },
+	            errors: {}
+	        };
+	        result.error = scrapingResult.error;
+	        result = Object.keys(scrapingResult.values)
+	            .map(function (name) { return ({ name: name, value: scrapingResult.values[name] }); })
+	            .reduce(function (hash, a) {
+	            if (a.value.isSuccessful)
+	                hash.values[a.name] = a.value.value;
+	            else
+	                hash.errors[a.name] = a.value.error;
+	            return hash;
+	        }, result);
+	        return result;
+	    };
 	    return ProductService;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -368,11 +475,14 @@
 
 /***/ },
 /* 11 */
+/*!*******************************************************!*\
+  !*** ./server/services/products/product-validator.ts ***!
+  \*******************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var validator = __webpack_require__(8);
+	var validator = __webpack_require__(/*! node-validator */ 8);
 	var ProductValidator = (function () {
 	    function ProductValidator() {
 	        this.productValidator = validator.isAnyObject()
@@ -401,6 +511,18 @@
 
 /***/ },
 /* 12 */
+/*!*************************!*\
+  !*** external "moment" ***!
+  \*************************/
+/***/ function(module, exports) {
+
+	module.exports = require("moment");
+
+/***/ },
+/* 13 */
+/*!********************************************!*\
+  !*** ./server-test/test-data/web-shops.ts ***!
+  \********************************************/
 /***/ function(module, exports) {
 
 	/// <reference path="../../server/typings/index.d.ts" />
@@ -515,7 +637,10 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
+/*!*******************************************!*\
+  !*** ./server-test/test-data/products.ts ***!
+  \*******************************************/
 /***/ function(module, exports) {
 
 	/// <reference path="../../server/typings/index.d.ts" />
