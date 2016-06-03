@@ -15,7 +15,6 @@ const db = new Database();
 const webShopService = new WebShopService(new MongoWebShopStorage(db));
 const productService = new ProductService(new MongoProductStorage(db), webShopService);
 
-
 const jsdomScraper = new JsdomScraper();
 
 webShopService.all()
@@ -34,41 +33,59 @@ webShopService.all()
 
                             jsdomScraper.scrape(url, shop.scrapingSettings)
                                 .then(result => {
-                                    console
-                                        .log(`Scrapping of ${productToScrape.title} successful for shop ${shop.title}`);
 
-                                    const out = {};
-                                    Object.keys(result.values)
-                                        .forEach(k => {
-                                            const v = result.values[k];
-                                            if (v.isSuccessful) {
-                                                out[k] = v.value;
-                                            } else {
-                                                out[k] = { error: v.error };
-                                            }
+                                    const scrapedData = productService.productScrapedDataFromScrapingResult(result);
+
+                                    return productService.updateScrapedData(productToScrape.id, shop.id, scrapedData)
+                                        .then(() => {
+
+                                            console
+                                                .log(`Scrapping of ${productToScrape.title} successful for shop ${shop.title}`);
+
+                                            const out = {};
+                                            Object.keys(result.values)
+                                                .forEach(k => {
+                                                    const v = result.values[k];
+                                                    if (v.isSuccessful) {
+                                                        out[k] = v.value;
+                                                    } else {
+                                                        out[k] = {
+                                                            error: v.error
+                                                        };
+                                                    }
+                                                });
+
+                                            console.dir(out);
                                         });
-
-                                    console.dir(out);
                                 })
                                 .catch((result: Scraping.ScrapingResult) => {
-                                    console
-                                        .error(`Scrapping of ${productToScrape.title} failed for shop ${shop.title}`);
-                                    if (result.error) {
-                                        console.error(result.error);
-                                    } else {
-                                        const out = Object.keys(result.values)
-                                            .map(prop => ({ prop: prop, value: result.values[prop] }))
-                                            .reduce((hash, a) => {
-                                                if (a.value.isSuccessful)
-                                                    hash[a.prop] = a.value.value;
-                                                else
-                                                    hash[a.prop] = a.value.error;
-                                                return hash;
-                                            },
-                                            {});
 
-                                        console.dir(out);
-                                    }
+                                    const scrapedData = productService.productScrapedDataFromScrapingResult(result);
+
+                                    return productService.updateScrapedData(productToScrape.id, shop.id, scrapedData)
+                                        .then(() => {
+
+                                            console.error(`Scrapping of ${productToScrape.title} failed for shop ${shop.title}`);
+                                            if (result.error) {
+                                                console.error(result.error);
+                                            } else {
+                                                const out = Object.keys(result.values)
+                                                    .map(prop => ({
+                                                        prop: prop,
+                                                        value: result.values[prop]
+                                                    }))
+                                                    .reduce((hash, a) => {
+                                                        if (a.value.isSuccessful)
+                                                            hash[a.prop] = a.value.value;
+                                                        else
+                                                            hash[a.prop] = a.value.error;
+                                                        return hash;
+                                                    },
+                                                    {});
+
+                                                console.dir(out);
+                                            }
+                                        });
                                 });
                         });
                 });

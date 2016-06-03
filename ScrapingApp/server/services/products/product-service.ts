@@ -60,4 +60,33 @@ export default class ProductService {
                 return this.storage.setScrapingData(productId, webshopId, data);
             });
     }
+
+    productScrapedDataFromScrapingResult(scrapingResult: Scraping.ScrapingResult): Products.ProductScrapedData {
+        let result: Products.ProductScrapedData = {
+            url: null,
+            scrapedAt: null,
+            error: null,
+            values: {
+                title: null,
+                price: null,
+                image: null
+            },
+            errors: {}
+        };
+
+        result.error = scrapingResult.error;
+
+        result = Object.keys(scrapingResult.values)
+            .map(name => ({ name: name, value: scrapingResult.values[name] }))
+            .reduce((hash, a) => {
+                if (a.value.isSuccessful)
+                    hash.values[a.name] = a.value.value;
+                else
+                    hash.errors[a.name] = a.value.error;
+
+                return hash;
+            }, result);
+
+        return result;
+    }
 }

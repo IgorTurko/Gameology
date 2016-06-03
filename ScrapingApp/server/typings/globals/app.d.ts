@@ -186,12 +186,16 @@ declare namespace Products {
     interface ProductScrapedData {
         url: string;
         scrapedAt: Date;
+        error: any;
         values: {
             title: string;
             price: number;
             image: string;
             [key: string]: any;
         };
+        errors: {
+            [key: string]: any;
+        }
     }
 
     /**
