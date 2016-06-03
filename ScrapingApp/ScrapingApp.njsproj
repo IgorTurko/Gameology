@@ -35,6 +35,8 @@
   <ItemGroup>
     <Compile Include="out\client\assets\app.js" />
     <Compile Include="out\server\app.js" />
+    <Compile Include="out\test\import-test-data.js" />
+    <Compile Include="out\test\run-page-parsing.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\app.tsx" />
     <Content Include="client\grid\all-products.tsx" />
@@ -46,6 +48,8 @@
     <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="out\client\assets\app.js.map" />
     <Content Include="out\server\app.js.map" />
+    <Content Include="out\test\import-test-data.js.map" />
+    <Content Include="out\test\run-page-parsing.js.map" />
     <Content Include="package.json" />
     <Content Include="out\client\index.html" />
     <Content Include="server-test\tsconfig.json" />
@@ -114,7 +118,7 @@
     <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />
     <TypeScriptCompile Include="server-test\test-data\products.ts" />
     <TypeScriptCompile Include="server-test\test-data\web-shops.ts" />
-    <TypeScriptCompile Include="server-test\test-parsing\jsdom-parser-test-run.ts" />
+    <TypeScriptCompile Include="server-test\test-parsing\run-page-parsing.ts" />
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />

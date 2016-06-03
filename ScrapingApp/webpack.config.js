@@ -4,15 +4,15 @@ var fs = require("fs");
 var nodeModules = {};
 
 fs.readdirSync("node_modules")
-  .filter(function (x) {
-    return [".bin"].indexOf(x) === -1;
-})
-  .forEach(function (mod) {
-    nodeModules[mod] = "commonjs " + mod;
-});
+    .filter(function(x) {
+        return [".bin"].indexOf(x) === -1;
+    })
+    .forEach(function(mod) {
+        nodeModules[mod] = "commonjs " + mod;
+    });
 
-
-module.exports = [{
+module.exports = [
+    {
         entry: "./client/app.tsx",
         output: {
             filename: "app.js",
@@ -22,10 +22,12 @@ module.exports = [{
         resolve: {
             extensions: ["", ".webpack.js", ".web.js", ".ts", ".js", ".tsx"]
         },
-        externals: [{
+        externals: [
+            {
                 react: "var React",
                 "react-dom": "var ReactDOM"
-            }],
+            }
+        ],
         module: {
             loaders: [
                 { test: /\.tsx?$/, loader: "ts-loader" }
@@ -53,7 +55,7 @@ module.exports = [{
         module: {
             loaders: [
                 {
-                    test: /\.tsx?$/, 
+                    test: /\.tsx?$/,
                     loader: "ts-loader"
                 }
             ]
@@ -63,4 +65,35 @@ module.exports = [{
                 noEmit: false
             }
         }
-    }];
+    },
+// Server-Test
+    {
+        entry: {
+            "import-test-data": "./server-test/test-data/import-test-data.ts",
+            "run-page-parsing": "./server-test/test-parsing/run-page-parsing.ts"
+        },
+        output: {
+            filename: "[name].js",
+            path: "./out/test/"
+        },
+        devtool: "source-map",
+        target: "node",
+        resolve: {
+            extensions: ["", ".webpack.js", ".web.js", ".ts", ".js", ".tsx"]
+        },
+        externals: nodeModules,
+        module: {
+            loaders: [
+                {
+                    test: /\.tsx?$/,
+                    loader: "ts-loader"
+                }
+            ]
+        },
+        ts: {
+            compilerOptions: {
+                noEmit: false
+            }
+        }
+    }
+];
