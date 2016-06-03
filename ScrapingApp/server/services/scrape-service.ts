@@ -36,7 +36,7 @@ export default class ScrapeService implements Scraping.IScrapeService {
         });
     }
 
-    private scrapeProduct(product: Products.Product, shops: WebShopHash): Promise<{ webShopId: string; scrapingResult: Scraping.WebShopScrapingResult; }>[] {
+    private scrapeProduct(product: Api.Product, shops: WebShopHash): Promise<{ webShopId: string; scrapingResult: Scraping.WebShopScrapingResult; }>[] {
 
         return Object.keys(product.scrapingUrls)
             .map(webShopId => this.scrapeProductFromShopAndSave(product, webShopId, shops)
@@ -46,7 +46,7 @@ export default class ScrapeService implements Scraping.IScrapeService {
                 })));
     }
 
-    private scrapeProductFromShopAndSave(product: Products.Product, webShopId: string, shops: WebShopHash): Promise<Scraping.WebShopScrapingResult> {
+    private scrapeProductFromShopAndSave(product: Api.Product, webShopId: string, shops: WebShopHash): Promise<Scraping.WebShopScrapingResult> {
         return this.scraper
             .scrape(product.scrapingUrls[webShopId], shops[webShopId].scrapingSettings)
             .then(result => this.productService

@@ -175,7 +175,7 @@
 	    MongoWebShopStorage.prototype.all = function () {
 	        return this.db
 	            .collection(db_1.default.Collections.webshops)
-	            .then(function (c) { return c.find(); })
+	            .then(function (c) { return c.find({}, { _id: 0 }); })
 	            .then(function (c) { return c.toArray(); });
 	    };
 	    MongoWebShopStorage.prototype.one = function (id) {
@@ -183,7 +183,7 @@
 	            throw new Error("id is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.webshops)
-	            .then(function (c) { return c.find({ id: id }); })
+	            .then(function (c) { return c.find({ id: id }, { _id: 0 }); })
 	            .then(function (r) { return r.limit(1); })
 	            .then(function (c) { return c.next(); });
 	    };
@@ -304,7 +304,7 @@
 	    MongoProductStorage.prototype.all = function () {
 	        return this.db
 	            .collection(db_1.default.Collections.products)
-	            .then(function (c) { return c.find(); })
+	            .then(function (c) { return c.find({}, { _id: 0 }); })
 	            .then(function (c) { return c.toArray(); });
 	    };
 	    MongoProductStorage.prototype.one = function (id) {
@@ -312,9 +312,7 @@
 	            throw new Error("id is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.products)
-	            .then(function (c) { return c.find({
-	            id: id
-	        }); })
+	            .then(function (c) { return c.find({ id: id }, { _id: 0 }); })
 	            .then(function (c) { return c.limit(1); })
 	            .then(function (c) { return c.next(); });
 	    };

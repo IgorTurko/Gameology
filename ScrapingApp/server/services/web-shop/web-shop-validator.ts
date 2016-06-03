@@ -17,7 +17,7 @@ export default class WebShopValidator {
             .withOptional("deliveryMethods", validator.isArray(this.deliveryMethodValidator));
     }
 
-    validate(webShop: WebShops.WebShop): Promise<Validator.ValidationResult> {
+    validate(webShop: WebShops.WebShop): Promise<Api.ValidationResult> {
         if (!webShop)
             throw new Error("webShop is undefined");
 

@@ -11,11 +11,11 @@ export default class ProductService {
             throw new Error("storage is undefined");
     }
 
-    all(): Promise<Products.Product[]> {
+    all(): Promise<Api.Product[]> {
         return this.storage.all();
     }
 
-    save(product: Products.Product): Promise<Validator.ValidationResult> {
+    save(product: Api.Product): Promise<Api.ValidationResult> {
         if (!product)
             throw new Error("product is undefined");
 
@@ -33,14 +33,14 @@ export default class ProductService {
         });
     }
 
-    one(productId: string): Promise<Products.Product> {
+    one(productId: string): Promise<Api.Product> {
         if (!productId)
             throw new Error("productId is undefined");
 
         return this.storage.one(productId);
     }
 
-    updateScrapedData(productId: string, webshopId: string, data: Scraping.WebShopScrapingResult): Promise<Products.Product> {
+    updateScrapedData(productId: string, webshopId: string, data: Scraping.WebShopScrapingResult): Promise<Api.Product> {
         if (!productId)
             throw new Error("productId is undefined");
         if (!webshopId)

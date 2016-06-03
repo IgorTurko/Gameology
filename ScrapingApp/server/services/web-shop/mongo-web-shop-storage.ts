@@ -11,7 +11,7 @@ export default class MongoWebShopStorage implements WebShops.IWebShopStorage {
     all(): Promise<WebShops.WebShop[]> {
         return this.db
             .collection(Database.Collections.webshops)
-            .then(c => c.find())
+            .then(c => c.find({}, { _id: 0 }))
             .then(c => c.toArray());
     }
 
@@ -21,7 +21,7 @@ export default class MongoWebShopStorage implements WebShops.IWebShopStorage {
 
         return this.db
             .collection(Database.Collections.webshops)
-            .then(c => c.find({ id: id }))
+            .then(c => c.find({ id: id }, { _id: 0 }))
             .then(r => r.limit(1))
             .then(c => c.next());
     }

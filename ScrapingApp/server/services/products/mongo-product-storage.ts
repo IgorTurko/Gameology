@@ -8,27 +8,25 @@ export default class MongoProductStorage implements Products.IProductStorage {
             throw new Error("db is missing");
     }
 
-    all(): Promise<Products.Product[]> {
+    all(): Promise<Api.Product[]> {
         return this.db
             .collection(Database.Collections.products)
-            .then(c => c.find())
+            .then(c => c.find({}, { _id: 0 }))
             .then(c => c.toArray());
     }
 
-    one(id: string): Promise<Products.Product> {
+    one(id: string): Promise<Api.Product> {
         if (!id)
             throw new Error("id is undefined");
 
         return this.db
             .collection(Database.Collections.products)
-            .then(c => c.find({
-                id: id
-            }))
+            .then(c => c.find({ id: id }, { _id: 0 }))
             .then(c => c.limit(1))
             .then(c => c.next());
     }
 
-    save(product: Products.Product): Promise<Products.Product> {
+    save(product: Api.Product): Promise<Api.Product> {
         if (!product)
             throw new Error("product is undefined");
 
@@ -44,7 +42,7 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(() => product);
     }
 
-    setScrapingData(productId: string, webShopId: string, values: Products.ScrapedValues, log: Products.ScrapeLog): Promise<Products.Product> {
+    setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues, log: Api.ScrapeLog): Promise<Api.Product> {
         if (!productId)
             throw new Error("productId is undefined");
         if (!webShopId)
