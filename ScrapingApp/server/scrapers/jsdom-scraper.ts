@@ -8,19 +8,18 @@ export default class JsdomScraper implements Scraping.IScraper {
     scrape(url: string, values: Scraping.ScrapingSettings): Promise<Scraping.ScrapingResult> {
         if (!url)
             throw new Error("url is undefined");
-        if (!values) 
+        if (!values)
             throw new Error("values is undefined.");
         if (!Object.keys(values).length)
             throw new Error("No values to extract");
 
-
-        let result: Scraping.ScrapingResult = {
+        const result: Scraping.ScrapingResult = {
             isSuccessful: false,
             error: null,
             values: {}
         };
-       // "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
-        return new Promise((resolve, reject) => {
+        // "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+        return new Promise(resolve => {
             jsdom.env({
                 url: url,
                 userAgent: "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36",
@@ -33,11 +32,10 @@ export default class JsdomScraper implements Scraping.IScraper {
                         result.isSuccessful = false;
                         result.error = err;
 
-                        reject(result);
+                        resolve(result);
 
                         return;
-                    }
-                    else {
+                    } else {
                         Object.keys(values)
                             .forEach(valueName => {
                                 const settings = values[valueName];
@@ -48,11 +46,7 @@ export default class JsdomScraper implements Scraping.IScraper {
                             .map(valueName => result.values[valueName])
                             .every(v => v.isSuccessful);
 
-
-                        if (result.isSuccessful)
-                            resolve(result);
-                        else
-                            reject(result);
+                        resolve(result);
                     }
                 }
             });
@@ -78,13 +72,12 @@ export default class JsdomScraper implements Scraping.IScraper {
                 result.value = parsedValue;
 
                 return result;
-            }
-            catch (error) {
+            } catch (error) {
                 result.isSuccessful = false;
                 result.error = error;
                 result.settings = scrapingSetting;
 
-                if (scrapingSetting.failOnError === true)
+                if (scrapingSetting.failOnError)
                     return result;
             }
         }
@@ -96,13 +89,14 @@ export default class JsdomScraper implements Scraping.IScraper {
         const extractMethod = valueScrapingSetting.extract || "queryselector";
 
         switch (extractMethod) {
-            case "queryselector": {
+            case "queryselector":
+            {
                 const querySelectorSettings = valueScrapingSetting as Scraping.QuerySelectorExtractSettings;
 
                 if (!querySelectorSettings.elementSelector)
                     throw new Error(`elementSelector is missing`);
 
-                let elements = document.querySelectorAll(querySelectorSettings.elementSelector);
+                const elements = document.querySelectorAll(querySelectorSettings.elementSelector);
                 if (elements.length === 0)
                     throw new Error(`Element with selector ${querySelectorSettings.elementSelector} is missing`);
                 if (elements.length > 1)
@@ -113,7 +107,8 @@ export default class JsdomScraper implements Scraping.IScraper {
                 else
                     return elements[0].textContent;
             };
-            case "regex": {
+            case "regex":
+            {
                 const regexSettings = valueScrapingSetting as Scraping.RegexExtractSettings;
                 if (!regexSettings.regex)
                     throw new Error("regex missing");
@@ -128,7 +123,7 @@ export default class JsdomScraper implements Scraping.IScraper {
 
                 return matches[1];
             };
-            default: 
+            default:
                 throw new Error("Unknown extract method");
         }
     }
