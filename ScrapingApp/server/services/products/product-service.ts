@@ -16,8 +16,7 @@ export default class ProductService {
     }
 
     all(): Promise<Products.Product[]> {
-        return this.storage
-            .all();
+        return this.storage.all();
     }
 
     save(product: Products.Product): Promise<Validator.ValidationResult> {
@@ -57,7 +56,8 @@ export default class ProductService {
             .then(([product, webshop]) => {
                 data.scrapedAt = moment().toDate();
                 data.url = product.scrapingUrls[webshopId];
-                
+
+                return this.storage.setScrapingData(productId, webshopId, data);
             });
     }
 }

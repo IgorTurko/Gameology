@@ -312,7 +312,9 @@
 	            throw new Error("id is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.products)
-	            .then(function (c) { return c.find({ id: id }); })
+	            .then(function (c) { return c.find({
+	            id: id
+	        }); })
 	            .then(function (c) { return c.limit(1); })
 	            .then(function (c) { return c.next(); });
 	    };
@@ -321,11 +323,27 @@
 	            throw new Error("product is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.products)
-	            .then(function (c) { return c.updateOne({ id: product.id }, product, { upsert: true }); })
+	            .then(function (c) { return c.updateOne({
+	            id: product.id
+	        }, product, {
+	            upsert: true
+	        }); })
 	            .then(function () { return product; });
 	    };
 	    MongoProductStorage.prototype.setScrapingData = function (productId, webShopId, scrapingData) {
-	        throw new Error();
+	        return this.db
+	            .collection(db_1.default.Collections.products)
+	            .then(function (c) { return c.updateOne({
+	            id: productId
+	        }, {
+	            $set: (_a = {},
+	                _a["scrapedData." + webShopId] = scrapingData,
+	                _a
+	            )
+	        }, {
+	            upsert: true
+	        }); var _a; })
+	            .then(function () { return scrapingData; });
 	    };
 	    return MongoProductStorage;
 	}());
@@ -352,8 +370,7 @@
 	            throw new Error("webShopService is undefined");
 	    }
 	    ProductService.prototype.all = function () {
-	        return this.storage
-	            .all();
+	        return this.storage.all();
 	    };
 	    ProductService.prototype.save = function (product) {
 	        var _this = this;
@@ -378,6 +395,7 @@
 	        return this.storage.one(productId);
 	    };
 	    ProductService.prototype.updateScrapedData = function (productId, webshopId, data) {
+	        var _this = this;
 	        if (!productId)
 	            throw new Error("productId is undefined");
 	        if (!webshopId)
@@ -389,6 +407,7 @@
 	            var product = _a[0], webshop = _a[1];
 	            data.scrapedAt = moment().toDate();
 	            data.url = product.scrapingUrls[webshopId];
+	            return _this.storage.setScrapingData(productId, webshopId, data);
 	        });
 	    };
 	    return ProductService;
