@@ -42,44 +42,32 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/*!************************!*\
-  !*** ./client/app.tsx ***!
-  \************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="./typings/index.d.ts" />
 	"use strict";
-	var React = __webpack_require__(/*! react */ 1);
-	var ReactDOM = __webpack_require__(/*! react-dom */ 2);
-	var search_box_1 = __webpack_require__(/*! ./search/search-box */ 3);
-	var all_products_1 = __webpack_require__(/*! ./grid/all-products */ 4);
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(2);
+	var search_box_1 = __webpack_require__(3);
+	var all_products_1 = __webpack_require__(4);
 	ReactDOM.render(React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), document.getElementsByClassName("container")[0]);
 	ReactDOM.render(React.createElement(all_products_1.default, {value: ""}), document.getElementsByClassName("container")[0]);
 
 
 /***/ },
 /* 1 */
-/*!************************!*\
-  !*** external "React" ***!
-  \************************/
 /***/ function(module, exports) {
 
 	module.exports = React;
 
 /***/ },
 /* 2 */
-/*!***************************!*\
-  !*** external "ReactDOM" ***!
-  \***************************/
 /***/ function(module, exports) {
 
 	module.exports = ReactDOM;
 
 /***/ },
 /* 3 */
-/*!**************************************!*\
-  !*** ./client/search/search-box.tsx ***!
-  \**************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -89,7 +77,7 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	/// <reference path="./../typings/index.d.ts" />
-	var React = __webpack_require__(/*! react */ 1);
+	var React = __webpack_require__(1);
 	var SearchBox = (function (_super) {
 	    __extends(SearchBox, _super);
 	    function SearchBox() {
@@ -110,9 +98,6 @@
 
 /***/ },
 /* 4 */
-/*!**************************************!*\
-  !*** ./client/grid/all-products.tsx ***!
-  \**************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -122,7 +107,7 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	/// <reference path="./../typings/index.d.ts" />
-	var React = __webpack_require__(/*! react */ 1);
+	var React = __webpack_require__(1);
 	var Grid = (function (_super) {
 	    __extends(Grid, _super);
 	    function Grid() {
