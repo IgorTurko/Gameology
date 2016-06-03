@@ -50,8 +50,7 @@
 	var ReactDOM = __webpack_require__(2);
 	var search_box_1 = __webpack_require__(3);
 	var all_products_1 = __webpack_require__(4);
-	ReactDOM.render(React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), document.getElementsByClassName("container")[0]);
-	ReactDOM.render(React.createElement(all_products_1.default, {value: ""}), document.getElementsByClassName("container")[0]);
+	ReactDOM.render(React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {value: ""})), document.getElementsByClassName("container")[0]);
 
 
 /***/ },
@@ -108,18 +107,18 @@
 	};
 	/// <reference path="./../typings/index.d.ts" />
 	var React = __webpack_require__(1);
-	var Grid = (function (_super) {
-	    __extends(Grid, _super);
-	    function Grid() {
+	var AllProductsGrid = (function (_super) {
+	    __extends(AllProductsGrid, _super);
+	    function AllProductsGrid() {
 	        _super.apply(this, arguments);
 	    }
-	    Grid.prototype.render = function () {
-	        return (React.createElement("div", {className: "row"}));
+	    AllProductsGrid.prototype.render = function () {
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2"}, "Product"), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"})));
 	    };
-	    return Grid;
+	    return AllProductsGrid;
 	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Grid;
+	exports.default = AllProductsGrid;
 
 
 /***/ }

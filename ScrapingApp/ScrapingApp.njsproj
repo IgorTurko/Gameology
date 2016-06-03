@@ -43,6 +43,7 @@
     <Content Include="client\search\search-box.tsx" />
     <Content Include="client\tsconfig.json" />
     <Content Include="client\typings\globals\react-dom\typings.json" />
+    <Content Include="client\typings\globals\whatwg-fetch\typings.json" />
     <Content Include="config.json" />
     <Content Include="client\typings.json" />
     <Content Include="client\typings\globals\react\typings.json" />
@@ -73,8 +74,10 @@
   <ItemGroup>
     <Folder Include="client\" />
     <Folder Include="client\grid\" />
+    <Folder Include="client\data-access\" />
     <Folder Include="client\search\" />
     <Folder Include="client\typings\globals\react-dom\" />
+    <Folder Include="client\typings\globals\whatwg-fetch\" />
     <Folder Include="out\client\assets\" />
     <Folder Include="out\client\" />
     <Folder Include="out\test\" />
@@ -114,7 +117,9 @@
     <Folder Include="server\typings\modules\mongodb\" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="client\data-access\data.ts" />
     <TypeScriptCompile Include="client\typings\globals\react-dom\index.d.ts" />
+    <TypeScriptCompile Include="client\typings\globals\whatwg-fetch\index.d.ts" />
     <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />
     <TypeScriptCompile Include="server-test\test-data\products.ts" />
     <TypeScriptCompile Include="server-test\test-data\web-shops.ts" />
