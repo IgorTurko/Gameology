@@ -16,7 +16,7 @@ export default class MongoAuthenticationTokenStorage implements Authentication.I
         return this.db
             .collection(Database.Collections.sessions)
             .then(c => new Promise((resolve, reject) => {
-                c.find({ token: authenticationToken })
+                c.find({ token: authenticationToken }, { _id: 0 })
                     .limit(1)
                     .next((err, doc) => {
                         console.dir(doc);
