@@ -3,7 +3,7 @@
     "module": "commonjs",
     "inlineSourceMap": true,
     "inlineSources": true,
-    "outDir": "../out",
+    "noEmit": true,
     "pretty": true,
     "target": "ES5"
   }

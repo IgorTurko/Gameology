@@ -34,8 +34,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="public\assets\app.js" />
-    <Compile Include="public\assets\grid\all-products.js" />
-    <Compile Include="public\assets\search\search-box.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\app.tsx" />
     <Content Include="client\search\search-box.tsx" />
@@ -46,8 +44,6 @@
     <Content Include="client\typings\globals\react\typings.json" />
     <Content Include="package.json" />
     <Content Include="public\assets\app.js.map" />
-    <Content Include="public\assets\grid\all-products.js.map" />
-    <Content Include="public\assets\search\search-box.js.map" />
     <Content Include="public\index.html" />
     <Content Include="server-test\tsconfig.json" />
     <Content Include="server\tsconfig.json" />
@@ -72,14 +68,12 @@
     <Folder Include="client\grid\" />
     <Folder Include="client\search\" />
     <Folder Include="client\typings\globals\react-dom\" />
-    <Folder Include="public\assets\grid\" />
-    <Folder Include="public\assets\search\" />
+    <Folder Include="public\assets\" />
     <Folder Include="server-test\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
     <Folder Include="client\typings\globals\react\" />
     <Folder Include="public\" />
-    <Folder Include="public\assets\" />
     <Folder Include="server-test\test-data\" />
     <Folder Include="server-test\test-parsing\" />
     <Folder Include="server\" />
@@ -110,7 +104,7 @@
     <Folder Include="server\typings\modules\mongodb\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="client\grid\all-products.ts" />
+    <TypeScriptCompile Include="client\grid\all-products.tsx" />
     <TypeScriptCompile Include="client\typings\globals\react-dom\index.d.ts" />
     <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />
     <TypeScriptCompile Include="server-test\test-data\products.ts" />

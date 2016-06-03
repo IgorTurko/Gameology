@@ -47,7 +47,15 @@ module.exports = [{
         externals: nodeModules,
         module: {
             loaders: [
-                { test: /\.tsx?$/, loader: "ts-loader" }
+                {
+                    test: /\.tsx?$/, 
+                    loader: "ts-loader"
+                }
             ]
+        },
+        ts: {
+            compilerOptions: {
+                noEmit: false
+            }
         }
     }];
