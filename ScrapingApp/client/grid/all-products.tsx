@@ -3,7 +3,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 interface GridProps extends React.Props<any> {
-    value: string;
+    data: Product;
 }
 
 export default class AllProductsGrid extends React.Component<GridProps, {}> {

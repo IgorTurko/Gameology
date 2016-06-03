@@ -50,6 +50,9 @@
 	var ReactDOM = __webpack_require__(2);
 	var search_box_1 = __webpack_require__(3);
 	var all_products_1 = __webpack_require__(4);
+	var product_repo_1 = __webpack_require__(5);
+	var allProducts = new product_repo_1.default().getAllProducts().then(function () {
+	});
 	ReactDOM.render(React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {value: ""})), document.getElementsByClassName("container")[0]);
 
 
@@ -119,6 +122,32 @@
 	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = AllProductsGrid;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	/// <reference path="../typings/index.d.ts"/>
+	"use strict";
+	var ProductRepository = (function () {
+	    function ProductRepository() {
+	    }
+	    ProductRepository.prototype.getAllProducts = function () {
+	        return fetch('')
+	            .then(function (response) {
+	            return response.json();
+	        })
+	            .then(function (json) {
+	            return JSON.parse(json);
+	        }, function (err) {
+	            console.log('error');
+	        });
+	    };
+	    return ProductRepository;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ProductRepository;
 
 
 /***/ }

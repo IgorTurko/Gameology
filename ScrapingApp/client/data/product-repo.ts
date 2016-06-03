@@ -1,24 +1,25 @@
 ﻿/// <reference path="../typings/index.d.ts"/>
 
-class ProductDetails {
+interface ProductDetails {
     url: string;
     image: string;
 }
 
-class Product {
+interface Product {
     name: string;
     data: ProductDetails[];
 }
 
-class ProductRepository {
-    getAllProducts(): Product[]  {
-        return fetch('www.google.com')
-            .then(function (response) {
-                return null;
+export default class ProductRepository {
+    getAllProducts(): Promise<Product[]> {
+        return fetch('')
+            .then(function(response: Response) {
+                return response.json();
             })
-            .catch(function () {
-                console.log('exception');
-                return null;
-            })
+            .then(function(json) {
+                return JSON.parse(json) as Product[];
+            }, function(err) {
+                console.log('error');
+            });
     }
 }
