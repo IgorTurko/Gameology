@@ -51,7 +51,7 @@
 	var product_service_1 = __webpack_require__(10);
 	var mongo_web_shop_storage_1 = __webpack_require__(5);
 	var web_shop_service_1 = __webpack_require__(6);
-	var scrape_service_1 = __webpack_require__(18);
+	var scrape_service_1 = __webpack_require__(15);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
@@ -364,7 +364,7 @@
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var product_validator_1 = __webpack_require__(11);
-	var moment = __webpack_require__(17);
+	var moment = __webpack_require__(12);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -481,16 +481,75 @@
 
 
 /***/ },
-/* 12 */,
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = require("moment");
+
+/***/ },
 /* 13 */,
-/* 14 */
+/* 14 */,
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../typings/index.d.ts" />
+	"use strict";
+	var jsdom_scraper_1 = __webpack_require__(16);
+	var ScrapeService = (function () {
+	    function ScrapeService(productService, webShopService) {
+	        this.productService = productService;
+	        this.webShopService = webShopService;
+	        this.scraper = new jsdom_scraper_1.default();
+	        if (!productService)
+	            throw new Error("productService is undefined");
+	        if (!webShopService)
+	            throw new Error("webShopService is undefined");
+	        this.webShops = this.webShopService
+	            .all()
+	            .then(function (shops) { return shops.toHash(function (s) { return s.id; }); });
+	    }
+	    ScrapeService.prototype.scrapeProductData = function (productId) {
+	        var _this = this;
+	        if (!productId)
+	            throw new Error("productId is undefined");
+	        return this.webShops.then(function (shops) {
+	            return _this.productService.one(productId)
+	                .then(function (product) { return Promise.all(_this.scrapeProduct(product, shops))
+	                .then(function (results) { return results.toHash(function (e) { return e.webShopId; }, function (e) { return e.scrapingResult; }); }); });
+	        });
+	    };
+	    ScrapeService.prototype.scrapeProduct = function (product, shops) {
+	        var _this = this;
+	        return Object.keys(product.scrapingUrls)
+	            .map(function (webShopId) { return _this.scrapeProductFromShopAndSave(product, webShopId, shops)
+	            .then(function (productScrapeResult) { return ({
+	            webShopId: webShopId,
+	            scrapingResult: productScrapeResult
+	        }); }); });
+	    };
+	    ScrapeService.prototype.scrapeProductFromShopAndSave = function (product, webShopId, shops) {
+	        var _this = this;
+	        return this.scraper
+	            .scrape(product.scrapingUrls[webShopId], shops[webShopId].scrapingSettings)
+	            .then(function (result) { return _this.productService
+	            .updateScrapedData(product.id, webShopId, result)
+	            .then(function () { return result; }); });
+	    };
+	    return ScrapeService;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ScrapeService;
+
+
+/***/ },
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	__webpack_require__(19);
-	var jsdom = __webpack_require__(15);
-	var value_parser_1 = __webpack_require__(16);
+	__webpack_require__(17);
+	var jsdom = __webpack_require__(18);
+	var value_parser_1 = __webpack_require__(19);
 	var JsdomScraper = (function () {
 	    function JsdomScraper() {
 	        this.valueParser = new value_parser_1.default();
@@ -617,13 +676,29 @@
 
 
 /***/ },
-/* 15 */
+/* 17 */
+/***/ function(module, exports) {
+
+	/// <reference path="../typings/index.d.ts" />
+	Array.prototype.toHash = function toHash(keySelector, valueSelector) {
+	    valueSelector = valueSelector || (function (e) { return (e); });
+	    return this.reduce(function (hash, elem) {
+	        var key = keySelector(elem);
+	        var value = valueSelector(elem);
+	        hash[key] = value;
+	        return hash;
+	    }, {});
+	};
+
+
+/***/ },
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = require("jsdom");
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/index.d.ts"/>
@@ -650,81 +725,6 @@
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ValueParserHash;
-
-
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	module.exports = require("moment");
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// <reference path="../typings/index.d.ts" />
-	"use strict";
-	var jsdom_scraper_1 = __webpack_require__(14);
-	var ScrapeService = (function () {
-	    function ScrapeService(productService, webShopService) {
-	        this.productService = productService;
-	        this.webShopService = webShopService;
-	        this.scraper = new jsdom_scraper_1.default();
-	        if (!productService)
-	            throw new Error("productService is undefined");
-	        if (!webShopService)
-	            throw new Error("webShopService is undefined");
-	        this.webShops = this.webShopService
-	            .all()
-	            .then(function (shops) { return shops.toHash(function (s) { return s.id; }); });
-	    }
-	    ScrapeService.prototype.scrapeProductData = function (productId) {
-	        var _this = this;
-	        if (!productId)
-	            throw new Error("productId is undefined");
-	        return this.webShops.then(function (shops) {
-	            return _this.productService.one(productId)
-	                .then(function (product) { return Promise.all(_this.scrapeProduct(product, shops))
-	                .then(function (results) { return results.toHash(function (e) { return e.webShopId; }, function (e) { return e.scrapingResult; }); }); });
-	        });
-	    };
-	    ScrapeService.prototype.scrapeProduct = function (product, shops) {
-	        var _this = this;
-	        return Object.keys(product.scrapingUrls)
-	            .map(function (webShopId) { return _this.scrapeProductFromShopAndSave(product, webShopId, shops)
-	            .then(function (productScrapeResult) { return ({
-	            webShopId: webShopId,
-	            scrapingResult: productScrapeResult
-	        }); }); });
-	    };
-	    ScrapeService.prototype.scrapeProductFromShopAndSave = function (product, webShopId, shops) {
-	        var _this = this;
-	        return this.scraper
-	            .scrape(product.scrapingUrls[webShopId], shops[webShopId].scrapingSettings)
-	            .then(function (result) { return _this.productService
-	            .updateScrapedData(product.id, webShopId, result)
-	            .then(function () { return result; }); });
-	    };
-	    return ScrapeService;
-	}());
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ScrapeService;
-
-
-/***/ },
-/* 19 */
-/***/ function(module, exports) {
-
-	/// <reference path="../typings/index.d.ts" />
-	Array.prototype.toHash = function toHash(keySelector, valueSelector) {
-	    valueSelector = valueSelector || (function (e) { return (e); });
-	    return this.reduce(function (hash, elem) {
-	        var key = keySelector(elem);
-	        var value = valueSelector(elem);
-	        hash[key] = value;
-	        return hash;
-	    }, {});
-	};
 
 
 /***/ }

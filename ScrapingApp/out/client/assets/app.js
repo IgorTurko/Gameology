@@ -51,9 +51,9 @@
 	var search_box_1 = __webpack_require__(3);
 	var all_products_1 = __webpack_require__(4);
 	var product_repo_1 = __webpack_require__(5);
-	var allProducts = new product_repo_1.default().getAllProducts().then(function () {
+	var allProducts = new product_repo_1.default().getAllProducts().then(function (data) {
+	    ReactDOM.render(React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {data: data})), document.getElementsByClassName("container")[0]);
 	});
-	ReactDOM.render(React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {value: ""})), document.getElementsByClassName("container")[0]);
 
 
 /***/ },
@@ -116,6 +116,7 @@
 	        _super.apply(this, arguments);
 	    }
 	    AllProductsGrid.prototype.render = function () {
+	        console.log(this.props.data);
 	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2"}, "Product"), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"})));
 	    };
 	    return AllProductsGrid;
@@ -128,18 +129,17 @@
 /* 5 */
 /***/ function(module, exports) {
 
-	/// <reference path="../typings/index.d.ts"/>
 	"use strict";
 	var ProductRepository = (function () {
 	    function ProductRepository() {
 	    }
 	    ProductRepository.prototype.getAllProducts = function () {
-	        return fetch('')
+	        return fetch('/api/products')
 	            .then(function (response) {
 	            return response.json();
 	        })
 	            .then(function (json) {
-	            return JSON.parse(json);
+	            return json;
 	        }, function (err) {
 	            console.log('error');
 	        });

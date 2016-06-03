@@ -6,12 +6,10 @@ import SearchBox from "./search/search-box";
 import Grid from "./grid/all-products";
 import ProductRepo from "./data/product-repo";
 
-var allProducts = new ProductRepo().getAllProducts().then(function() {
-    
+var allProducts = new ProductRepo().getAllProducts().then(function(data) {
+    ReactDOM.render(
+        <div className="container">
+            <SearchBox value="" placeholder= "Search products..." />
+            <Grid data={data} />
+        </div>, document.getElementsByClassName("container")[0]); 
 });
-
-ReactDOM.render(
-    <div className="container">
-        <SearchBox value="" placeholder= "Search products..." />
-        <Grid value="" />
-    </div>, document.getElementsByClassName("container")[0]);
