@@ -94,6 +94,7 @@
     <Folder Include="server-test\test-parsing\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
+    <Folder Include="server\runner\" />
     <Folder Include="server\scrapers\" />
     <Folder Include="server\routes\" />
     <Folder Include="server\services\" />
@@ -132,7 +133,9 @@
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
     <TypeScriptCompile Include="server\routes\authentication-route.ts" />
+    <TypeScriptCompile Include="server\runner\scrape-runner.ts" />
     <TypeScriptCompile Include="server\scrapers\jsdom-scraper.ts" />
+    <TypeScriptCompile Include="server\services\scrape-service.ts" />
     <TypeScriptCompile Include="server\scrapers\value-parser.ts" />
     <TypeScriptCompile Include="server\services\authentication\authentication-token-provider.ts" />
     <TypeScriptCompile Include="server\services\authentication\in-memory-authentication-token-storage.ts" />

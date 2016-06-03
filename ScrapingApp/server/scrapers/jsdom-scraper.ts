@@ -8,7 +8,7 @@ export default class JsdomScraper implements Scraping.IScraper {
     scrape(url: string, values: Scraping.ScrapingSettings): Promise<Scraping.ScrapingResult> {
         if (!url)
             throw new Error("url is undefined");
-        if (!values)
+        if (!values) 
             throw new Error("values is undefined.");
         if (!Object.keys(values).length)
             throw new Error("No values to extract");

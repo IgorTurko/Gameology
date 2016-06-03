@@ -51,8 +51,8 @@
 	var web_shop_service_1 = __webpack_require__(6);
 	var mongo_product_storage_1 = __webpack_require__(9);
 	var product_service_1 = __webpack_require__(10);
-	var web_shops_1 = __webpack_require__(12);
-	var products_1 = __webpack_require__(13);
+	var web_shops_1 = __webpack_require__(13);
+	var products_1 = __webpack_require__(14);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db), webShopService);
@@ -358,7 +358,7 @@
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var product_validator_1 = __webpack_require__(11);
-	var moment = __webpack_require__(17);
+	var moment = __webpack_require__(12);
 	var ProductService = (function () {
 	    function ProductService(storage, webShopService) {
 	        this.storage = storage;
@@ -477,6 +477,12 @@
 /* 12 */
 /***/ function(module, exports) {
 
+	module.exports = require("moment");
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
 	/// <reference path="../../server/typings/index.d.ts" />
 	"use strict";
 	exports.webShops = [
@@ -589,7 +595,7 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../server/typings/index.d.ts" />
@@ -651,15 +657,6 @@
 	    },
 	];
 
-
-/***/ },
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */
-/***/ function(module, exports) {
-
-	module.exports = require("moment");
 
 /***/ }
 /******/ ]);
