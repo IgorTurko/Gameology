@@ -44,7 +44,14 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(() => product);
     }
 
-    setScrapingData(productId: string, webShopId: string, scrapingData: Products.ProductScrapedData): Promise<Products.ProductScrapedData> {
+    setScrapingData(productId: string, webShopId: string, values: Products.ScrapedValues, log: Products.ScrapeLog): Promise<Products.Product> {
+        if (!productId)
+            throw new Error("productId is undefined");
+        if (!webShopId)
+            throw new Error("webShopId is undefined");
+        if (!values)
+            throw new Error("values is undefined");
+
         return this.db
             .collection(Database.Collections.products)
             .then(c => c.updateOne(
@@ -53,12 +60,13 @@ export default class MongoProductStorage implements Products.IProductStorage {
             },
             {
                 $set: {
-                    [`scrapedData.${webShopId}`]: scrapingData
+                    [`values.${webShopId}`]: values,
+                    [`log.${webShopId}`]: log
                 }
             },
             {
                 upsert: true
             }))
-            .then(() => scrapingData);
+            .then(r => this.one(productId));
     }
 }

@@ -42,19 +42,16 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/*!***********************!*\
-  !*** ./server/app.ts ***!
-  \***********************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="./typings/index.d.ts"/>
-	__webpack_require__(/*! ./utils/array-extensions */ 1);
-	var express = __webpack_require__(/*! express */ 2);
-	var bodyparser = __webpack_require__(/*! body-parser */ 3);
-	var cookieparser = __webpack_require__(/*! cookie-parser */ 4);
-	var config_1 = __webpack_require__(/*! ./config */ 5);
-	var authentication_route_1 = __webpack_require__(/*! ./routes/authentication-route */ 7);
+	__webpack_require__(1);
+	var express = __webpack_require__(2);
+	var bodyparser = __webpack_require__(3);
+	var cookieparser = __webpack_require__(4);
+	var config_1 = __webpack_require__(5);
+	var authentication_route_1 = __webpack_require__(7);
 	var server = express();
 	server.use(cookieparser());
 	server.use("/api", bodyparser());
@@ -70,9 +67,6 @@
 
 /***/ },
 /* 1 */
-/*!******************************************!*\
-  !*** ./server/utils/array-extensions.ts ***!
-  \******************************************/
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/index.d.ts" />
@@ -89,41 +83,29 @@
 
 /***/ },
 /* 2 */
-/*!**************************!*\
-  !*** external "express" ***!
-  \**************************/
 /***/ function(module, exports) {
 
 	module.exports = require("express");
 
 /***/ },
 /* 3 */
-/*!******************************!*\
-  !*** external "body-parser" ***!
-  \******************************/
 /***/ function(module, exports) {
 
 	module.exports = require("body-parser");
 
 /***/ },
 /* 4 */
-/*!********************************!*\
-  !*** external "cookie-parser" ***!
-  \********************************/
 /***/ function(module, exports) {
 
 	module.exports = require("cookie-parser");
 
 /***/ },
 /* 5 */
-/*!**************************!*\
-  !*** ./server/config.ts ***!
-  \**************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="typings/index.d.ts"/>
-	var fs = __webpack_require__(/*! fs */ 6);
+	var fs = __webpack_require__(6);
 	var configContent = fs.readFileSync("./config.json", "utf8");
 	var configuration = JSON.parse(configContent);
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -132,27 +114,21 @@
 
 /***/ },
 /* 6 */
-/*!*********************!*\
-  !*** external "fs" ***!
-  \*********************/
 /***/ function(module, exports) {
 
 	module.exports = require("fs");
 
 /***/ },
 /* 7 */
-/*!***********************************************!*\
-  !*** ./server/routes/authentication-route.ts ***!
-  \***********************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	var express = __webpack_require__(/*! express */ 2);
-	var db_1 = __webpack_require__(/*! ../data-access/db */ 8);
-	var mongo_authentication_token_storage_1 = __webpack_require__(/*! ../services/authentication/mongo-authentication-token-storage */ 10);
-	var authentication_token_provider_1 = __webpack_require__(/*! ../services/authentication/authentication-token-provider */ 11);
-	var authentication_middleware_1 = __webpack_require__(/*! ../web/authentication-middleware */ 14);
+	var express = __webpack_require__(2);
+	var db_1 = __webpack_require__(8);
+	var mongo_authentication_token_storage_1 = __webpack_require__(10);
+	var authentication_token_provider_1 = __webpack_require__(11);
+	var authentication_middleware_1 = __webpack_require__(14);
 	var db = new db_1.default();
 	var tokenStorage = new mongo_authentication_token_storage_1.default(db);
 	// const tokenStorage = new InMemoryAuthenticationTokenStorage();
@@ -180,15 +156,12 @@
 
 /***/ },
 /* 8 */
-/*!**********************************!*\
-  !*** ./server/data-access/db.ts ***!
-  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	var mongo = __webpack_require__(/*! mongodb */ 9);
-	var config_1 = __webpack_require__(/*! ../config */ 5);
+	var mongo = __webpack_require__(9);
+	var config_1 = __webpack_require__(5);
 	var db = new Promise(function (resolve, reject) {
 	    mongo.MongoClient.connect(config_1.default.mongoUrl, function (err, db) {
 	        if (err) {
@@ -227,23 +200,17 @@
 
 /***/ },
 /* 9 */
-/*!**************************!*\
-  !*** external "mongodb" ***!
-  \**************************/
 /***/ function(module, exports) {
 
 	module.exports = require("mongodb");
 
 /***/ },
 /* 10 */
-/*!******************************************************************************!*\
-  !*** ./server/services/authentication/mongo-authentication-token-storage.ts ***!
-  \******************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(/*! ../../data-access/db */ 8);
+	var db_1 = __webpack_require__(8);
 	var MongoAuthenticationTokenStorage = (function () {
 	    function MongoAuthenticationTokenStorage(db) {
 	        this.db = db;
@@ -297,15 +264,12 @@
 
 /***/ },
 /* 11 */
-/*!*************************************************************************!*\
-  !*** ./server/services/authentication/authentication-token-provider.ts ***!
-  \*************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/index.d.ts" />
-	var uuid = __webpack_require__(/*! node-uuid */ 12);
-	var moment = __webpack_require__(/*! moment */ 13);
+	var uuid = __webpack_require__(12);
+	var moment = __webpack_require__(13);
 	var AuthenticationTokenProvider = (function () {
 	    function AuthenticationTokenProvider(storage) {
 	        this.storage = storage;
@@ -351,27 +315,18 @@
 
 /***/ },
 /* 12 */
-/*!****************************!*\
-  !*** external "node-uuid" ***!
-  \****************************/
 /***/ function(module, exports) {
 
 	module.exports = require("node-uuid");
 
 /***/ },
 /* 13 */
-/*!*************************!*\
-  !*** external "moment" ***!
-  \*************************/
 /***/ function(module, exports) {
 
 	module.exports = require("moment");
 
 /***/ },
 /* 14 */
-/*!*************************************************!*\
-  !*** ./server/web/authentication-middleware.ts ***!
-  \*************************************************/
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/index.d.ts" />

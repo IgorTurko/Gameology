@@ -360,20 +360,28 @@
 	        }); })
 	            .then(function () { return product; });
 	    };
-	    MongoProductStorage.prototype.setScrapingData = function (productId, webShopId, scrapingData) {
+	    MongoProductStorage.prototype.setScrapingData = function (productId, webShopId, values, log) {
+	        var _this = this;
+	        if (!productId)
+	            throw new Error("productId is undefined");
+	        if (!webShopId)
+	            throw new Error("webShopId is undefined");
+	        if (!values)
+	            throw new Error("values is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.products)
 	            .then(function (c) { return c.updateOne({
 	            id: productId
 	        }, {
 	            $set: (_a = {},
-	                _a["scrapedData." + webShopId] = scrapingData,
+	                _a["values." + webShopId] = values,
+	                _a["log." + webShopId] = log,
 	                _a
 	            )
 	        }, {
 	            upsert: true
 	        }); var _a; })
-	            .then(function () { return scrapingData; });
+	            .then(function (r) { return _this.one(productId); });
 	    };
 	    return MongoProductStorage;
 	}());
@@ -435,37 +443,41 @@
 	            throw new Error("webShopId is undefined");
 	        if (!data)
 	            throw new Error("data is undefined");
-	        return Promise.all([this.one(productId), this.webShopService.one(webshopId)])
-	            .then(function (_a) {
-	            var product = _a[0], webshop = _a[1];
-	            data.scrapedAt = moment().toDate();
-	            data.url = product.scrapingUrls[webshopId];
-	            return _this.storage.setScrapingData(productId, webshopId, data);
-	        });
-	    };
-	    ProductService.prototype.productScrapedDataFromScrapingResult = function (scrapingResult) {
-	        var result = {
-	            url: null,
-	            scrapedAt: null,
-	            error: null,
-	            values: {
+	        var now = moment.utc().toDate();
+	        return this.one(productId)
+	            .then(function (product) {
+	            if (!product.values)
+	                product.values = {};
+	            var values = product.values[webshopId] || {
 	                title: null,
 	                price: null,
 	                image: null
-	            },
-	            errors: {}
-	        };
-	        result.error = scrapingResult.error;
-	        result = Object.keys(scrapingResult.values)
-	            .map(function (name) { return ({ name: name, value: scrapingResult.values[name] }); })
-	            .reduce(function (hash, a) {
-	            if (a.value.isSuccessful)
-	                hash.values[a.name] = a.value.value;
-	            else
-	                hash.errors[a.name] = a.value.error;
-	            return hash;
-	        }, result);
-	        return result;
+	            };
+	            product.values[webshopId] = values;
+	            if (!product.log)
+	                product.log = {};
+	            var log = product.log[webshopId] || {
+	                url: null,
+	                scrapedAt: null,
+	                error: data.error,
+	                values: {}
+	            };
+	            product.log[webshopId] = log;
+	            log.url = product.scrapingUrls[webshopId];
+	            log.scrapedAt = now;
+	            log.error = data.error;
+	            Object.keys(data.values)
+	                .forEach(function (name) {
+	                var value = data.values[name];
+	                if (value.isSuccessful)
+	                    values[name] = value.value;
+	                log.values[name] = {
+	                    scrapedAt: now,
+	                    error: value.error
+	                };
+	            });
+	            return _this.storage.setScrapingData(product.id, webshopId, values, log);
+	        });
 	    };
 	    return ProductService;
 	}());

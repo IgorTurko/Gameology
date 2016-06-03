@@ -7,7 +7,7 @@ import ValueParserHash from "./value-parser";
 export default class JsdomScraper implements Scraping.IScraper {
     private valueParser = new ValueParserHash();
 
-    scrape(url: string, values: Scraping.ScrapingSettings): Promise<Scraping.ScrapingResult> {
+    scrape(url: string, values: Scraping.ScrapingSettings): Promise<Scraping.WebShopScrapingResult> {
         if (!url)
             throw new Error("url is undefined");
         if (!values)
@@ -15,7 +15,7 @@ export default class JsdomScraper implements Scraping.IScraper {
         if (!Object.keys(values).length)
             throw new Error("No values to extract");
 
-        const result: Scraping.ScrapingResult = {
+        const result: Scraping.WebShopScrapingResult = {
             isSuccessful: false,
             error: null,
             values: {}
@@ -48,7 +48,7 @@ export default class JsdomScraper implements Scraping.IScraper {
                             .map(valueName => result.values[valueName])
                             .every(v => v.isSuccessful);
 
-                        resolve(result);
+                        resolve(result);  
                     }
                 }
             });

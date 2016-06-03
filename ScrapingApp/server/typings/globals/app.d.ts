@@ -118,7 +118,7 @@ declare namespace Scraping {
         settings: ValueScrapingSettings;
     }
 
-    interface ScrapingResult {
+    interface WebShopScrapingResult {
         isSuccessful: boolean;
         error: any;
         values: {
@@ -140,11 +140,11 @@ declare namespace Scraping {
          * @param values Settings for scraping individual values from the page.
          * @returns Promise which resolves or rejects with ScrapingResult.
          */
-        scrape(url: string, values: ScrapingSettings): Promise<ScrapingResult>;
+        scrape(url: string, values: ScrapingSettings): Promise<WebShopScrapingResult>;
     }
 
     interface WebShopScrapeResult {
-        [webShopId: string]: ScrapingResult;
+        [webShopId: string]: WebShopScrapingResult;
     }
 
     interface IScrapeService {
@@ -186,21 +186,31 @@ declare namespace WebShops {
 
 declare namespace Products {
 
-    interface ProductScrapedData {
+    interface IWebShopHash<T> {
+        [webShopId: string]: T;
+    }
+
+    interface IValueHash<T> {
+        [valueName: string]: T;
+    }
+
+    interface ScrapedValues {
+        title: string;
+        price: number;
+        image: string;
+        [key: string]: any;
+    }
+
+    interface ScrapeLog {
         url: string;
         scrapedAt: Date;
         error: any;
-        values: {
-            title: string;
-            price: number;
-            image: string;
-            [key: string]: any;
-        };
-        errors: {
-            [key: string]: any;
-        }
+        values: IValueHash<{
+            scrapedAt: Date;
+            error: any;
+        }>;
     }
-
+    
     /**
      * Product to scrape data from.
      * Includes common info like title and identifier,
@@ -210,12 +220,9 @@ declare namespace Products {
     interface Product {
         id: string;
         title: string;
-        scrapingUrls?: {
-            [webShopId: string]: string;
-        };
-        scrapedData?: {
-            [webShopId: string]: ProductScrapedData;
-        };
+        scrapingUrls: IWebShopHash<string>;
+        values?: IWebShopHash<ScrapedValues>;
+        log?: IWebShopHash<ScrapeLog>;
     }
 
     /**
@@ -228,7 +235,7 @@ declare namespace Products {
 
         save(product: Product): Promise<Product>;
 
-        setScrapingData(productId: string, webShopId: string, scrapingData: ProductScrapedData): Promise<ProductScrapedData>;
+        setScrapingData(productId: string, webShopId: string, values: ScrapedValues, log: ScrapeLog): Promise<Product>;
     }
 }
 

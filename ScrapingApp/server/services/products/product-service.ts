@@ -44,49 +44,57 @@ export default class ProductService {
         return this.storage.one(productId);
     }
 
-    updateScrapedData(productId: string, webshopId: string, data: Products.ProductScrapedData): Promise<any> {
+    updateScrapedData(productId: string, webshopId: string, data: Scraping.WebShopScrapingResult): Promise<Products.Product> {
         if (!productId)
             throw new Error("productId is undefined");
         if (!webshopId)
             throw new Error("webShopId is undefined");
         if (!data)
             throw new Error("data is undefined");
+        const now = moment.utc().toDate();
 
-        return Promise.all([this.one(productId), this.webShopService.one(webshopId)])
-            .then(([product, webshop]) => {
-                data.scrapedAt = moment().toDate();
-                data.url = product.scrapingUrls[webshopId];
+        return this.one(productId)
+            .then(product => {
+                if (!product.values)
+                    product.values = {};
 
-                return this.storage.setScrapingData(productId, webshopId, data);
+                let values = product.values[webshopId] || {
+                    title: null,
+                    price: null,
+                    image: null
+                };
+                product.values[webshopId] = values;
+
+
+                if (!product.log)
+                    product.log = {};
+
+                let log = product.log[webshopId] || {
+                    url: null,
+                    scrapedAt: null,
+                    error: data.error,
+                    values: {}
+                };
+                product.log[webshopId] = log;
+
+                log.url = product.scrapingUrls[webshopId];
+                log.scrapedAt = now;
+                log.error = data.error;
+
+                Object.keys(data.values)
+                    .forEach(name => {
+                        const value = data.values[name];
+
+                        if (value.isSuccessful)
+                            values[name] = value.value;
+
+                        log.values[name] = {
+                            scrapedAt: now,
+                            error: value.error
+                        };
+                    });
+
+                return this.storage.setScrapingData(product.id, webshopId, values, log);
             });
-    }
-
-    productScrapedDataFromScrapingResult(scrapingResult: Scraping.ScrapingResult): Products.ProductScrapedData {
-        let result: Products.ProductScrapedData = {
-            url: null,
-            scrapedAt: null,
-            error: null,
-            values: {
-                title: null,
-                price: null,
-                image: null
-            },
-            errors: {}
-        };
-
-        result.error = scrapingResult.error;
-
-        result = Object.keys(scrapingResult.values)
-            .map(name => ({ name: name, value: scrapingResult.values[name] }))
-            .reduce((hash, a) => {
-                if (a.value.isSuccessful)
-                    hash.values[a.name] = a.value.value;
-                else
-                    hash.errors[a.name] = a.value.error;
-
-                return hash;
-            }, result);
-
-        return result;
     }
 }
