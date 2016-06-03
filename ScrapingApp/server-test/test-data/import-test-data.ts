@@ -51,4 +51,8 @@ function addProduct(product: Api.Product): Promise<any> {
 addWebShop(webShops[0])
     .then(() => {
         return addProduct(products[0]);
+    })
+    .then(() => {
+        console.info("Test data added.");
+        process.exit();
     });

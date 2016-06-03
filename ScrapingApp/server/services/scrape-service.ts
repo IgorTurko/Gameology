@@ -25,7 +25,7 @@ export default class ScrapeService implements Scraping.IScrapeService {
             .then(shops => shops.toHash(s => s.id));
     }
 
-    scrapeProductData(productId: string): Promise<Scraping.WebShopScrapeResult> {
+    scrapeProductData(productId: string): Promise<Scraping.ProductScrapeResult> {
         if (!productId)
             throw new Error("productId is undefined");
 

@@ -19,40 +19,50 @@ const productService = new ProductService(new MongoProductStorage(db));
 
 const scrapeService = new ScrapeService(productService, webShopService);
 
+function outputProductScrapeResult(scrapeResult: Scraping.ProductScrapeResult, product: Api.Product, shops: WebShops.WebShop[]) {
+    Object.keys(scrapeResult)
+        .forEach(shopId => {
+            const shop = shops.filter(s => s.id === shopId)[0];
+            const result = scrapeResult[shopId];
+
+            console.log(`Scrapping of ${product.title} successful for shop ${shop.title}`);
+
+            const out = {};
+            Object.keys(result.values)
+                .forEach(k => {
+                    const v = result.values[k];
+                    if (v.isSuccessful) {
+                        out[k] = v.value;
+                    } else {
+                        out[k] = {
+                            error: v.error
+                        };
+                    }
+                });
+
+            console.dir(out);
+        });
+
+}
+
 webShopService.all()
     .then(shops => {
-
-        productService.all()
+        return productService.all()
             .then(products => {
-                products.forEach(product => {
-                    scrapeService.scrapeProductData(product.id)
-                        .then(productScrapeResultHash => {
-
-                            Object.keys(productScrapeResultHash)
-                                .forEach(shopId => {
-                                    const shop = shops.filter(s => s.id === shopId)[0];
-                                    const result = productScrapeResultHash[shopId];
-
-                                    console.log(`Scrapping of ${product.title} successful for shop ${shop.title}`);
-
-                                    const out = {};
-                                    Object.keys(result.values)
-                                        .forEach(k => {
-                                            const v = result.values[k];
-                                            if (v.isSuccessful) {
-                                                out[k] = v.value;
-                                            } else {
-                                                out[k] = {
-                                                    error: v.error
-                                                };
-                                            }
-                                        });
-
-                                    console.dir(out);
-                                });
-
-                        });
+                const productScrapePromises = products.map(product => {
+                    return scrapeService.scrapeProductData(product.id)
+                        .then(productScrapeResultHash => outputProductScrapeResult(productScrapeResultHash, product, shops));
                 });
+
+                return Promise.all(productScrapePromises);
             });
     })
-    .catch(err => console.error(err));
+    .then(() => {
+        console.info("Scraping completed successfully");
+        process.exit();
+    })
+    .catch(err => {
+        console.error("Scraping failed");
+        console.error(err);
+        process.exit();
+    });

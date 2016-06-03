@@ -12,6 +12,10 @@ declare interface Array<T> {
     toHash<K>(keySelector: (elem: T) => string, valueSelector?: (elem: T) => K): { [key: string]: K; };
 }
 
+declare interface ObjectConstructor {
+    entries(obj: any): any[][];
+}
+
 
 declare namespace Authentication {
 
@@ -145,7 +149,7 @@ declare namespace Scraping {
         scrape(url: string, values: ScrapingSettings): Promise<WebShopScrapingResult>;
     }
 
-    interface WebShopScrapeResult {
+    interface ProductScrapeResult {
         [webShopId: string]: WebShopScrapingResult;
     }
 
@@ -153,7 +157,7 @@ declare namespace Scraping {
         /**
          * Scrapes product data for all shops and saves scraping result.
          */
-        scrapeProductData(productId: string): Promise<WebShopScrapeResult>;
+        scrapeProductData(productId: string): Promise<ProductScrapeResult>;
     }
 }
 

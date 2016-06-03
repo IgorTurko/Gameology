@@ -56,38 +56,48 @@
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
 	var scrapeService = new scrape_service_1.default(productService, webShopService);
+	function outputProductScrapeResult(scrapeResult, product, shops) {
+	    Object.keys(scrapeResult)
+	        .forEach(function (shopId) {
+	        var shop = shops.filter(function (s) { return s.id === shopId; })[0];
+	        var result = scrapeResult[shopId];
+	        console.log("Scrapping of " + product.title + " successful for shop " + shop.title);
+	        var out = {};
+	        Object.keys(result.values)
+	            .forEach(function (k) {
+	            var v = result.values[k];
+	            if (v.isSuccessful) {
+	                out[k] = v.value;
+	            }
+	            else {
+	                out[k] = {
+	                    error: v.error
+	                };
+	            }
+	        });
+	        console.dir(out);
+	    });
+	}
 	webShopService.all()
 	    .then(function (shops) {
-	    productService.all()
+	    return productService.all()
 	        .then(function (products) {
-	        products.forEach(function (product) {
-	            scrapeService.scrapeProductData(product.id)
-	                .then(function (productScrapeResultHash) {
-	                Object.keys(productScrapeResultHash)
-	                    .forEach(function (shopId) {
-	                    var shop = shops.filter(function (s) { return s.id === shopId; })[0];
-	                    var result = productScrapeResultHash[shopId];
-	                    console.log("Scrapping of " + product.title + " successful for shop " + shop.title);
-	                    var out = {};
-	                    Object.keys(result.values)
-	                        .forEach(function (k) {
-	                        var v = result.values[k];
-	                        if (v.isSuccessful) {
-	                            out[k] = v.value;
-	                        }
-	                        else {
-	                            out[k] = {
-	                                error: v.error
-	                            };
-	                        }
-	                    });
-	                    console.dir(out);
-	                });
-	            });
+	        var productScrapePromises = products.map(function (product) {
+	            return scrapeService.scrapeProductData(product.id)
+	                .then(function (productScrapeResultHash) { return outputProductScrapeResult(productScrapeResultHash, product, shops); });
 	        });
+	        return Promise.all(productScrapePromises);
 	    });
 	})
-	    .catch(function (err) { return console.error(err); });
+	    .then(function () {
+	    console.info("Scraping completed successfully");
+	    process.exit();
+	})
+	    .catch(function (err) {
+	    console.error("Scraping failed");
+	    console.error(err);
+	    process.exit();
+	});
 
 
 /***/ },
@@ -680,15 +690,21 @@
 /***/ function(module, exports) {
 
 	/// <reference path="typings/index.d.ts" />
-	Array.prototype.toHash = function toHash(keySelector, valueSelector) {
-	    valueSelector = valueSelector || (function (e) { return (e); });
-	    return this.reduce(function (hash, elem) {
-	        var key = keySelector(elem);
-	        var value = valueSelector(elem);
-	        hash[key] = value;
-	        return hash;
-	    }, {});
-	};
+	if (!Array.prototype.toHash) {
+	    Array.prototype.toHash = function toHash(keySelector, valueSelector) {
+	        valueSelector = valueSelector || (function (e) { return (e); });
+	        return this.reduce(function (hash, elem) {
+	            var key = keySelector(elem);
+	            var value = valueSelector(elem);
+	            hash[key] = value;
+	            return hash;
+	        }, {});
+	    };
+	}
+	if (!Object.entries) {
+	    Object.entries = function (obj) { return Object.keys(obj)
+	        .map(function (key) { return ([key, obj[key]]); }); };
+	}
 
 
 /***/ },

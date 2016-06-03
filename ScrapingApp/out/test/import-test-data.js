@@ -87,6 +87,10 @@
 	addWebShop(web_shops_1.webShops[0])
 	    .then(function () {
 	    return addProduct(products_1.products[0]);
+	})
+	    .then(function () {
+	    console.info("Test data added.");
+	    process.exit();
 	});
 
 
