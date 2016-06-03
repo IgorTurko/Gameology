@@ -6,7 +6,7 @@ interface GridProps extends React.Props<any> {
     value: string;
 }
 
-export default class Grid1 extends React.Component<GridProps, {}> {
+export default class Grid extends React.Component<GridProps, {}> {
     render() {
         return (<div className="row"></div>);
     }

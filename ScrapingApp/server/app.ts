@@ -15,7 +15,7 @@ server.use("/api", bodyparser());
 server.use("/api", authenticationRouter);
 
 
-server.use("/", express.static("./public", {
+server.use("/", express.static("./out/client", {
     index: "index.html"
 }));
 

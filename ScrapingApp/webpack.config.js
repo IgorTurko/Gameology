@@ -16,7 +16,7 @@ module.exports = [{
         entry: "./client/app.tsx",
         output: {
             filename: "app.js",
-            path: "./public/assets"
+            path: "./out/client/assets"
         },
         devtool: "source-map",
         resolve: {
@@ -30,6 +30,11 @@ module.exports = [{
             loaders: [
                 { test: /\.tsx?$/, loader: "ts-loader" }
             ]
+        },
+        ts: {
+            compilerOptions: {
+                noEmit: false
+            }
         }
     },
     // Server
@@ -37,7 +42,7 @@ module.exports = [{
         entry: "./server/app.ts",
         output: {
             filename: "app.js",
-            path: "./server/"
+            path: "./out/server/"
         },
         devtool: "source-map",
         target: "node",
