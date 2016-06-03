@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="out\client\assets\app.js" />
+    <Compile Include="out\client\assets\fetch.js" />
     <Compile Include="out\server\app.js" />
     <Compile Include="out\test\import-test-data.js" />
     <Compile Include="out\test\run-page-parsing.js" />
@@ -42,6 +43,7 @@
     <Content Include="client\grid\all-products.tsx" />
     <Content Include="client\search\search-box.tsx" />
     <Content Include="client\tsconfig.json" />
+    <Content Include="client\typings\globals\es6-promise\typings.json" />
     <Content Include="client\typings\globals\react-dom\typings.json" />
     <Content Include="client\typings\globals\whatwg-fetch\typings.json" />
     <Content Include="config.json" />
@@ -74,8 +76,9 @@
   <ItemGroup>
     <Folder Include="client\" />
     <Folder Include="client\grid\" />
-    <Folder Include="client\data-access\" />
+    <Folder Include="client\data\" />
     <Folder Include="client\search\" />
+    <Folder Include="client\typings\globals\es6-promise\" />
     <Folder Include="client\typings\globals\react-dom\" />
     <Folder Include="client\typings\globals\whatwg-fetch\" />
     <Folder Include="out\client\assets\" />
@@ -117,7 +120,8 @@
     <Folder Include="server\typings\modules\mongodb\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="client\data-access\data.ts" />
+    <TypeScriptCompile Include="client\data\product-repo.ts" />
+    <TypeScriptCompile Include="client\typings\globals\es6-promise\index.d.ts" />
     <TypeScriptCompile Include="client\typings\globals\react-dom\index.d.ts" />
     <TypeScriptCompile Include="client\typings\globals\whatwg-fetch\index.d.ts" />
     <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />

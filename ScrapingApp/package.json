@@ -11,8 +11,9 @@
   "dependencies": {
     "body-parser": "^1.15.1",
     "cookie-parser": "^1.4.3",
+    "es6-promise": "^3.2.1",
     "express": "^4.13.4",
-    "fetch": "^1.0.1",
+    "fetch-polyfill": "^0.8.2",
     "jsdom": "^9.2.1",
     "moment": "^2.13.0",
     "mongodb": "^2.1.21",
