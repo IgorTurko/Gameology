@@ -6,8 +6,16 @@ interface GridProps extends React.Props<any> {
     value: string;
 }
 
-export default class Grid extends React.Component<GridProps, {}> {
+export default class AllProductsGrid extends React.Component<GridProps, {}> {
     render() {
-        return (<div className="row"></div>);
+        return (
+            <div className="row">
+                <div className="col-md-2">Product</div>
+                <div className="col-md-2"></div>
+                <div className="col-md-2"></div>
+                <div className="col-md-2"></div>
+                <div className="col-md-2"></div>
+                <div className="col-md-2"></div>
+            </div>);
     }
 }

@@ -12,6 +12,7 @@
     "body-parser": "^1.15.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.13.4",
+    "fetch": "^1.0.1",
     "jsdom": "^9.2.1",
     "moment": "^2.13.0",
     "mongodb": "^2.1.21",
@@ -20,7 +21,8 @@
     "react": "^15.1.0",
     "react-router": "^2.4.1",
     "ts-loader": "^0.8.2",
-    "typescript": "^1.8.10"
+    "typescript": "^1.8.10",
+    "whatwg-fetch": "^1.0.0"
   },
   "scripts": {
     "start": "./out/app.js"
