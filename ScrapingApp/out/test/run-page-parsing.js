@@ -679,7 +679,7 @@
 /* 17 */
 /***/ function(module, exports) {
 
-	/// <reference path="../typings/index.d.ts" />
+	/// <reference path="typings/index.d.ts" />
 	Array.prototype.toHash = function toHash(keySelector, valueSelector) {
 	    valueSelector = valueSelector || (function (e) { return (e); });
 	    return this.reduce(function (hash, elem) {

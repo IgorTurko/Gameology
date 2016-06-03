@@ -1,5 +1,4 @@
 ﻿/// <reference path="./typings/index.d.ts"/>
-require("./utils/array-extensions");
 
 import * as http  from "http";
 import * as express  from "express";
