@@ -38,4 +38,16 @@
         values?: IWebShopHash<ScrapedValues>;
         log?: IWebShopHash<ScrapeLog>;
     }
+
+    interface ValidationResult {
+        isValid: boolean;
+        errorCount: number;
+        errors: ValidationError[];
+    }
+
+    interface ValidationError {
+        parameter: string;
+        value: any;
+        message: string;
+    }
 }

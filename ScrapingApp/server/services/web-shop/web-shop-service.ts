@@ -22,7 +22,7 @@ export default class WebShopService {
         return this.storage.one(webShopId);
     }
 
-    save(webShop: WebShops.WebShop): Promise<Validator.ValidationResult> {
+    save(webShop: WebShops.WebShop): Promise<Api.ValidationResult> {
         if (!webShop)
             throw new Error("webShop is undefined");
 

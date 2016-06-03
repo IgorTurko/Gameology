@@ -201,18 +201,3 @@ declare namespace Products {
         setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues, log: Api.ScrapeLog): Promise<Api.Product>;
     }
 }
-
-declare namespace Validator {
-
-    interface ValidationResult {
-        isValid: boolean;
-        errorCount: number;
-        errors: ValidationError[];
-    }
-
-    interface ValidationError {
-        parameter: string;
-        value: any;
-        message: string;
-    }
-}

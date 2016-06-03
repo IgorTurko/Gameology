@@ -12,7 +12,7 @@ export default class ProductValidator {
 
     }
 
-    validate(product: Api.Product): Promise<Validator.ValidationResult> {
+    validate(product: Api.Product): Promise<Api.ValidationResult> {
         if (!product)
             throw new Error("product is undefined");
 

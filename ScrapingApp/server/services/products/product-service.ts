@@ -15,7 +15,7 @@ export default class ProductService {
         return this.storage.all();
     }
 
-    save(product: Api.Product): Promise<Validator.ValidationResult> {
+    save(product: Api.Product): Promise<Api.ValidationResult> {
         if (!product)
             throw new Error("product is undefined");
 
