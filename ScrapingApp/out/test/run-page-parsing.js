@@ -55,73 +55,120 @@
 	var mongo_web_shop_storage_1 = __webpack_require__(/*! ../../server/services/web-shop/mongo-web-shop-storage */ 5);
 	var web_shop_service_1 = __webpack_require__(/*! ../../server/services/web-shop/web-shop-service */ 6);
 	var jsdom_scraper_1 = __webpack_require__(/*! ../../server/scrapers/jsdom-scraper */ 15);
+	var scrape_service_1 = __webpack_require__(/*! ../../server/services/scrape-service */ 18);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db), webShopService);
 	var jsdomScraper = new jsdom_scraper_1.default();
+	var scrapeService = new scrape_service_1.default(productService, webShopService);
 	webShopService.all()
 	    .then(function (shops) {
-	    return productService.all()
+	    productService.all()
 	        .then(function (products) {
-	        products.forEach(function (productToScrape) {
-	            console.log("Scraping data for product " + productToScrape.title);
-	            console.log();
-	            Object.keys(productToScrape.scrapingUrls)
-	                .forEach(function (shopId) {
-	                var shop = shops.filter(function (s) { return s.id === shopId; })[0];
-	                var url = productToScrape.scrapingUrls[shopId];
-	                jsdomScraper.scrape(url, shop.scrapingSettings)
-	                    .then(function (result) {
-	                    var scrapedData = productService.productScrapedDataFromScrapingResult(result);
-	                    return productService.updateScrapedData(productToScrape.id, shop.id, scrapedData)
-	                        .then(function () {
-	                        console
-	                            .log("Scrapping of " + productToScrape.title + " successful for shop " + shop.title);
-	                        var out = {};
-	                        Object.keys(result.values)
-	                            .forEach(function (k) {
-	                            var v = result.values[k];
-	                            if (v.isSuccessful) {
-	                                out[k] = v.value;
-	                            }
-	                            else {
-	                                out[k] = {
-	                                    error: v.error
-	                                };
-	                            }
-	                        });
-	                        console.dir(out);
-	                    });
-	                })
-	                    .catch(function (result) {
-	                    var scrapedData = productService.productScrapedDataFromScrapingResult(result);
-	                    return productService.updateScrapedData(productToScrape.id, shop.id, scrapedData)
-	                        .then(function () {
-	                        console.error("Scrapping of " + productToScrape.title + " failed for shop " + shop.title);
-	                        if (result.error) {
-	                            console.error(result.error);
+	        products.forEach(function (product) {
+	            scrapeService.scrapeProductData(product.id)
+	                .then(function (productScrapeResultHash) {
+	                Object.keys(productScrapeResultHash)
+	                    .forEach(function (shopId) {
+	                    var shop = shops.filter(function (s) { return s.id === shopId; })[0];
+	                    var result = productScrapeResultHash[shopId];
+	                    console.log("Scrapping of " + product.title + " successful for shop " + shop.title);
+	                    var out = {};
+	                    Object.keys(result.values)
+	                        .forEach(function (k) {
+	                        var v = result.values[k];
+	                        if (v.isSuccessful) {
+	                            out[k] = v.value;
 	                        }
 	                        else {
-	                            var out = Object.keys(result.values)
-	                                .map(function (prop) { return ({
-	                                prop: prop,
-	                                value: result.values[prop]
-	                            }); })
-	                                .reduce(function (hash, a) {
-	                                if (a.value.isSuccessful)
-	                                    hash[a.prop] = a.value.value;
-	                                else
-	                                    hash[a.prop] = a.value.error;
-	                                return hash;
-	                            }, {});
-	                            console.dir(out);
+	                            out[k] = {
+	                                error: v.error
+	                            };
 	                        }
 	                    });
+	                    console.dir(out);
 	                });
 	            });
 	        });
 	    });
 	});
+	/*
+	webShopService.all()
+	    .then(shops => {
+	
+	        return productService.all()
+	            .then(products => {
+	                products.forEach(productToScrape => {
+	                    console.log(`Scraping data for product ${productToScrape.title}`);
+	                    console.log();
+	
+	                    Object.keys(productToScrape.scrapingUrls)
+	                        .forEach(shopId => {
+	                            const shop = shops.filter(s => s.id === shopId)[0];
+	                            const url = productToScrape.scrapingUrls[shopId];
+	
+	                            jsdomScraper.scrape(url, shop.scrapingSettings)
+	                                .then(result => {
+	
+	                                    const scrapedData = productService.productScrapedDataFromScrapingResult(result);
+	
+	                                    return productService.updateScrapedData(productToScrape.id, shop.id, scrapedData)
+	                                        .then(() => {
+	
+	                                            console
+	                                                .log(`Scrapping of ${productToScrape.title} successful for shop ${shop.title}`);
+	
+	                                            const out = {};
+	                                            Object.keys(result.values)
+	                                                .forEach(k => {
+	                                                    const v = result.values[k];
+	                                                    if (v.isSuccessful) {
+	                                                        out[k] = v.value;
+	                                                    } else {
+	                                                        out[k] = {
+	                                                            error: v.error
+	                                                        };
+	                                                    }
+	                                                });
+	
+	                                            console.dir(out);
+	                                        });
+	                                })
+	                                .catch((result: Scraping.ScrapingResult) => {
+	
+	                                    const scrapedData = productService.productScrapedDataFromScrapingResult(result);
+	
+	                                    return productService.updateScrapedData(productToScrape.id, shop.id, scrapedData)
+	                                        .then(() => {
+	
+	                                            console.error(`Scrapping of ${productToScrape.title} failed for shop ${shop.title}`);
+	                                            if (result.error) {
+	                                                console.error(result.error);
+	                                            } else {
+	                                                const out = Object.keys(result.values)
+	                                                    .map(prop => ({
+	                                                        prop: prop,
+	                                                        value: result.values[prop]
+	                                                    }))
+	                                                    .reduce((hash, a) => {
+	                                                        if (a.value.isSuccessful)
+	                                                            hash[a.prop] = a.value.value;
+	                                                        else
+	                                                            hash[a.prop] = a.value.error;
+	                                                        return hash;
+	                                                    },
+	                                                    {});
+	
+	                                                console.dir(out);
+	                                            }
+	                                        });
+	                                });
+	                        });
+	                });
+	            });
+	    });
+	
+	*/ 
 
 
 /***/ },
@@ -730,6 +777,68 @@
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ValueParserHash;
+
+
+/***/ },
+/* 18 */
+/*!*******************************************!*\
+  !*** ./server/services/scrape-service.ts ***!
+  \*******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../typings/index.d.ts" />
+	"use strict";
+	var jsdom_scraper_1 = __webpack_require__(/*! ../scrapers/jsdom-scraper */ 15);
+	var ScrapeService = (function () {
+	    function ScrapeService(productService, webShopService) {
+	        this.productService = productService;
+	        this.webShopService = webShopService;
+	        this.scraper = new jsdom_scraper_1.default();
+	        if (!productService)
+	            throw new Error("productService is undefined");
+	        if (!webShopService)
+	            throw new Error("webShopService is undefined");
+	        this.webShops = this.webShopService
+	            .all()
+	            .then(function (shops) { return shops.reduce(function (hash, shop) {
+	            hash[shop.id] = shop;
+	            return hash;
+	        }, {}); });
+	    }
+	    ScrapeService.prototype.scrapeProductData = function (productId) {
+	        var _this = this;
+	        if (!productId)
+	            throw new Error("productId is undefined");
+	        return this.webShops.then(function (shops) {
+	            return _this.productService.one(productId)
+	                .then(function (product) { return Promise.all(_this.scrapeProduct(product, shops))
+	                .then(function (results) { return results.reduce(function (hash, r) {
+	                hash[r.webShopId] = r.scrapingResult;
+	                return hash;
+	            }, {}); }); });
+	        });
+	    };
+	    ScrapeService.prototype.scrapeProduct = function (product, shops) {
+	        var _this = this;
+	        return Object.keys(product.scrapingUrls)
+	            .map(function (webShopId) { return _this.scrapeProductFromShopAndSave(product, webShopId, shops)
+	            .then(function (productScrapeResult) { return ({
+	            webShopId: webShopId,
+	            scrapingResult: productScrapeResult
+	        }); }); });
+	    };
+	    ScrapeService.prototype.scrapeProductFromShopAndSave = function (product, webShopId, shops) {
+	        var _this = this;
+	        return this.scraper
+	            .scrape(product.scrapingUrls[webShopId], shops[webShopId].scrapingSettings)
+	            .then(function (result) { return _this.productService
+	            .updateScrapedData(product.id, webShopId, _this.productService.productScrapedDataFromScrapingResult(result))
+	            .then(function () { return result; }); });
+	    };
+	    return ScrapeService;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ScrapeService;
 
 
 /***/ }

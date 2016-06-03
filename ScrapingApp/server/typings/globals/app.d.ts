@@ -135,20 +135,15 @@ declare namespace Scraping {
         scrape(url: string, values: ScrapingSettings): Promise<ScrapingResult>;
     }
 
-    /**
-     * Converts a value to specified type.
-     */
-    interface ValueParser {
-        /**
-         * Converts a value to a specified format.
-         * Returns promise wich resolves with value on parsing success or fails with error message.
-         * 
-         */
-        (input: string): any;
+    interface WebShopScrapeResult {
+        [webShopId: string]: ScrapingResult;
     }
 
-    interface IValueParserHash {
-        [parser: string]: ValueParser;
+    interface IScrapeService {
+        /**
+         * Scrapes product data for all shops and saves scraping result.
+         */
+        scrapeProductData(productId: string): Promise<WebShopScrapeResult>;
     }
 }
 
