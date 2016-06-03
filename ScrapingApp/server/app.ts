@@ -8,13 +8,17 @@ import * as bodyparser from "body-parser";
 import * as cookieparser from "cookie-parser";
 
 import config from "./config";
+
 import authenticationRouter from "./routes/authentication-route";
+import productRouter from "./routes/product-route";
 
 let server = express();
 
 server.use(cookieparser());
 server.use("/api", bodyparser());
-server.use("/api", authenticationRouter);
+
+// server.use("/api", authenticationRouter);
+server.use("/api/products", productRouter);
 
 
 server.use("/", express.static("./out/client", {

@@ -134,6 +134,7 @@
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
     <TypeScriptCompile Include="server\routes\authentication-route.ts" />
+    <TypeScriptCompile Include="server\routes\product-route.ts" />
     <TypeScriptCompile Include="server\runner\scrape-runner.ts" />
     <TypeScriptCompile Include="server\scrapers\jsdom-scraper.ts" />
     <TypeScriptCompile Include="server\services\scrape-service.ts" />

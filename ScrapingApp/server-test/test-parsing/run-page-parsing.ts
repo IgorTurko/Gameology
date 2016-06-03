@@ -15,7 +15,7 @@ import ScrapeService from "../../server/services/scrape-service";
 const db = new Database();
 
 const webShopService = new WebShopService(new MongoWebShopStorage(db));
-const productService = new ProductService(new MongoProductStorage(db), webShopService);
+const productService = new ProductService(new MongoProductStorage(db));
 
 const scrapeService = new ScrapeService(productService, webShopService);
 

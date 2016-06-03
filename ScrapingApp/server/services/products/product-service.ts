@@ -1,18 +1,14 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
 
 import ProductValidator from "./product-validator";
-import WebShopService from "../web-shop/web-shop-service";
 import * as moment from "moment";
 
 export default class ProductService {
     private validator = new ProductValidator();
 
-    constructor(private storage: Products.IProductStorage,
-                private webShopService: WebShopService) {
+    constructor(private storage: Products.IProductStorage) {
         if (!storage)
             throw new Error("storage is undefined");
-        if (!webShopService)
-            throw new Error("webShopService is undefined");
     }
 
     all(): Promise<Products.Product[]> {

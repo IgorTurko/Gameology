@@ -16,8 +16,7 @@ const authenticationMiddleware = new AuthenticationMiddleware(tokenProvider);
 
 const router = express.Router();
 
-router.post("/login",
-(req, res, next) => {
+router.post("/login", (req, res, next) => {
     const info = req.body;
 
     if (info.login) {
