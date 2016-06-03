@@ -3,6 +3,14 @@
     mongoUrl: string;
 }
 
+/**
+ * Array extension
+ */
+declare interface Array<T> {
+    toHash<K>(keySelector: (elem: T) => string, valueSelector?: (elem: T) => K): { [key: string]: K; };
+}
+
+
 declare namespace Authentication {
 
     interface AuthenticationInfo {

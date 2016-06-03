@@ -91,6 +91,7 @@
     <Folder Include="server-test\test-parsing\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
+    <Folder Include="server\utils\" />
     <Folder Include="server\runner\" />
     <Folder Include="server\scrapers\" />
     <Folder Include="server\routes\" />
@@ -158,6 +159,7 @@
     <TypeScriptCompile Include="server\typings\modules\moment\index.d.ts" />
     <TypeScriptCompile Include="server\typings\modules\mongodb\index.d.ts" />
     <TypeScriptCompile Include="server\typings\modules\node-uuid\index.d.ts" />
+    <TypeScriptCompile Include="server\utils\array-extensions.ts" />
     <TypeScriptCompile Include="server\web\authentication-middleware.ts" />
   </ItemGroup>
   <ItemGroup>

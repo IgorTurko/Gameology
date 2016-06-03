@@ -22,12 +22,7 @@ export default class ScrapeService implements Scraping.IScrapeService {
 
         this.webShops = this.webShopService
             .all()
-            .then(shops => shops.reduce((hash, shop) => {
-                hash[shop.id] = shop;
-
-                return hash;
-            },
-            {}));
+            .then(shops => shops.toHash(s => s.id));
     }
 
     scrapeProductData(productId: string): Promise<Scraping.WebShopScrapeResult> {
@@ -37,12 +32,7 @@ export default class ScrapeService implements Scraping.IScrapeService {
         return this.webShops.then(shops => {
             return this.productService.one(productId)
                 .then(product => Promise.all(this.scrapeProduct(product, shops))
-                    .then(results => results.reduce((hash, r) => {
-                        hash[r.webShopId] = r.scrapingResult;
-
-                        return hash;
-                    },
-                    {})));
+                    .then(results => results.toHash(e => e.webShopId, e => e.scrapingResult)));
         });
     }
 
