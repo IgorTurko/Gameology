@@ -14,7 +14,7 @@ import { products } from "./products";
 const db = new Database();
 
 const webShopService = new WebShopService(new MongoWebShopStorage(db));
-const productService = new ProductService(new MongoProductStorage(db));
+const productService = new ProductService(new MongoProductStorage(db), webShopService);
 
 function addWebShop(webShop: WebShops.WebShop): Promise<any> {
     return webShopService.save(webShop)

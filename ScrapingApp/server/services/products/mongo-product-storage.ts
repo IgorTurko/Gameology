@@ -35,4 +35,8 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(c => c.updateOne({ id: product.id }, product, { upsert: true }))
             .then(() => product);
     }
+
+    setScrapingData(productId: string, webShopId: string, scrapingData: Products.ProductScrapedData): Promise<Products.ProductScrapedData> {
+        throw new Error();
+    }
 }

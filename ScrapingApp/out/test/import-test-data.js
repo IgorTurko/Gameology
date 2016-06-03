@@ -55,7 +55,7 @@
 	var products_1 = __webpack_require__(13);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
-	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
+	var productService = new product_service_1.default(new mongo_product_storage_1.default(db), webShopService);
 	function addWebShop(webShop) {
 	    return webShopService.save(webShop)
 	        .then(function () {
@@ -218,6 +218,11 @@
 	    WebShopService.prototype.all = function () {
 	        return this.storage.all();
 	    };
+	    WebShopService.prototype.one = function (webShopId) {
+	        if (!webShopId)
+	            throw new Error("webShopId is undefined");
+	        return this.storage.one(webShopId);
+	    };
 	    WebShopService.prototype.save = function (webShop) {
 	        var _this = this;
 	        if (!webShop)
@@ -319,6 +324,9 @@
 	            .then(function (c) { return c.updateOne({ id: product.id }, product, { upsert: true }); })
 	            .then(function () { return product; });
 	    };
+	    MongoProductStorage.prototype.setScrapingData = function (productId, webShopId, scrapingData) {
+	        throw new Error();
+	    };
 	    return MongoProductStorage;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -332,12 +340,16 @@
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var product_validator_1 = __webpack_require__(11);
+	var moment = __webpack_require__(17);
 	var ProductService = (function () {
-	    function ProductService(storage) {
+	    function ProductService(storage, webShopService) {
 	        this.storage = storage;
+	        this.webShopService = webShopService;
 	        this.validator = new product_validator_1.default();
 	        if (!storage)
 	            throw new Error("storage is undefined");
+	        if (!webShopService)
+	            throw new Error("webShopService is undefined");
 	    }
 	    ProductService.prototype.all = function () {
 	        return this.storage
@@ -358,6 +370,25 @@
 	                        .save(product)
 	                        .then(function () { return resolve(validationResult); });
 	            });
+	        });
+	    };
+	    ProductService.prototype.one = function (productId) {
+	        if (!productId)
+	            throw new Error("productId is undefined");
+	        return this.storage.one(productId);
+	    };
+	    ProductService.prototype.updateScrapedData = function (productId, webshopId, data) {
+	        if (!productId)
+	            throw new Error("productId is undefined");
+	        if (!webshopId)
+	            throw new Error("webShopId is undefined");
+	        if (!data)
+	            throw new Error("data is undefined");
+	        return Promise.all([this.one(productId), this.webShopService.one(webshopId)])
+	            .then(function (_a) {
+	            var product = _a[0], webshop = _a[1];
+	            data.scrapedAt = moment().toDate();
+	            data.url = product.scrapingUrls[webshopId];
 	        });
 	    };
 	    return ProductService;
@@ -577,6 +608,15 @@
 	    },
 	];
 
+
+/***/ },
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = require("moment");
 
 /***/ }
 /******/ ]);

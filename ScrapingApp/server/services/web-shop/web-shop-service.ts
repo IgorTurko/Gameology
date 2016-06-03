@@ -15,6 +15,13 @@ export default class WebShopService {
         return this.storage.all();
     }
 
+    one(webShopId: string): Promise<WebShops.WebShop> {
+        if (!webShopId)
+            throw new Error("webShopId is undefined");
+
+        return this.storage.one(webShopId);
+    }
+
     save(webShop: WebShops.WebShop): Promise<Validator.ValidationResult> {
         if (!webShop)
             throw new Error("webShop is undefined");

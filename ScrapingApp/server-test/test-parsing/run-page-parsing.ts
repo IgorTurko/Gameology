@@ -12,8 +12,9 @@ import JsdomScraper from "../../server/scrapers/jsdom-scraper";
 
 const db = new Database();
 
-const productService = new ProductService(new MongoProductStorage(db));
 const webShopService = new WebShopService(new MongoWebShopStorage(db));
+const productService = new ProductService(new MongoProductStorage(db), webShopService);
+
 
 const jsdomScraper = new JsdomScraper();
 

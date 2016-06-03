@@ -182,6 +182,18 @@ declare namespace WebShops {
 }
 
 declare namespace Products {
+
+    interface ProductScrapedData {
+        url: string;
+        scrapedAt: Date;
+        values: {
+            title: string;
+            price: number;
+            image: string;
+            [key: string]: any;
+        };
+    }
+
     /**
      * Product to scrape data from.
      * Includes common info like title and identifier,
@@ -195,16 +207,7 @@ declare namespace Products {
             [webShopId: string]: string;
         };
         scrapedData?: {
-            [webShopId: string]: {
-                url: string;
-                scrapedAt: Date;
-                values: {
-                    title: string;
-                    price: number;
-                    image: string;
-                    [key: string]: any;
-                };
-            };
+            [webShopId: string]: ProductScrapedData;
         };
     }
 
@@ -217,6 +220,8 @@ declare namespace Products {
         one(id: string): Promise<Product>;
 
         save(product: Product): Promise<Product>;
+
+        setScrapingData(productId: string, webShopId: string, scrapingData: ProductScrapedData): Promise<ProductScrapedData>;
     }
 }
 
