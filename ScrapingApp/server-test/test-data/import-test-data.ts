@@ -32,7 +32,7 @@ function addWebShop(webShop: WebShops.WebShop): Promise<any> {
         });
 }
 
-function addProduct(product: Products.Product): Promise<any> {
+function addProduct(product: Api.Product): Promise<any> {
     return productService.save(product)
         .then(() => {
             console.info(`Product ${product.title} added.`);

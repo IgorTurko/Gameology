@@ -1,6 +1,6 @@
 ﻿/// <reference path="../../server/typings/index.d.ts" />
 
-export const products: Products.Product[] = [
+export const products: Api.Product[] = [
     {
         id: "be81468f1c774f4c96e11d3e2c2df67e",
         title: "DIXIT",

@@ -1,4 +1,6 @@
-﻿declare interface Configuration {
+﻿/// <reference path="../../../api.d.ts"/>
+
+declare interface Configuration {
     fallbackPort: number;
     mongoUrl: string;
 }
@@ -185,57 +187,18 @@ declare namespace WebShops {
 }
 
 declare namespace Products {
-
-    interface IWebShopHash<T> {
-        [webShopId: string]: T;
-    }
-
-    interface IValueHash<T> {
-        [valueName: string]: T;
-    }
-
-    interface ScrapedValues {
-        title: string;
-        price: number;
-        image: string;
-        [key: string]: any;
-    }
-
-    interface ScrapeLog {
-        url: string;
-        scrapedAt: Date;
-        error: any;
-        values: IValueHash<{
-            scrapedAt: Date;
-            error: any;
-        }>;
-    }
     
-    /**
-     * Product to scrape data from.
-     * Includes common info like title and identifier,
-     * scraping settings (URLs on each supported shop) and
-     * latest scraped data for each shop.
-     */
-    interface Product {
-        id: string;
-        title: string;
-        scrapingUrls: IWebShopHash<string>;
-        values?: IWebShopHash<ScrapedValues>;
-        log?: IWebShopHash<ScrapeLog>;
-    }
-
     /**
     * Persistent storage for web shop.
     */
     interface IProductStorage {
-        all(): Promise<Product[]>;
+        all(): Promise<Api.Product[]>;
 
-        one(id: string): Promise<Product>;
+        one(id: string): Promise<Api.Product>;
 
-        save(product: Product): Promise<Product>;
+        save(product: Api.Product): Promise<Api.Product>;
 
-        setScrapingData(productId: string, webShopId: string, values: ScrapedValues, log: ScrapeLog): Promise<Product>;
+        setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues, log: Api.ScrapeLog): Promise<Api.Product>;
     }
 }
 
