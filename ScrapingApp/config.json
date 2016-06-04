@@ -1,4 +1,5 @@
 {
   "fallbackPort": 3000,
-  "mongoUrl":  "mongodb://localhost:27017/gameology"
+  "mongoUrl": "mongodb://localhost:27017/gameology",
+  "scrapingThreads": 3 
 }

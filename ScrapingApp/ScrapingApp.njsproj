@@ -58,6 +58,7 @@
     <Content Include="server-test\tsconfig.json" />
     <Content Include="server\tsconfig.json" />
     <Content Include="server\typings.json" />
+    <Content Include="server\typings\globals\async\typings.json" />
     <Content Include="server\typings\globals\body-parser\typings.json" />
     <Content Include="server\typings\globals\cookie-parser\typings.json" />
     <Content Include="server\typings\globals\es6-promise\typings.json" />
@@ -101,6 +102,7 @@
     <Folder Include="server\services\authentication\" />
     <Folder Include="server\services\products\" />
     <Folder Include="server\services\web-shop\" />
+    <Folder Include="server\typings\globals\async\" />
     <Folder Include="server\typings\globals\body-parser\" />
     <Folder Include="server\typings\globals\cookie-parser\" />
     <Folder Include="server\typings\globals\es6-promise\" />
@@ -133,6 +135,7 @@
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
+    <TypeScriptCompile Include="server\services\scrape-queue-service.ts" />
     <TypeScriptCompile Include="server\routes\authentication-route.ts" />
     <TypeScriptCompile Include="server\routes\product-route.ts" />
     <TypeScriptCompile Include="server\runner\scrape-runner.ts" />
@@ -149,6 +152,7 @@
     <TypeScriptCompile Include="server\services\web-shop\web-shop-service.ts" />
     <TypeScriptCompile Include="server\services\web-shop\web-shop-validator.ts" />
     <TypeScriptCompile Include="server\typings\globals\app.d.ts" />
+    <TypeScriptCompile Include="server\typings\globals\async\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\body-parser\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\cookie-parser\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\es6-promise\index.d.ts" />
