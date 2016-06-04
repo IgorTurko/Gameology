@@ -26,6 +26,8 @@ export default class ScrapeSchedulerService {
             .map(rule => schedule.scheduleJob(uuid.v1(),
                 rule,
                 () => {
+                    console.log(`${new Date()} Running product scraping for scheduler rule ${rule}`);
+
                     this.productService
                         .all()
                         .then(products => {

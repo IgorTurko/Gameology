@@ -4,6 +4,7 @@ declare interface Configuration {
     fallbackPort: number;
     mongoUrl: string;
     scrapingThreads: number;
+    schedules: string[];
 }
 
 /**

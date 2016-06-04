@@ -8,7 +8,7 @@ let db: Promise<mongo.Db> = new Promise((resolve, reject) => {
         if (err) {
             reject(err);
         } else {
-            console.log(`Connected to Mongo server at ${config.mongoUrl}`);
+            console.info(`Connected to Mongo server at ${config.mongoUrl}`);
             resolve(db);
         }
     });

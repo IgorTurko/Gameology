@@ -136,6 +136,7 @@
     <TypeScriptCompile Include="server\app.ts" />
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
+    <TypeScriptCompile Include="server\scrape-server.ts" />
     <TypeScriptCompile Include="server\services\scrape-queue-service.ts" />
     <TypeScriptCompile Include="server\routes\authentication-route.ts" />
     <TypeScriptCompile Include="server\routes\product-route.ts" />
@@ -171,6 +172,7 @@
     <TypeScriptCompile Include="server\typings\modules\mongodb\index.d.ts" />
     <TypeScriptCompile Include="server\typings\modules\node-uuid\index.d.ts" />
     <TypeScriptCompile Include="server\extensions.ts" />
+    <TypeScriptCompile Include="server\web-server.ts" />
     <TypeScriptCompile Include="server\web\authentication-middleware.ts" />
   </ItemGroup>
   <ItemGroup>

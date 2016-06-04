@@ -108,7 +108,7 @@
 	            reject(err);
 	        }
 	        else {
-	            console.log("Connected to Mongo server at " + config_1.default.mongoUrl);
+	            console.info("Connected to Mongo server at " + config_1.default.mongoUrl);
 	            resolve(db);
 	        }
 	    });

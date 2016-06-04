@@ -12,6 +12,8 @@ export default class ScrapeQueueService {
             throw new Error("scrapeService is missing");
 
         this.queue = async.queue((productId: string, callback) => {
+            console.log(`Scraping data for product ${productId}`);
+
             this.scrapeService.scrapeProductData(productId)
                 .then(() => callback())
                 .catch(err => callback(err));
