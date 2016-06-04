@@ -1,20 +1,29 @@
 ﻿/// <reference path="../../../api.d.ts"/>
 
-declare interface Configuration {
+/**
+ * Application configuration.
+ */
+interface Configuration {
+    /** Web server port would be used if environment variable doesn't set a port. */
     fallbackPort: number;
+    /** Mongo connection URL */
     mongoUrl: string;
+    /** Maximum number of concurrently running scraping functions */
     scrapingThreads: number;
+    /** Array of cron format schedules which whould be used for run scraping */
     schedules: string[];
+    /** Delay in milliseconds after scraping each product. */
+    delayBetweenShopScrapingMs: number;
 }
 
 /**
  * Array extension
  */
-declare interface Array<T> {
+interface Array<T> {
     toHash<K>(keySelector: (elem: T) => string, valueSelector?: (elem: T) => K): { [key: string]: K; };
 }
 
-declare interface ObjectConstructor {
+interface ObjectConstructor {
     entries(obj: any): any[][];
 }
 

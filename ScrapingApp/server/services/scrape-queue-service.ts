@@ -7,7 +7,7 @@ import ScrapeService from "./scrape-service";
 export default class ScrapeQueueService {
     private queue: AsyncQueue<string>;
 
-    constructor(private scrapeService: ScrapeService, scrapingThreads: number) {
+    constructor(private scrapeService: ScrapeService, scrapingThreads: number, delayBetweenProductScraping: number) {
         if (!scrapeService)
             throw new Error("scrapeService is missing");
 
@@ -26,8 +26,8 @@ export default class ScrapeQueueService {
                                 console.error(result.error);
                             }
                         });
-                        
-                    callback();
+
+                    setTimeout(callback, delayBetweenProductScraping);
                 })
                 .catch(err => callback(err));
 

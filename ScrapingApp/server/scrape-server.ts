@@ -22,7 +22,7 @@ const webShopService = new WebShopService(new MongoWebShopService(db));
 
 const scrapeService = new ScrapeService(productService, webShopService);
 
-const queue = new ScrapeQueueService(scrapeService, configuration.scrapingThreads);
+const queue = new ScrapeQueueService(scrapeService, configuration.scrapingThreads, configuration.delayBetweenShopScrapingMs);
 const scheduler = new ScrapeSchedulerService(queue, productService, configuration.schedules);
 
 export function run() {
