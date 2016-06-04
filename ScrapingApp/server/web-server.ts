@@ -9,7 +9,8 @@ import * as cookieparser from "cookie-parser";
 import config from "./config";
 
 import authenticationRouter from "./web/routes/authentication-route";
-import productRouter from "./web/routes/product-route";
+import productRoute from "./web/routes/product-route";
+import webShopRoute from "./web/routes/web-shop-route";
 
 let server = express();
 
@@ -17,7 +18,9 @@ server.use(cookieparser());
 server.use("/api", bodyparser());
 
 // server.use("/api", authenticationRouter);
-server.use("/api/products", productRouter);
+server.use("/api/products", productRoute);
+server.use("/api/shops", webShopRoute);
+
 
 
 server.use("/", express.static("./out/client", {
