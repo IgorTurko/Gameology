@@ -1,23 +1,22 @@
 ﻿/// <reference path="../typings/index.d.ts"/>
 
 import * as async from "async";
-import configuration from "../config";
 
 import ScrapeService from "./scrape-service";
 
 export default class ScrapeQueueService {
     private queue: AsyncQueue<string>;
 
-    constructor(private scrapeService: ScrapeService) {
+    constructor(private scrapeService: ScrapeService, scrapingThreads: number) {
         if (!scrapeService)
             throw new Error("scrapeService is missing");
 
         this.queue = async.queue((productId: string, callback) => {
             this.scrapeService.scrapeProductData(productId)
-                .then(r => callback())
+                .then(() => callback())
                 .catch(err => callback(err));
 
-        }, configuration.scrapingThreads);
+        }, scrapingThreads);
     }
 
     /**

@@ -66,6 +66,7 @@
     <Content Include="server\typings\globals\express\typings.json" />
     <Content Include="server\typings\globals\jquery\typings.json" />
     <Content Include="server\typings\globals\jsdom\typings.json" />
+    <Content Include="server\typings\globals\node-schedule\typings.json" />
     <Content Include="server\typings\globals\node-validator\typings.json" />
     <Content Include="server\typings\globals\node\typings.json" />
     <Content Include="server\typings\globals\serve-static\typings.json" />
@@ -95,7 +96,6 @@
     <Folder Include="server-test\test-parsing\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
-    <Folder Include="server\runner\" />
     <Folder Include="server\scrapers\" />
     <Folder Include="server\routes\" />
     <Folder Include="server\services\" />
@@ -108,6 +108,7 @@
     <Folder Include="server\typings\globals\es6-promise\" />
     <Folder Include="server\typings\globals\jquery\" />
     <Folder Include="server\typings\globals\jsdom\" />
+    <Folder Include="server\typings\globals\node-schedule\" />
     <Folder Include="server\typings\globals\node-validator\" />
     <Folder Include="server\typings\modules\moment\" />
     <Folder Include="server\typings\modules\node-uuid\" />
@@ -138,8 +139,8 @@
     <TypeScriptCompile Include="server\services\scrape-queue-service.ts" />
     <TypeScriptCompile Include="server\routes\authentication-route.ts" />
     <TypeScriptCompile Include="server\routes\product-route.ts" />
-    <TypeScriptCompile Include="server\runner\scrape-runner.ts" />
     <TypeScriptCompile Include="server\scrapers\jsdom-scraper.ts" />
+    <TypeScriptCompile Include="server\services\scrape-scheduler-service.ts" />
     <TypeScriptCompile Include="server\services\scrape-service.ts" />
     <TypeScriptCompile Include="server\scrapers\value-parser.ts" />
     <TypeScriptCompile Include="server\services\authentication\authentication-token-provider.ts" />
@@ -160,6 +161,7 @@
     <TypeScriptCompile Include="server\typings\globals\express\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\jquery\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\jsdom\index.d.ts" />
+    <TypeScriptCompile Include="server\typings\globals\node-schedule\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\node-validator\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="server\typings\globals\serve-static\index.d.ts" />

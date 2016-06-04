@@ -7,6 +7,7 @@
 /// <reference path="globals/express/index.d.ts" />
 /// <reference path="globals/jquery/index.d.ts" />
 /// <reference path="globals/jsdom/index.d.ts" />
+/// <reference path="globals/node-schedule/index.d.ts" />
 /// <reference path="globals/node-validator/index.d.ts" />
 /// <reference path="globals/node/index.d.ts" />
 /// <reference path="globals/serve-static/index.d.ts" />
