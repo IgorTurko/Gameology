@@ -15,7 +15,20 @@ export default class ScrapeQueueService {
             console.log(`Scraping data for product ${productId}`);
 
             this.scrapeService.scrapeProductData(productId)
-                .then(() => callback())
+                .then(res => {
+                    Object.keys(res)
+                        .forEach(webShop => {
+                            const result = res[webShop];
+                            if (result.isSuccessful)
+                                console.log(`Scraping product ${productId} from shop ${webShop} completed successfuly`);
+                            else {
+                                console.error(`Scraping product ${productId} from shop ${webShop} failed`);
+                                console.error(result.error);
+                            }
+                        });
+                        
+                    callback();
+                })
                 .catch(err => callback(err));
 
         }, scrapingThreads);
