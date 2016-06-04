@@ -51,7 +51,7 @@
 	var product_service_1 = __webpack_require__(10);
 	var mongo_web_shop_storage_1 = __webpack_require__(5);
 	var web_shop_service_1 = __webpack_require__(6);
-	var scrape_service_1 = __webpack_require__(15);
+	var scrape_service_1 = __webpack_require__(16);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
@@ -375,6 +375,7 @@
 	"use strict";
 	var product_validator_1 = __webpack_require__(11);
 	var moment = __webpack_require__(12);
+	var uuid = __webpack_require__(13);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -389,16 +390,19 @@
 	        var _this = this;
 	        if (!product)
 	            throw new Error("product is undefined");
-	        return new Promise(function (resolve, reject) {
+	        if (!product.id)
+	            product.id = uuid.v1();
+	        return new Promise(function (resolve) {
 	            _this.validator
 	                .validate(product)
 	                .then(function (validationResult) {
 	                if (!validationResult.isValid)
-	                    reject(validationResult);
-	                else
+	                    resolve(validationResult);
+	                else {
 	                    _this.storage
 	                        .save(product)
-	                        .then(function () { return resolve(validationResult); });
+	                        .then(function () { return resolve(product); });
+	                }
 	            });
 	        });
 	    };
@@ -497,14 +501,20 @@
 	module.exports = require("moment");
 
 /***/ },
-/* 13 */,
+/* 13 */
+/***/ function(module, exports) {
+
+	module.exports = require("node-uuid");
+
+/***/ },
 /* 14 */,
-/* 15 */
+/* 15 */,
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../typings/index.d.ts" />
 	"use strict";
-	var jsdom_scraper_1 = __webpack_require__(16);
+	var jsdom_scraper_1 = __webpack_require__(17);
 	var ScrapeService = (function () {
 	    function ScrapeService(productService, webShopService) {
 	        this.productService = productService;
@@ -552,14 +562,14 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	__webpack_require__(17);
-	var jsdom = __webpack_require__(18);
-	var value_parser_1 = __webpack_require__(19);
+	__webpack_require__(18);
+	var jsdom = __webpack_require__(19);
+	var value_parser_1 = __webpack_require__(20);
 	var JsdomScraper = (function () {
 	    function JsdomScraper() {
 	        this.valueParser = new value_parser_1.default();
@@ -686,7 +696,7 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	/// <reference path="typings/index.d.ts" />
@@ -708,13 +718,13 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = require("jsdom");
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/index.d.ts"/>

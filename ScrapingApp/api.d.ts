@@ -50,4 +50,16 @@
         value: any;
         message: string;
     }
+
+    interface IFailResponse {
+        ok: boolean;
+        errors: ValidationError[];
+    }
+
+    interface ISuccessResponse<TEntity> {
+        ok: boolean;
+        entity: TEntity;
+    }
+
+    type IPostResponse<TEntity> = IFailResponse | ISuccessResponse<TEntity>;
 }

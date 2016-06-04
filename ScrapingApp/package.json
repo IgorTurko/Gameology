@@ -27,9 +27,6 @@
     "typescript": "^1.8.10",
     "whatwg-fetch": "^1.0.0"
   },
-  "scripts": {
-    "start": "./out/app.js"
-  },
   "devDependencies": {
     "typescript": "^1.8.10"
   }
