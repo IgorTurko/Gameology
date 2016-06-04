@@ -15,7 +15,7 @@ import webShopRoute from "./web/routes/web-shop-route";
 let server = express();
 
 server.use(cookieparser());
-server.use("/api", bodyparser());
+server.use("/api", bodyparser.json());
 
 // server.use("/api", authenticationRouter);
 server.use("/api/products", productRoute);

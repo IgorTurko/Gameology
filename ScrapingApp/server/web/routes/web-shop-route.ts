@@ -1,4 +1,4 @@
-﻿/// <reference path="../../typings/index.d.ts"/>
+﻿/// <reference path="../../typings/index.d.ts" />
 
 import * as express from "express";
 
@@ -13,10 +13,17 @@ const webShopService = new WebShopService(new MongoWebShopStorage(db));
 
 const router = express.Router();
 
-router.get("/", (request, response) => {
+router.get("/",
+(request, response) => {
     webShopService.all()
         .then(shops => {
-            response.json(shops).end();
+            const model = shops.map(s => ({
+                id: s.id,
+                isBase: s.isBase,
+                title: s.title,
+                delivery: s.delivery
+            }));
+            response.json(model).end();
         })
         .catch(err => response.send(500, err).end());
 });
