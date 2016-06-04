@@ -8,8 +8,8 @@ import * as cookieparser from "cookie-parser";
 
 import config from "./config";
 
-import authenticationRouter from "./routes/authentication-route";
-import productRouter from "./routes/product-route";
+import authenticationRouter from "./web/routes/authentication-route";
+import productRouter from "./web/routes/product-route";
 
 let server = express();
 

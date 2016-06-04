@@ -1,10 +1,10 @@
-﻿/// <reference path="../typings/index.d.ts"/>
+﻿/// <reference path="../../typings/index.d.ts"/>
 
 import * as express from "express";
 
-import Db from "../data-access/db";
-import MongoProductStorage from "../services/products/mongo-product-storage";
-import ProductService from "../services/products/product-service";
+import Db from "../../data-access/db";
+import MongoProductStorage from "../../services/products/mongo-product-storage";
+import ProductService from "../../services/products/product-service";
 
 const db = new Db();
 
