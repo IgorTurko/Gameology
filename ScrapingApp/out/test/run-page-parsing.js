@@ -202,7 +202,12 @@
 	            throw new Error("webShop is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.webshops)
-	            .then(function (c) { return c.updateOne({ id: webShop.id }, webShop, { upsert: true }); })
+	            .then(function (c) { return c.updateOne({ id: webShop.id }, {
+	            $set: {
+	                title: webShop.title,
+	                delivery: webShop.delivery
+	            }
+	        }); })
 	            .then(function () { return webShop; });
 	    };
 	    return MongoWebShopStorage;

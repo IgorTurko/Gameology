@@ -32,7 +32,12 @@ export default class MongoWebShopStorage implements WebShops.IWebShopStorage {
 
         return this.db
             .collection(Database.Collections.webshops)
-            .then(c => c.updateOne({ id: webShop.id }, webShop, { upsert: true }))
+            .then(c => c.updateOne({ id: webShop.id }, {
+                $set: {
+                    title: webShop.title,
+                    delivery: webShop.delivery
+                }
+            }))
             .then(() => webShop);
     }
 }
