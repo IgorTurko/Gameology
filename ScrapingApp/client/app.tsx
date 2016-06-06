@@ -10,6 +10,6 @@ var allProducts = new ProductRepo().getAllProducts().then(function(data) {
     ReactDOM.render(
         <div className="container">
             <SearchBox value="" placeholder= "Search products..." />
-            <Grid data={data} />
+            <Grid data={data} shops="" />
         </div>, document.getElementsByClassName("container")[0]); 
 });

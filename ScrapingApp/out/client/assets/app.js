@@ -52,7 +52,7 @@
 	var all_products_1 = __webpack_require__(4);
 	var product_repo_1 = __webpack_require__(5);
 	var allProducts = new product_repo_1.default().getAllProducts().then(function (data) {
-	    ReactDOM.render(React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {data: data})), document.getElementsByClassName("container")[0]);
+	    ReactDOM.render(React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {data: data, shops: ""})), document.getElementsByClassName("container")[0]);
 	});
 
 
@@ -115,9 +115,30 @@
 	    function AllProductsGrid() {
 	        _super.apply(this, arguments);
 	    }
+	    AllProductsGrid.prototype.getHeader = function () {
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2"}, "Product"), this.props.shops.map(function (shop) {
+	            React.createElement("div", {className: "col-md-2"}, "shop.toUpperCase()");
+	        })));
+	    };
+	    ;
+	    AllProductsGrid.prototype.getEmptyRow = function () {
+	        return React.createElement("div", {className: "col-md-12"}, "No products");
+	    };
+	    ;
+	    AllProductsGrid.prototype.getData = function () {
+	        var _this = this;
+	        return this.props.data.map(function (product) {
+	            return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2"}, product.title), _this.props.shops.map(function (shop) {
+	                React.createElement("div", {className: "col-md-2"}, React.createElement("div", null, product.scrapingUrls[shop]), React.createElement("div", null, product.values[shop].image), React.createElement("div", null, product.values[shop].price));
+	            })));
+	        });
+	    };
+	    ;
 	    AllProductsGrid.prototype.render = function () {
-	        console.log(this.props.data);
-	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2"}, "Product"), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"}), React.createElement("div", {className: "col-md-2"})));
+	        if (this.props.data == null || this.props.data.length == 0) {
+	            return React.createElement("div", null, this.getHeader(), this.getEmptyRow());
+	        }
+	        return React.createElement("div", null, this.getHeader(), this.getData());
 	    };
 	    return AllProductsGrid;
 	}(React.Component));
@@ -144,6 +165,7 @@
 	            console.log('error');
 	        });
 	    };
+	    ;
 	    return ProductRepository;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });

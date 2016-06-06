@@ -123,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="api.d.ts" />
+    <TypeScriptCompile Include="client\data\shop-repo.ts" />
     <TypeScriptCompile Include="client\data\product-repo.ts" />
     <TypeScriptCompile Include="client\typings\globals\es6-promise\index.d.ts" />
     <TypeScriptCompile Include="client\typings\globals\react-dom\index.d.ts" />
