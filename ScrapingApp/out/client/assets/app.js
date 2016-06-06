@@ -121,9 +121,9 @@
 	        _super.apply(this, arguments);
 	    }
 	    ProductsGrid.prototype.getHeader = function () {
-	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2"}, "Product"), this.props
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-1"}, "Product"), this.props
 	            .shops
-	            .map(function (shop) { return (React.createElement("div", {className: "col-md-2"}, shop.title)); })));
+	            .map(function (shop) { return (React.createElement("div", {className: "col-md-2"}, shop.title)); }), React.createElement("div", {className: "col-md-1 product-action"}, "Actions")));
 	    };
 	    ;
 	    ProductsGrid.prototype.getEmptyRow = function () {
@@ -133,7 +133,10 @@
 	    ProductsGrid.prototype.getData = function () {
 	        var _this = this;
 	        return this.props.products.map(function (product) {
-	            return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2"}, product.title), _this.props.shops.map(function (shop) { return (React.createElement("div", {className: "col-md-2"}, React.createElement("div", null, product.scrapingUrls[shop.id]), React.createElement("div", null, product.values[shop.id].image), React.createElement("div", null, product.values[shop.id].price))); })));
+	            return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2"}, product.title), _this.props.shops.map(function (shop) {
+	                var p = product.values[shop.id];
+	                return (React.createElement("div", {className: "col-md-2"}, React.createElement("div", {className: "product-url"}, product.scrapingUrls[shop.id]), React.createElement("img", {className: "product-img", src: p != null ? p.image : '', alt: "no image"}), React.createElement("div", {className: "product-price"}, p != null ? p.price : '')));
+	            })));
 	        });
 	    };
 	    ;
