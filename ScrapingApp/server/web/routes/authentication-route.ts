@@ -17,7 +17,7 @@ const authenticationMiddleware = new AuthenticationMiddleware(tokenProvider);
 const router = express.Router();
 
 router.post("/login", (req, res, next) => {
-    const info = req.body;
+    const info: Api.AuthenticationCredentials = req.body;
 
     if (info.login) {
         authenticationMiddleware.signIn(req, res, info.login)

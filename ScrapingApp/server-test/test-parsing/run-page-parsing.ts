@@ -19,7 +19,7 @@ const productService = new ProductService(new MongoProductStorage(db));
 
 const scrapeService = new ScrapeService(productService, webShopService);
 
-function outputProductScrapeResult(scrapeResult: Scraping.ProductScrapeResult, product: Api.Product, shops: WebShops.WebShop[]) {
+function outputProductScrapeResult(scrapeResult: Scraping.ProductScrapeResult, product: Api.Product, shops: Api.WebShop[]) {
     Object.keys(scrapeResult)
         .forEach(shopId => {
             const shop = shops.filter(s => s.id === shopId)[0];

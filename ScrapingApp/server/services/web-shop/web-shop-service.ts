@@ -11,18 +11,18 @@ export default class WebShopService {
             throw new Error("storage is undefined");
     }
 
-    all(): Promise<WebShops.WebShop[]> {
+    all(): Promise<Api.WebShop[]> {
         return this.storage.all();
     }
 
-    one(webShopId: string): Promise<WebShops.WebShop> {
+    one(webShopId: string): Promise<Api.WebShop> {
         if (!webShopId)
             throw new Error("webShopId is undefined");
 
         return this.storage.one(webShopId);
     }
 
-    save(webShop: WebShops.WebShop): Promise<Api.ValidationResult> {
+    save(webShop: Api.WebShop): Promise<Api.ValidationResult> {
         if (!webShop)
             throw new Error("webShop is undefined");
 

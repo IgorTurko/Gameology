@@ -7,7 +7,7 @@ import ValueParserHash from "./value-parser";
 export default class JsdomScraper implements Scraping.IScraper {
     private valueParser = new ValueParserHash();
 
-    scrape(url: string, values: Scraping.ScrapingSettings): Promise<Scraping.WebShopScrapingResult> {
+    scrape(url: string, values: Api.ScrapingSettings): Promise<Scraping.WebShopScrapingResult> {
         if (!url)
             throw new Error("url is undefined");
         if (!values)
@@ -55,7 +55,7 @@ export default class JsdomScraper implements Scraping.IScraper {
         });
     }
 
-    private scrapeValue(document: Document, valueScrapingSettings: Scraping.ValueScrapingSettings[]): Scraping.ValueScrapingResult {
+    private scrapeValue(document: Document, valueScrapingSettings: Api.ValueScrapingSettings[]): Scraping.ValueScrapingResult {
         if (!document)
             throw new Error("document is undefined");
         if (!valueScrapingSettings)
@@ -87,13 +87,13 @@ export default class JsdomScraper implements Scraping.IScraper {
         return result;
     }
 
-    private extractRawValueFromDocument(document: Document, valueScrapingSetting: Scraping.ValueScrapingSettings): string {
+    private extractRawValueFromDocument(document: Document, valueScrapingSetting: Api.ValueScrapingSettings): string {
         const extractMethod = valueScrapingSetting.extract || "queryselector";
 
         switch (extractMethod) {
             case "queryselector":
             {
-                const querySelectorSettings = valueScrapingSetting as Scraping.QuerySelectorExtractSettings;
+                const querySelectorSettings = valueScrapingSetting as Api.QuerySelectorExtractSettings;
 
                 if (!querySelectorSettings.elementSelector)
                     throw new Error(`elementSelector is missing`);
@@ -111,7 +111,7 @@ export default class JsdomScraper implements Scraping.IScraper {
             };
             case "regex":
             {
-                const regexSettings = valueScrapingSetting as Scraping.RegexExtractSettings;
+                const regexSettings = valueScrapingSetting as Api.RegexExtractSettings;
                 if (!regexSettings.regex)
                     throw new Error("regex missing");
 
