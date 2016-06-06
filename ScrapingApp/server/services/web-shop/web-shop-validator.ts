@@ -13,8 +13,7 @@ export default class WebShopValidator {
 
         
         this.webShopValidator = validator.isAnyObject()
-            .withRequired("title", validator.isString())
-            .withOptional("deliveryMethods", validator.isArray(this.deliveryMethodValidator));
+            .withRequired("title", validator.isString());
     }
 
     validate(webShop: Api.WebShop): Promise<Api.ValidationResult> {

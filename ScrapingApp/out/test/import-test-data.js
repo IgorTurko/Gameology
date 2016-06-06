@@ -269,8 +269,7 @@
 	            .withRequired("deliveryMethod", validator.isString())
 	            .withRequired("price", validator.isNumber({ min: 0 }));
 	        this.webShopValidator = validator.isAnyObject()
-	            .withRequired("title", validator.isString())
-	            .withOptional("deliveryMethods", validator.isArray(this.deliveryMethodValidator));
+	            .withRequired("title", validator.isString());
 	    }
 	    WebShopValidator.prototype.validate = function (webShop) {
 	        var _this = this;
