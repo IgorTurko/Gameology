@@ -136,7 +136,8 @@
 	    Database.Collections = {
 	        sessions: "sessions",
 	        webshops: "webshops",
-	        products: "products"
+	        products: "products",
+	        users: "users"
 	    };
 	    return Database;
 	}());

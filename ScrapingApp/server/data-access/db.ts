@@ -18,7 +18,8 @@ export default class Database {
     static Collections = {
         sessions: "sessions",
         webshops: "webshops",
-        products: "products"
+        products: "products",
+        users: "users"
     };
 
     collection(collection: string): Promise<mongo.Collection> {

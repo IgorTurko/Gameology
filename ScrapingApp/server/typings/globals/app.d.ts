@@ -146,3 +146,16 @@ declare namespace Products {
         setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues, log: Api.ScrapeLog): Promise<Api.Product>;
     }
 }
+
+declare namespace Users {
+
+    interface UserAccount {
+        userName: string;
+        password: string;
+        isActive: boolean;
+    }
+
+    interface IUserAccountStorage {
+        findByUserName(userName: string): Promise<UserAccount>;
+    }
+}
