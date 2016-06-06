@@ -1,12 +1,10 @@
 ﻿/// <reference path="./../typings/index.d.ts" />
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import Product = Api.Product;
-import Shop = Api.WebShop;
 
 interface GridProps extends React.Props<any> {
-    products: Product[];
-    shops: Shop[];
+    products: Api.Product[];
+    shops: Api.WebShop[];
 }
 
 export default class ProductsGrid extends React.Component<GridProps, {}> {
@@ -15,7 +13,9 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
             <div className="row">
                 <div className="col-md-2">Product</div>
                 {
-                    this.props.shops.map(shop => <div className="col-md-2">shop.title</div>)
+                    this.props
+                        .shops
+                        .map(shop => (<div className="col-md-2">{ shop.title }</div>))
                 }
             </div>);
     };
@@ -29,13 +29,13 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
             return (<div className="row">
                 <div className="col-md-2">{product.title}</div>
                 {
-                    this.props.shops.map(shop => {
+                    this.props.shops.map(shop => (
                         <div className="col-md-2">
                             <div>{product.scrapingUrls[shop.id]}</div>
                             <div>{product.values[shop.id].image}</div>
                             <div>{product.values[shop.id].price}</div>
                         </div>
-                    })
+                    ))
                 }
             </div>);
         });
