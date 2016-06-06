@@ -22,20 +22,21 @@ export default class WebShopService {
         return this.storage.one(webShopId);
     }
 
-    save(webShop: Api.WebShop): Promise<Api.ValidationResult> {
+    save(webShop: Api.WebShop): Promise<Api.WebShop | Api.ValidationResult> {
         if (!webShop)
             throw new Error("webShop is undefined");
 
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             this.validator
                 .validate(webShop)
                 .then(validationResult => {
                     if (!validationResult.isValid)
-                        reject(validationResult);
+                        resolve(validationResult);
                     else
                         this.storage
                             .save(webShop)
-                            .then(() => resolve(validationResult));
+                            .then(() => this.one(webShop.id))
+                            .then(entity => resolve(entity));
                 });
         });
     }

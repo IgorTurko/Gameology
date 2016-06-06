@@ -32,7 +32,8 @@ export default class ProductService {
                     else {
                         this.storage
                             .save(product)
-                            .then(() => resolve(product));
+                            .then(() => this.one(product.id))
+                            .then(entity => resolve(entity));
                     }
                 });
         });

@@ -242,16 +242,17 @@
 	        var _this = this;
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
-	        return new Promise(function (resolve, reject) {
+	        return new Promise(function (resolve) {
 	            _this.validator
 	                .validate(webShop)
 	                .then(function (validationResult) {
 	                if (!validationResult.isValid)
-	                    reject(validationResult);
+	                    resolve(validationResult);
 	                else
 	                    _this.storage
 	                        .save(webShop)
-	                        .then(function () { return resolve(validationResult); });
+	                        .then(function () { return _this.one(webShop.id); })
+	                        .then(function (entity) { return resolve(entity); });
 	            });
 	        });
 	    };
@@ -412,7 +413,8 @@
 	                else {
 	                    _this.storage
 	                        .save(product)
-	                        .then(function () { return resolve(product); });
+	                        .then(function () { return _this.one(product.id); })
+	                        .then(function (entity) { return resolve(entity); });
 	                }
 	            });
 	        });
