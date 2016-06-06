@@ -2,6 +2,7 @@
 
 import ProductValidator from "./product-validator";
 import * as moment from "moment";
+import * as uuid from "node-uuid";
 
 export default class ProductService {
     private validator = new ProductValidator();
@@ -15,20 +16,25 @@ export default class ProductService {
         return this.storage.all();
     }
 
-    save(product: Api.Product): Promise<Api.ValidationResult> {
+    save(product: Api.Product): Promise<Api.ValidationResult | Api.Product> {
         if (!product)
             throw new Error("product is undefined");
 
-        return new Promise((resolve, reject) => {
+        if (!product.id)
+            product.id = uuid.v1();
+
+        return new Promise(resolve => {
             this.validator
                 .validate(product)
                 .then(validationResult => {
                     if (!validationResult.isValid)
-                        reject(validationResult);
-                    else
+                        resolve(validationResult);
+                    else {
                         this.storage
                             .save(product)
-                            .then(() => resolve(validationResult));
+                            .then(() => this.one(product.id))
+                            .then(entity => resolve(entity));
+                    }
                 });
         });
     }

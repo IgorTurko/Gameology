@@ -56,38 +56,48 @@
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
 	var scrapeService = new scrape_service_1.default(productService, webShopService);
+	function outputProductScrapeResult(scrapeResult, product, shops) {
+	    Object.keys(scrapeResult)
+	        .forEach(function (shopId) {
+	        var shop = shops.filter(function (s) { return s.id === shopId; })[0];
+	        var result = scrapeResult[shopId];
+	        console.log("Scrapping of " + product.title + " successful for shop " + shop.title);
+	        var out = {};
+	        Object.keys(result.values)
+	            .forEach(function (k) {
+	            var v = result.values[k];
+	            if (v.isSuccessful) {
+	                out[k] = v.value;
+	            }
+	            else {
+	                out[k] = {
+	                    error: v.error
+	                };
+	            }
+	        });
+	        console.dir(out);
+	    });
+	}
 	webShopService.all()
 	    .then(function (shops) {
-	    productService.all()
+	    return productService.all()
 	        .then(function (products) {
-	        products.forEach(function (product) {
-	            scrapeService.scrapeProductData(product.id)
-	                .then(function (productScrapeResultHash) {
-	                Object.keys(productScrapeResultHash)
-	                    .forEach(function (shopId) {
-	                    var shop = shops.filter(function (s) { return s.id === shopId; })[0];
-	                    var result = productScrapeResultHash[shopId];
-	                    console.log("Scrapping of " + product.title + " successful for shop " + shop.title);
-	                    var out = {};
-	                    Object.keys(result.values)
-	                        .forEach(function (k) {
-	                        var v = result.values[k];
-	                        if (v.isSuccessful) {
-	                            out[k] = v.value;
-	                        }
-	                        else {
-	                            out[k] = {
-	                                error: v.error
-	                            };
-	                        }
-	                    });
-	                    console.dir(out);
-	                });
-	            });
+	        var productScrapePromises = products.map(function (product) {
+	            return scrapeService.scrapeProductData(product.id)
+	                .then(function (productScrapeResultHash) { return outputProductScrapeResult(productScrapeResultHash, product, shops); });
 	        });
+	        return Promise.all(productScrapePromises);
 	    });
 	})
-	    .catch(function (err) { return console.error(err); });
+	    .then(function () {
+	    console.info("Scraping completed successfully");
+	    process.exit();
+	})
+	    .catch(function (err) {
+	    console.error("Scraping failed");
+	    console.error(err);
+	    process.exit();
+	});
 
 
 /***/ },
@@ -104,7 +114,7 @@
 	            reject(err);
 	        }
 	        else {
-	            console.log("Connected to Mongo server at " + config_1.default.mongoUrl);
+	            console.info("Connected to Mongo server at " + config_1.default.mongoUrl);
 	            resolve(db);
 	        }
 	    });
@@ -126,7 +136,8 @@
 	    Database.Collections = {
 	        sessions: "sessions",
 	        webshops: "webshops",
-	        products: "products"
+	        products: "products",
+	        users: "users"
 	    };
 	    return Database;
 	}());
@@ -192,7 +203,12 @@
 	            throw new Error("webShop is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.webshops)
-	            .then(function (c) { return c.updateOne({ id: webShop.id }, webShop, { upsert: true }); })
+	            .then(function (c) { return c.updateOne({ id: webShop.id }, {
+	            $set: {
+	                title: webShop.title,
+	                delivery: webShop.delivery
+	            }
+	        }); })
 	            .then(function () { return webShop; });
 	    };
 	    return MongoWebShopStorage;
@@ -227,16 +243,17 @@
 	        var _this = this;
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
-	        return new Promise(function (resolve, reject) {
+	        return new Promise(function (resolve) {
 	            _this.validator
 	                .validate(webShop)
 	                .then(function (validationResult) {
 	                if (!validationResult.isValid)
-	                    reject(validationResult);
+	                    resolve(validationResult);
 	                else
 	                    _this.storage
 	                        .save(webShop)
-	                        .then(function () { return resolve(validationResult); });
+	                        .then(function () { return _this.one(webShop.id); })
+	                        .then(function (entity) { return resolve(entity); });
 	            });
 	        });
 	    };
@@ -259,8 +276,7 @@
 	            .withRequired("deliveryMethod", validator.isString())
 	            .withRequired("price", validator.isNumber({ min: 0 }));
 	        this.webShopValidator = validator.isAnyObject()
-	            .withRequired("title", validator.isString())
-	            .withOptional("deliveryMethods", validator.isArray(this.deliveryMethodValidator));
+	            .withRequired("title", validator.isString());
 	    }
 	    WebShopValidator.prototype.validate = function (webShop) {
 	        var _this = this;
@@ -323,7 +339,13 @@
 	            .collection(db_1.default.Collections.products)
 	            .then(function (c) { return c.updateOne({
 	            id: product.id
-	        }, product, {
+	        }, {
+	            $set: {
+	                id: product.id,
+	                title: product.title,
+	                scrapingUrls: product.scrapingUrls
+	            }
+	        }, {
 	            upsert: true
 	        }); })
 	            .then(function () { return product; });
@@ -365,6 +387,7 @@
 	"use strict";
 	var product_validator_1 = __webpack_require__(11);
 	var moment = __webpack_require__(12);
+	var uuid = __webpack_require__(20);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -379,16 +402,20 @@
 	        var _this = this;
 	        if (!product)
 	            throw new Error("product is undefined");
-	        return new Promise(function (resolve, reject) {
+	        if (!product.id)
+	            product.id = uuid.v1();
+	        return new Promise(function (resolve) {
 	            _this.validator
 	                .validate(product)
 	                .then(function (validationResult) {
 	                if (!validationResult.isValid)
-	                    reject(validationResult);
-	                else
+	                    resolve(validationResult);
+	                else {
 	                    _this.storage
 	                        .save(product)
-	                        .then(function () { return resolve(validationResult); });
+	                        .then(function () { return _this.one(product.id); })
+	                        .then(function (entity) { return resolve(entity); });
+	                }
 	            });
 	        });
 	    };
@@ -547,7 +574,7 @@
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	__webpack_require__(17);
+	__webpack_require__(21);
 	var jsdom = __webpack_require__(18);
 	var value_parser_1 = __webpack_require__(19);
 	var JsdomScraper = (function () {
@@ -676,22 +703,7 @@
 
 
 /***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	/// <reference path="../typings/index.d.ts" />
-	Array.prototype.toHash = function toHash(keySelector, valueSelector) {
-	    valueSelector = valueSelector || (function (e) { return (e); });
-	    return this.reduce(function (hash, elem) {
-	        var key = keySelector(elem);
-	        var value = valueSelector(elem);
-	        hash[key] = value;
-	        return hash;
-	    }, {});
-	};
-
-
-/***/ },
+/* 17 */,
 /* 18 */
 /***/ function(module, exports) {
 
@@ -725,6 +737,34 @@
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ValueParserHash;
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	module.exports = require("node-uuid");
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	/// <reference path="typings/index.d.ts" />
+	if (!Array.prototype.toHash) {
+	    Array.prototype.toHash = function toHash(keySelector, valueSelector) {
+	        valueSelector = valueSelector || (function (e) { return (e); });
+	        return this.reduce(function (hash, elem) {
+	            var key = keySelector(elem);
+	            var value = valueSelector(elem);
+	            hash[key] = value;
+	            return hash;
+	        }, {});
+	    };
+	}
+	if (!Object.entries) {
+	    Object.entries = function (obj) { return Object.keys(obj)
+	        .map(function (key) { return ([key, obj[key]]); }); };
+	}
 
 
 /***/ }

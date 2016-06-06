@@ -1,6 +1,6 @@
 ﻿/// <reference path="../../server/typings/index.d.ts" />
 
-export const webShops: WebShops.WebShop[] =
+export const webShops: Api.WebShop[] =
 [
     {
         id: "gameology",

@@ -6,7 +6,7 @@ import WebShopService from "./web-shop/web-shop-service";
 import JsdomScraper from "../scrapers/jsdom-scraper";
 
 interface WebShopHash {
-    [webShopId: string]: WebShops.WebShop;
+    [webShopId: string]: Api.WebShop;
 }
 
 export default class ScrapeService implements Scraping.IScrapeService {
@@ -25,7 +25,7 @@ export default class ScrapeService implements Scraping.IScrapeService {
             .then(shops => shops.toHash(s => s.id));
     }
 
-    scrapeProductData(productId: string): Promise<Scraping.WebShopScrapeResult> {
+    scrapeProductData(productId: string): Promise<Scraping.ProductScrapeResult> {
         if (!productId)
             throw new Error("productId is undefined");
 

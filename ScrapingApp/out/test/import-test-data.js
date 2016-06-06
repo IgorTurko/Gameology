@@ -87,6 +87,10 @@
 	addWebShop(web_shops_1.webShops[0])
 	    .then(function () {
 	    return addProduct(products_1.products[0]);
+	})
+	    .then(function () {
+	    console.info("Test data added.");
+	    process.exit();
 	});
 
 
@@ -104,7 +108,7 @@
 	            reject(err);
 	        }
 	        else {
-	            console.log("Connected to Mongo server at " + config_1.default.mongoUrl);
+	            console.info("Connected to Mongo server at " + config_1.default.mongoUrl);
 	            resolve(db);
 	        }
 	    });
@@ -126,7 +130,8 @@
 	    Database.Collections = {
 	        sessions: "sessions",
 	        webshops: "webshops",
-	        products: "products"
+	        products: "products",
+	        users: "users"
 	    };
 	    return Database;
 	}());
@@ -192,7 +197,12 @@
 	            throw new Error("webShop is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.webshops)
-	            .then(function (c) { return c.updateOne({ id: webShop.id }, webShop, { upsert: true }); })
+	            .then(function (c) { return c.updateOne({ id: webShop.id }, {
+	            $set: {
+	                title: webShop.title,
+	                delivery: webShop.delivery
+	            }
+	        }); })
 	            .then(function () { return webShop; });
 	    };
 	    return MongoWebShopStorage;
@@ -227,16 +237,17 @@
 	        var _this = this;
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
-	        return new Promise(function (resolve, reject) {
+	        return new Promise(function (resolve) {
 	            _this.validator
 	                .validate(webShop)
 	                .then(function (validationResult) {
 	                if (!validationResult.isValid)
-	                    reject(validationResult);
+	                    resolve(validationResult);
 	                else
 	                    _this.storage
 	                        .save(webShop)
-	                        .then(function () { return resolve(validationResult); });
+	                        .then(function () { return _this.one(webShop.id); })
+	                        .then(function (entity) { return resolve(entity); });
 	            });
 	        });
 	    };
@@ -259,8 +270,7 @@
 	            .withRequired("deliveryMethod", validator.isString())
 	            .withRequired("price", validator.isNumber({ min: 0 }));
 	        this.webShopValidator = validator.isAnyObject()
-	            .withRequired("title", validator.isString())
-	            .withOptional("deliveryMethods", validator.isArray(this.deliveryMethodValidator));
+	            .withRequired("title", validator.isString());
 	    }
 	    WebShopValidator.prototype.validate = function (webShop) {
 	        var _this = this;
@@ -323,7 +333,13 @@
 	            .collection(db_1.default.Collections.products)
 	            .then(function (c) { return c.updateOne({
 	            id: product.id
-	        }, product, {
+	        }, {
+	            $set: {
+	                id: product.id,
+	                title: product.title,
+	                scrapingUrls: product.scrapingUrls
+	            }
+	        }, {
 	            upsert: true
 	        }); })
 	            .then(function () { return product; });
@@ -365,6 +381,7 @@
 	"use strict";
 	var product_validator_1 = __webpack_require__(11);
 	var moment = __webpack_require__(12);
+	var uuid = __webpack_require__(20);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -379,16 +396,20 @@
 	        var _this = this;
 	        if (!product)
 	            throw new Error("product is undefined");
-	        return new Promise(function (resolve, reject) {
+	        if (!product.id)
+	            product.id = uuid.v1();
+	        return new Promise(function (resolve) {
 	            _this.validator
 	                .validate(product)
 	                .then(function (validationResult) {
 	                if (!validationResult.isValid)
-	                    reject(validationResult);
-	                else
+	                    resolve(validationResult);
+	                else {
 	                    _this.storage
 	                        .save(product)
-	                        .then(function () { return resolve(validationResult); });
+	                        .then(function () { return _this.one(product.id); })
+	                        .then(function (entity) { return resolve(entity); });
+	                }
 	            });
 	        });
 	    };
@@ -664,6 +685,17 @@
 	    },
 	];
 
+
+/***/ },
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */
+/***/ function(module, exports) {
+
+	module.exports = require("node-uuid");
 
 /***/ }
 /******/ ]);

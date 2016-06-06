@@ -16,7 +16,7 @@ const db = new Database();
 const webShopService = new WebShopService(new MongoWebShopStorage(db));
 const productService = new ProductService(new MongoProductStorage(db));
 
-function addWebShop(webShop: WebShops.WebShop): Promise<any> {
+function addWebShop(webShop: Api.WebShop): Promise<any> {
     return webShopService.save(webShop)
         .then(() => {
             console.info(`Web shop ${webShop.title} added.`);
@@ -51,4 +51,8 @@ function addProduct(product: Api.Product): Promise<any> {
 addWebShop(webShops[0])
     .then(() => {
         return addProduct(products[0]);
+    })
+    .then(() => {
+        console.info("Test data added.");
+        process.exit();
     });

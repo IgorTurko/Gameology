@@ -33,12 +33,18 @@ export default class MongoProductStorage implements Products.IProductStorage {
         return this.db
             .collection(Database.Collections.products)
             .then(c => c.updateOne({
-                    id: product.id
-                },
-                product,
-                {
-                    upsert: true
-                }))
+                id: product.id
+            },
+            {
+                $set: {
+                    id: product.id,
+                    title: product.title,
+                    scrapingUrls: product.scrapingUrls
+                }
+            },
+            {
+                upsert: true
+            }))
             .then(() => product);
     }
 

@@ -1,31 +1,7 @@
 ﻿/// <reference path="./typings/index.d.ts"/>
-require("./utils/array-extensions");
 
-import * as http  from "http";
-import * as express  from "express";
+import * as webServer from "./web-server";
+import * as scrapeServer from "./scrape-server";
 
-import * as bodyparser from "body-parser";
-import * as cookieparser from "cookie-parser";
-
-import config from "./config";
-
-import authenticationRouter from "./routes/authentication-route";
-import productRouter from "./routes/product-route";
-
-let server = express();
-
-server.use(cookieparser());
-server.use("/api", bodyparser());
-
-// server.use("/api", authenticationRouter);
-server.use("/api/products", productRouter);
-
-
-server.use("/", express.static("./out/client", {
-    index: "index.html"
-}));
-
-const port = process.env.PORT || config.fallbackPort;
-server.listen(port, () => {
-    console.log(`Web server started at http://localhost:${port}/`);
-});
+scrapeServer.run();
+webServer.run();

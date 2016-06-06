@@ -1,15 +1,30 @@
 ﻿/// <reference path="../../../api.d.ts"/>
 
-declare interface Configuration {
+/**
+ * Application configuration.
+ */
+interface Configuration {
+    /** Web server port would be used if environment variable doesn't set a port. */
     fallbackPort: number;
+    /** Mongo connection URL */
     mongoUrl: string;
+    /** Maximum number of concurrently running scraping functions */
+    scrapingThreads: number;
+    /** Array of cron format schedules which whould be used for run scraping */
+    schedules: string[];
+    /** Delay in milliseconds after scraping each product. */
+    delayBetweenShopScrapingMs: number;
 }
 
 /**
  * Array extension
  */
-declare interface Array<T> {
+interface Array<T> {
     toHash<K>(keySelector: (elem: T) => string, valueSelector?: (elem: T) => K): { [key: string]: K; };
+}
+
+interface ObjectConstructor {
+    entries(obj: any): any[][];
 }
 
 
@@ -48,62 +63,7 @@ declare namespace Authentication {
 
 declare namespace Scraping {
 
-    /**
-     * Value settings for the scraping
-     */
-    interface ValueScrapingInfo {
-        /**
-         * Value type. Can be one of value "number", "string" or "relative-url".
-         * Default is "string".
-         */
-        type?: "number" | "string",
-        /**
-         * Boolean value indicates whether failing of value scraping leads to total scraping fail.
-         * Default false.
-         */
-        failOnError?: boolean;
-
-        /**
-         * How the value is extracted.
-         * There are two supported modes:
-         * - queryselector uses document.querySelector() method for finding element
-         * - regex - uses regular expression on document.innerHTML to capture data.
-         *
-         * Default mode is queryselector.
-         */
-        extract?: "queryselector" | "regex";
-    }
-
-    interface QuerySelectorExtractSettings {
-        elementSelector: string;
-        attribute?: string;
-    }
-
-    interface RegexExtractSettings {
-        regex: string;
-    }
-
-    type ValueScrapingSettings = ValueScrapingInfo & (QuerySelectorExtractSettings | RegexExtractSettings);
-
-    /**
-     * Scraping settings defines how to extract data from pages of specified type.
-     * Scraping settings is hash of value name and array of scraping settings.
-     *
-     * Each key in hash corresponds to scraped value.
-     * Scraping settings for value is array of objects.
-     *
-     * Scraper will try to extract value with each of setting.
-     * If extracting would be successful the next settings will not be tested.
-     *
-     * If any setting has failOnError === true and scraping would fail for this setting the value scraping would be error.
-     * Usually the last setting only should set failOnError to true.
-     */
-    interface ScrapingSettings {
-        title: ValueScrapingSettings[];
-        price: ValueScrapingSettings[];
-        image: ValueScrapingSettings[];
-        [valueName: string]: ValueScrapingSettings[];
-    }
+    
 
     interface ScrapingError {
         errorMessage: string;
@@ -117,7 +77,7 @@ declare namespace Scraping {
         /**
          * First setting correctly parses a document.
          */
-        settings: ValueScrapingSettings;
+        settings: Api.ValueScrapingSettings;
     }
 
     interface WebShopScrapingResult {
@@ -142,10 +102,10 @@ declare namespace Scraping {
          * @param values Settings for scraping individual values from the page.
          * @returns Promise which resolves or rejects with ScrapingResult.
          */
-        scrape(url: string, values: ScrapingSettings): Promise<WebShopScrapingResult>;
+        scrape(url: string, values: Api.ScrapingSettings): Promise<WebShopScrapingResult>;
     }
 
-    interface WebShopScrapeResult {
+    interface ProductScrapeResult {
         [webShopId: string]: WebShopScrapingResult;
     }
 
@@ -153,36 +113,21 @@ declare namespace Scraping {
         /**
          * Scrapes product data for all shops and saves scraping result.
          */
-        scrapeProductData(productId: string): Promise<WebShopScrapeResult>;
+        scrapeProductData(productId: string): Promise<ProductScrapeResult>;
     }
 }
 
 declare namespace WebShops {
-    /**
-     * Setting for web shop scraping.
-     * Includes common information like title and delivery prices and
-     * scraper settings.
-     */
-    interface WebShop {
-        id: string;
-        isBase: boolean;
-        title: string;
-        scrapingSettings: Scraping.ScrapingSettings;
-        delivery?: Array<{
-            deliveryMethod: string;
-            price: number;
-        }>;
-    }
-
+    
     /**
      * Persistent storage for web shop.
      */
     interface IWebShopStorage {
-        all(): Promise<WebShop[]>;
+        all(): Promise<Api.WebShop[]>;
 
-        one(id: string): Promise<WebShop>;
+        one(id: string): Promise<Api.WebShop>;
 
-        save(webShop: WebShop): Promise<WebShop>;
+        save(webShop: Api.WebShop): Promise<Api.WebShop>;
     }
 }
 
@@ -199,5 +144,18 @@ declare namespace Products {
         save(product: Api.Product): Promise<Api.Product>;
 
         setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues, log: Api.ScrapeLog): Promise<Api.Product>;
+    }
+}
+
+declare namespace Users {
+
+    interface UserAccount {
+        userName: string;
+        password: string;
+        isActive: boolean;
+    }
+
+    interface IUserAccountStorage {
+        findByUserName(userName: string): Promise<UserAccount>;
     }
 }

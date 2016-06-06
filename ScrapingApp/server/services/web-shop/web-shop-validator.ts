@@ -13,11 +13,10 @@ export default class WebShopValidator {
 
         
         this.webShopValidator = validator.isAnyObject()
-            .withRequired("title", validator.isString())
-            .withOptional("deliveryMethods", validator.isArray(this.deliveryMethodValidator));
+            .withRequired("title", validator.isString());
     }
 
-    validate(webShop: WebShops.WebShop): Promise<Api.ValidationResult> {
+    validate(webShop: Api.WebShop): Promise<Api.ValidationResult> {
         if (!webShop)
             throw new Error("webShop is undefined");
 
