@@ -33,11 +33,6 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="out\client\assets\app.js" />
-    <Compile Include="out\client\assets\fetch.js" />
-    <Compile Include="out\server\app.js" />
-    <Compile Include="out\test\import-test-data.js" />
-    <Compile Include="out\test\run-page-parsing.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\app.tsx" />
     <Content Include="client\grid\all-products.tsx" />
@@ -49,12 +44,7 @@
     <Content Include="config.json" />
     <Content Include="client\typings.json" />
     <Content Include="client\typings\globals\react\typings.json" />
-    <Content Include="out\client\assets\app.js.map" />
-    <Content Include="out\server\app.js.map" />
-    <Content Include="out\test\import-test-data.js.map" />
-    <Content Include="out\test\run-page-parsing.js.map" />
     <Content Include="package.json" />
-    <Content Include="out\client\index.html" />
     <Content Include="server-test\tsconfig.json" />
     <Content Include="server\tsconfig.json" />
     <Content Include="server\typings.json" />
@@ -83,15 +73,10 @@
     <Folder Include="client\typings\globals\es6-promise\" />
     <Folder Include="client\typings\globals\react-dom\" />
     <Folder Include="client\typings\globals\whatwg-fetch\" />
-    <Folder Include="out\client\assets\" />
-    <Folder Include="out\client\" />
-    <Folder Include="out\test\" />
-    <Folder Include="out\server\" />
     <Folder Include="server-test\" />
     <Folder Include="client\typings\" />
     <Folder Include="client\typings\globals\" />
     <Folder Include="client\typings\globals\react\" />
-    <Folder Include="out\" />
     <Folder Include="server-test\test-data\" />
     <Folder Include="server-test\test-parsing\" />
     <Folder Include="server\" />
