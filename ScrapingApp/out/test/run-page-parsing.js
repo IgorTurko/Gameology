@@ -333,7 +333,13 @@
 	            .collection(db_1.default.Collections.products)
 	            .then(function (c) { return c.updateOne({
 	            id: product.id
-	        }, product, {
+	        }, {
+	            $set: {
+	                id: product.id,
+	                title: product.title,
+	                scrapingUrls: product.scrapingUrls
+	            }
+	        }, {
 	            upsert: true
 	        }); })
 	            .then(function () { return product; });
