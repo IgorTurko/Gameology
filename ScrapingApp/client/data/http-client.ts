@@ -6,6 +6,10 @@ export default class HttpClient {
         return this.fetch(url);
     };
 
+    post<T>(url: string, body: any): Promise<T> {
+        return this.fetch(url, body);
+    };
+
     private fetch<T>(url: string, body?: any): Promise<T> {
         const options: RequestInit = {
             credentials: 'same-origin'
@@ -25,7 +29,7 @@ export default class HttpClient {
                 }
 
                 if (response.status == 401) {
-                    eventBus.emit(Events.AuthorizationRequired)
+                    eventBus.emit(Events.AuthorizationError)
                 } else {
                     eventBus.emit(Events.NetworkError);
                 }

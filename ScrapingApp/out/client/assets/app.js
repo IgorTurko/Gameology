@@ -48,18 +48,30 @@
 	"use strict";
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(2);
-	var search_box_1 = __webpack_require__(3);
-	var all_products_1 = __webpack_require__(4);
-	var product_repo_1 = __webpack_require__(5);
-	var shop_repo_1 = __webpack_require__(16);
-	var event_bus_1 = __webpack_require__(7);
+	var login_form_1 = __webpack_require__(3);
+	var search_box_1 = __webpack_require__(4);
+	var all_products_1 = __webpack_require__(5);
+	var product_repo_1 = __webpack_require__(6);
+	var shop_repo_1 = __webpack_require__(17);
+	var login_repo_1 = __webpack_require__(18);
+	var event_bus_1 = __webpack_require__(8);
 	var App = (function () {
 	    function App() {
 	        var _this = this;
 	        this.callbacks = [];
 	        this.productRepository = new product_repo_1.default();
 	        this.shopRepository = new shop_repo_1.default();
-	        event_bus_1.eventBus.addListener(event_bus_1.Events.AuthorizationRequired, function () { return _this.onAuthorizationRequired(); });
+	        this.loginRepository = new login_repo_1.default();
+	        this.state = {
+	            products: [],
+	            shops: [],
+	            isAuthenticated: true,
+	            isNetworkError: false,
+	            authenticationErrorMessage: null
+	        };
+	        event_bus_1.eventBus.addListener(event_bus_1.Events.AuthorizationError, function () { return _this.onAuthorizationError(); });
+	        event_bus_1.eventBus.addListener(event_bus_1.Events.NetworkError, function () { return _this.onNetworkError(); });
+	        event_bus_1.eventBus.addListener(event_bus_1.Events.DoLogin, function (credentials) { return _this.onDoLogin(credentials); });
 	    }
 	    App.prototype.change = function (callback) {
 	        this.callbacks.push(callback);
@@ -71,23 +83,46 @@
 	            .all([this.productRepository.getAllProducts(), this.shopRepository.getAllShops()])
 	            .then(function (_a) {
 	            var products = _a[0], shops = _a[1];
-	            var state = {
-	                products: products,
-	                shops: shops
-	            };
-	            _this.callbacks.forEach(function (callback) {
-	                callback(state);
-	            });
+	            _this.state.products = products;
+	            _this.state.shops = shops;
+	            _this.refreshState();
 	        });
 	    };
-	    App.prototype.onAuthorizationRequired = function () {
-	        console.log("hi");
+	    App.prototype.refreshState = function () {
+	        var _this = this;
+	        this.callbacks.forEach(function (callback) {
+	            callback(_this.state);
+	        });
+	    };
+	    App.prototype.onAuthorizationError = function () {
+	        this.state.isAuthenticated = false;
+	        this.refreshState();
+	    };
+	    App.prototype.onNetworkError = function () {
+	        this.state.isNetworkError = true;
+	        this.refreshState();
+	    };
+	    App.prototype.onDoLogin = function (credentials) {
+	        var _this = this;
+	        this.loginRepository.login(credentials)
+	            .then(function () {
+	            _this.state.isAuthenticated = true;
+	            _this.state.authenticationErrorMessage = null;
+	            _this.start();
+	        })
+	            .catch(function (error) {
+	            _this.state.authenticationErrorMessage = error;
+	        });
 	    };
 	    return App;
 	}());
 	var app = new App();
 	app.change(function (state) {
-	    ReactDOM.render(React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {products: state.products, shops: state.shops})), document.getElementsByClassName("container")[0]);
+	    ReactDOM.render(React.createElement("div", {className: "container"}, (function () {
+	        if (!state.isAuthenticated) {
+	            return React.createElement(login_form_1.default, {errorMessage: state.authenticationErrorMessage, onLogin: function (credentials) { return event_bus_1.eventBus.emit(event_bus_1.Events.DoLogin, credentials); }});
+	        }
+	    })(), React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {products: state.products, shops: state.shops})), document.getElementsByClassName("container")[0]);
 	})
 	    .start();
 
@@ -106,6 +141,46 @@
 
 /***/ },
 /* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	///<reference path="../typings/index.d.ts" />
+	var React = __webpack_require__(1);
+	var LoginForm = (function (_super) {
+	    __extends(LoginForm, _super);
+	    function LoginForm() {
+	        _super.apply(this, arguments);
+	    }
+	    LoginForm.prototype.onFormSubmit = function (e) {
+	        e.preventDefault();
+	        var credentials = {
+	            login: e.target["login"].value,
+	            password: e.target["password"].value
+	        };
+	        if (this.props.onLogin) {
+	            this.props.onLogin(credentials);
+	        }
+	    };
+	    LoginForm.prototype.render = function () {
+	        var _this = this;
+	        return (React.createElement("div", null, React.createElement("form", {className: "form-inline", onSubmit: function (e) { return _this.onFormSubmit(e); }}, React.createElement("div", {className: "form-group"}, React.createElement("label", {className: "sr-only", for: "login"}, "Login"), React.createElement("input", {type: "text", className: "form-control", name: "login", id: "login", placeholder: "Login"})), React.createElement("div", {className: "form-group"}, React.createElement("label", {className: "sr-only", for: "password"}, "Password"), React.createElement("input", {type: "password", className: "form-control", name: "password", id: "password", placeholder: "Password"})), React.createElement("button", {type: "submit", className: "btn btn-default"}, "Log in")), (function () {
+	            if (_this.props.errorMessage)
+	                return React.createElement("div", {className: "alert alert-danger", role: "alert"}, _this.props.errorMessage);
+	        })()));
+	    };
+	    return LoginForm;
+	}(React.Component));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = LoginForm;
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -135,7 +210,7 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -184,11 +259,11 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http_client_1 = __webpack_require__(6);
+	var http_client_1 = __webpack_require__(7);
 	var ProductRepository = (function () {
 	    function ProductRepository() {
 	        this.httpClient = new http_client_1.default();
@@ -204,17 +279,21 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts"/>
-	var event_bus_1 = __webpack_require__(7);
+	var event_bus_1 = __webpack_require__(8);
 	var HttpClient = (function () {
 	    function HttpClient() {
 	    }
 	    HttpClient.prototype.get = function (url) {
 	        return this.fetch(url);
+	    };
+	    ;
+	    HttpClient.prototype.post = function (url, body) {
+	        return this.fetch(url, body);
 	    };
 	    ;
 	    HttpClient.prototype.fetch = function (url, body) {
@@ -233,7 +312,7 @@
 	                    return;
 	                }
 	                if (response.status == 401) {
-	                    event_bus_1.eventBus.emit(event_bus_1.Events.AuthorizationRequired);
+	                    event_bus_1.eventBus.emit(event_bus_1.Events.AuthorizationError);
 	                }
 	                else {
 	                    event_bus_1.eventBus.emit(event_bus_1.Events.NetworkError);
@@ -252,17 +331,18 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="./typings/index.d.ts" />
 	"use strict";
-	var fbemitter_1 = __webpack_require__(8);
+	var fbemitter_1 = __webpack_require__(9);
 	var Events = (function () {
 	    function Events() {
 	    }
-	    Events.AuthorizationRequired = "authorization-required";
+	    Events.AuthorizationError = "authorization-error";
 	    Events.NetworkError = "network-error";
+	    Events.DoLogin = "do-login";
 	    return Events;
 	}());
 	exports.Events = Events;
@@ -271,7 +351,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -284,14 +364,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(9)
+	  EventEmitter: __webpack_require__(10)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -310,11 +390,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(11);
-	var EventSubscriptionVendor = __webpack_require__(13);
+	var EmitterSubscription = __webpack_require__(12);
+	var EventSubscriptionVendor = __webpack_require__(14);
 	
-	var emptyFunction = __webpack_require__(15);
-	var invariant = __webpack_require__(14);
+	var emptyFunction = __webpack_require__(16);
+	var invariant = __webpack_require__(15);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -485,10 +565,10 @@
 	})();
 	
 	module.exports = BaseEventEmitter;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -588,7 +668,7 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -609,7 +689,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(12);
+	var EventSubscription = __webpack_require__(13);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -641,7 +721,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	/**
@@ -695,7 +775,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -714,7 +794,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(14);
+	var invariant = __webpack_require__(15);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -801,10 +881,10 @@
 	})();
 	
 	module.exports = EventSubscriptionVendor;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -856,10 +936,10 @@
 	}
 	
 	module.exports = invariant;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	/**
@@ -901,11 +981,11 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http_client_1 = __webpack_require__(6);
+	var http_client_1 = __webpack_require__(7);
 	var ShopRepository = (function () {
 	    function ShopRepository() {
 	        this.httpClient = new http_client_1.default();
@@ -918,6 +998,26 @@
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ShopRepository;
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var http_client_1 = __webpack_require__(7);
+	var LoginRepository = (function () {
+	    function LoginRepository() {
+	        this.httpClient = new http_client_1.default();
+	    }
+	    LoginRepository.prototype.login = function (credentials) {
+	        return this.httpClient.post('/api/login', credentials);
+	    };
+	    ;
+	    return LoginRepository;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = LoginRepository;
 
 
 /***/ }

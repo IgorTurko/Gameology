@@ -3,8 +3,9 @@
 import {EventEmitter} from "fbemitter";
 
 class Events{
-    static AuthorizationRequired = "authorization-required";
+    static AuthorizationError = "authorization-error";
     static NetworkError = "network-error";
+    static DoLogin = "do-login";
 }
 
 const eventBus = new EventEmitter();

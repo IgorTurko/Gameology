@@ -41,6 +41,7 @@
     <Compile Include="webpack.config.js" />
     <Content Include="client\app.tsx" />
     <Content Include="client\grid\all-products.tsx" />
+    <Content Include="client\login\login-form.tsx" />
     <Content Include="client\search\search-box.tsx" />
     <Content Include="client\tsconfig.json" />
     <Content Include="client\typings\globals\es6-promise\typings.json" />
@@ -81,6 +82,7 @@
     <Folder Include="client\" />
     <Folder Include="client\grid\" />
     <Folder Include="client\data\" />
+    <Folder Include="client\login\" />
     <Folder Include="client\search\" />
     <Folder Include="client\typings\globals\es6-promise\" />
     <Folder Include="client\typings\globals\fbemitter\" />
@@ -131,6 +133,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="api.d.ts" />
     <TypeScriptCompile Include="client\data\http-client.ts" />
+    <TypeScriptCompile Include="client\data\login-repo.ts" />
     <TypeScriptCompile Include="client\data\shop-repo.ts" />
     <TypeScriptCompile Include="client\data\product-repo.ts" />
     <TypeScriptCompile Include="client\event-bus.ts" />
