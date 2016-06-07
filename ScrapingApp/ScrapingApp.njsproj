@@ -43,6 +43,7 @@
     <Content Include="client\search\search-box.tsx" />
     <Content Include="client\tsconfig.json" />
     <Content Include="client\typings\globals\es6-promise\typings.json" />
+    <Content Include="client\typings\globals\fbemitter\typings.json" />
     <Content Include="client\typings\globals\react-dom\typings.json" />
     <Content Include="client\typings\globals\whatwg-fetch\typings.json" />
     <Content Include="config.json" />
@@ -81,6 +82,7 @@
     <Folder Include="client\data\" />
     <Folder Include="client\search\" />
     <Folder Include="client\typings\globals\es6-promise\" />
+    <Folder Include="client\typings\globals\fbemitter\" />
     <Folder Include="client\typings\globals\react-dom\" />
     <Folder Include="client\typings\globals\whatwg-fetch\" />
     <Folder Include="out\" />
@@ -126,9 +128,12 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="api.d.ts" />
+    <TypeScriptCompile Include="client\data\http-client.ts" />
     <TypeScriptCompile Include="client\data\shop-repo.ts" />
     <TypeScriptCompile Include="client\data\product-repo.ts" />
+    <TypeScriptCompile Include="client\event-bus.ts" />
     <TypeScriptCompile Include="client\typings\globals\es6-promise\index.d.ts" />
+    <TypeScriptCompile Include="client\typings\globals\fbemitter\index.d.ts" />
     <TypeScriptCompile Include="client\typings\globals\react-dom\index.d.ts" />
     <TypeScriptCompile Include="client\typings\globals\whatwg-fetch\index.d.ts" />
     <TypeScriptCompile Include="server-test\test-data\import-test-data.ts" />

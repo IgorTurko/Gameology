@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/a47a1eebc160b453b5e36e11a65c8b3bd7fc5448/fbemitter/fbemitter.d.ts",
+    "raw": "registry:dt/fbemitter#2.0.0+20151228063024",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/a47a1eebc160b453b5e36e11a65c8b3bd7fc5448/fbemitter/fbemitter.d.ts"
+  }
+}
