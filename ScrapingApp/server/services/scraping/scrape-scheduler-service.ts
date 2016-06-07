@@ -1,10 +1,10 @@
-﻿/// <reference path="../typings/index.d.ts" />
+﻿/// <reference path="../../typings/index.d.ts" />
 
 import * as schedule from "node-schedule";
 import * as uuid from "node-uuid";
 
 import ScrapeQueueService from "./scrape-queue-service";
-import ProductService from "./products/product-service";
+import ProductService from "../products/product-service";
 
 export default class ScrapeSchedulerService {
     constructor(private queue: ScrapeQueueService,

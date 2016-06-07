@@ -10,7 +10,7 @@ import WebShopService from "../../server/services/web-shop/web-shop-service";
 
 import JsdomScraper from "../../server/scrapers/jsdom-scraper";
 
-import ScrapeService from "../../server/services/scrape-service";
+import ScrapeService from "../../server/services/scraping/scrape-service";
 
 const db = new Database();
 

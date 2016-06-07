@@ -10,9 +10,9 @@ import WebShopService from "./services/web-shop/web-shop-service";
 import MongoProductStorage from "./services/products/mongo-product-storage";
 import ProductService from "./services/products/product-service";
 
-import ScrapeService from "./services/scrape-service";
-import ScrapeQueueService from "./services/scrape-queue-service";
-import ScrapeSchedulerService from "./services/scrape-scheduler-service";
+import ScrapeService from "./services/scraping/scrape-service";
+import ScrapeQueueService from "./services/scraping/scrape-queue-service";
+import ScrapeSchedulerService from "./services/scraping/scrape-scheduler-service";
 
 const db = new Database();
 

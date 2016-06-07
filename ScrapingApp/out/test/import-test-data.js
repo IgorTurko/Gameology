@@ -408,11 +408,6 @@
 	                    _this.storage
 	                        .save(product)
 	                        .then(function () { return _this.one(product.id); })
-	                        .then(function (p) {
-	                        if (_this.scrapeQueueService)
-	                            _this.scrapeQueueService.enqueue(p.id);
-	                        return p;
-	                    })
 	                        .then(function (entity) { return resolve(entity); });
 	                }
 	            });

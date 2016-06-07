@@ -1,9 +1,9 @@
-﻿/// <reference path="../typings/index.d.ts" />
+﻿/// <reference path="../../typings/index.d.ts" />
 
-import ProductService from "./products/product-service";
-import WebShopService from "./web-shop/web-shop-service";
+import ProductService from "../products/product-service";
+import WebShopService from "../web-shop/web-shop-service";
 
-import JsdomScraper from "../scrapers/jsdom-scraper";
+import JsdomScraper from "../../scrapers/jsdom-scraper";
 
 interface WebShopHash {
     [webShopId: string]: Api.WebShop;

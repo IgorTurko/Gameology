@@ -414,11 +414,6 @@
 	                    _this.storage
 	                        .save(product)
 	                        .then(function () { return _this.one(product.id); })
-	                        .then(function (p) {
-	                        if (_this.scrapeQueueService)
-	                            _this.scrapeQueueService.enqueue(p.id);
-	                        return p;
-	                    })
 	                        .then(function (entity) { return resolve(entity); });
 	                }
 	            });
@@ -530,7 +525,7 @@
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../typings/index.d.ts" />
+	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var jsdom_scraper_1 = __webpack_require__(17);
 	var ScrapeService = (function () {
