@@ -1,8 +1,9 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
 
-import ProductValidator from "./product-validator";
 import * as moment from "moment";
 import * as uuid from "node-uuid";
+
+import ProductValidator from "./product-validator";
 
 export default class ProductService {
     private validator = new ProductValidator();

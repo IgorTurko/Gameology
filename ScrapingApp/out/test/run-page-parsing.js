@@ -385,9 +385,9 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var product_validator_1 = __webpack_require__(11);
-	var moment = __webpack_require__(12);
-	var uuid = __webpack_require__(13);
+	var moment = __webpack_require__(11);
+	var uuid = __webpack_require__(12);
+	var product_validator_1 = __webpack_require__(13);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -414,6 +414,11 @@
 	                    _this.storage
 	                        .save(product)
 	                        .then(function () { return _this.one(product.id); })
+	                        .then(function (p) {
+	                        if (_this.scrapeQueueService)
+	                            _this.scrapeQueueService.enqueue(p.id);
+	                        return p;
+	                    })
 	                        .then(function (entity) { return resolve(entity); });
 	                }
 	            });
@@ -476,6 +481,18 @@
 
 /***/ },
 /* 11 */
+/***/ function(module, exports) {
+
+	module.exports = require("moment");
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = require("node-uuid");
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -506,18 +523,6 @@
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ProductValidator;
 
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	module.exports = require("moment");
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	module.exports = require("node-uuid");
 
 /***/ },
 /* 14 */,
