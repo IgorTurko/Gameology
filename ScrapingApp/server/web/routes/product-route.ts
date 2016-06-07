@@ -13,7 +13,7 @@ const productService = new ProductService(new MongoProductStorage(db));
 const router = express.Router();
 
 router.get("/:id", (req, res) => {
-    const productId = req.param("id");
+    const productId = (req.params || {})["id"];
 
     if (!productId) {
         res.send(404, "Not found")

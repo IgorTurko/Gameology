@@ -51,7 +51,7 @@
 	var product_service_1 = __webpack_require__(10);
 	var mongo_web_shop_storage_1 = __webpack_require__(5);
 	var web_shop_service_1 = __webpack_require__(6);
-	var scrape_service_1 = __webpack_require__(16);
+	var scrape_service_1 = __webpack_require__(18);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
@@ -385,9 +385,10 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var product_validator_1 = __webpack_require__(11);
-	var moment = __webpack_require__(12);
-	var uuid = __webpack_require__(13);
+	var moment = __webpack_require__(11);
+	var uuid = __webpack_require__(12);
+	var event_bus_1 = __webpack_require__(13);
+	var product_validator_1 = __webpack_require__(15);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -414,6 +415,10 @@
 	                    _this.storage
 	                        .save(product)
 	                        .then(function () { return _this.one(product.id); })
+	                        .then(function (p) {
+	                        event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, p.id);
+	                        return p;
+	                    })
 	                        .then(function (entity) { return resolve(entity); });
 	                }
 	            });
@@ -476,6 +481,51 @@
 
 /***/ },
 /* 11 */
+/***/ function(module, exports) {
+
+	module.exports = require("moment");
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = require("node-uuid");
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../typings/index.d.ts"/>
+	"use strict";
+	var events_1 = __webpack_require__(14);
+	var EventNames = (function () {
+	    function EventNames() {
+	    }
+	    /**
+	     * Published when product inserted or updated.
+	     * Params is product id: string.
+	     */
+	    EventNames.ProductUpdated = "product-updated";
+	    /**
+	     * Published when product data is scraped.
+	     * Param is product id: string.
+	     */
+	    EventNames.ProductScraped = "product-scraped";
+	    return EventNames;
+	}());
+	exports.EventNames = EventNames;
+	var eventBus = new events_1.EventEmitter();
+	exports.eventBus = eventBus;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	module.exports = require("events");
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -508,26 +558,15 @@
 
 
 /***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	module.exports = require("moment");
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	module.exports = require("node-uuid");
-
-/***/ },
-/* 14 */,
-/* 15 */,
-/* 16 */
+/* 16 */,
+/* 17 */,
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../typings/index.d.ts" />
+	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var jsdom_scraper_1 = __webpack_require__(17);
+	var jsdom_scraper_1 = __webpack_require__(19);
+	var event_bus_1 = __webpack_require__(13);
 	var ScrapeService = (function () {
 	    function ScrapeService(productService, webShopService) {
 	        this.productService = productService;
@@ -548,7 +587,11 @@
 	        return this.webShops.then(function (shops) {
 	            return _this.productService.one(productId)
 	                .then(function (product) { return Promise.all(_this.scrapeProduct(product, shops))
-	                .then(function (results) { return results.toHash(function (e) { return e.webShopId; }, function (e) { return e.scrapingResult; }); }); });
+	                .then(function (results) { return results.toHash(function (e) { return e.webShopId; }, function (e) { return e.scrapingResult; }); }); })
+	                .then(function (r) {
+	                event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductScraped, productId);
+	                return r;
+	            });
 	        });
 	    };
 	    ScrapeService.prototype.scrapeProduct = function (product, shops) {
@@ -575,14 +618,14 @@
 
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	__webpack_require__(18);
-	var jsdom = __webpack_require__(19);
-	var value_parser_1 = __webpack_require__(20);
+	__webpack_require__(20);
+	var jsdom = __webpack_require__(21);
+	var value_parser_1 = __webpack_require__(22);
 	var JsdomScraper = (function () {
 	    function JsdomScraper() {
 	        this.valueParser = new value_parser_1.default();
@@ -709,7 +752,7 @@
 
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports) {
 
 	/// <reference path="typings/index.d.ts" />
@@ -731,13 +774,13 @@
 
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = require("jsdom");
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/index.d.ts"/>

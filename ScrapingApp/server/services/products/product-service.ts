@@ -1,8 +1,11 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
 
-import ProductValidator from "./product-validator";
 import * as moment from "moment";
 import * as uuid from "node-uuid";
+
+import { eventBus, EventNames } from "../event-bus";
+
+import ProductValidator from "./product-validator";
 
 export default class ProductService {
     private validator = new ProductValidator();
@@ -33,6 +36,11 @@ export default class ProductService {
                         this.storage
                             .save(product)
                             .then(() => this.one(product.id))
+                            .then(p => {
+                                eventBus.emit(EventNames.ProductUpdated, p.id);
+
+                                return p;
+                            })
                             .then(entity => resolve(entity));
                     }
                 });

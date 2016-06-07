@@ -51,8 +51,8 @@
 	var web_shop_service_1 = __webpack_require__(6);
 	var mongo_product_storage_1 = __webpack_require__(9);
 	var product_service_1 = __webpack_require__(10);
-	var web_shops_1 = __webpack_require__(14);
-	var products_1 = __webpack_require__(15);
+	var web_shops_1 = __webpack_require__(16);
+	var products_1 = __webpack_require__(17);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
@@ -379,9 +379,10 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var product_validator_1 = __webpack_require__(11);
-	var moment = __webpack_require__(12);
-	var uuid = __webpack_require__(13);
+	var moment = __webpack_require__(11);
+	var uuid = __webpack_require__(12);
+	var event_bus_1 = __webpack_require__(13);
+	var product_validator_1 = __webpack_require__(15);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -408,6 +409,10 @@
 	                    _this.storage
 	                        .save(product)
 	                        .then(function () { return _this.one(product.id); })
+	                        .then(function (p) {
+	                        event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, p.id);
+	                        return p;
+	                    })
 	                        .then(function (entity) { return resolve(entity); });
 	                }
 	            });
@@ -470,6 +475,51 @@
 
 /***/ },
 /* 11 */
+/***/ function(module, exports) {
+
+	module.exports = require("moment");
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = require("node-uuid");
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../typings/index.d.ts"/>
+	"use strict";
+	var events_1 = __webpack_require__(14);
+	var EventNames = (function () {
+	    function EventNames() {
+	    }
+	    /**
+	     * Published when product inserted or updated.
+	     * Params is product id: string.
+	     */
+	    EventNames.ProductUpdated = "product-updated";
+	    /**
+	     * Published when product data is scraped.
+	     * Param is product id: string.
+	     */
+	    EventNames.ProductScraped = "product-scraped";
+	    return EventNames;
+	}());
+	exports.EventNames = EventNames;
+	var eventBus = new events_1.EventEmitter();
+	exports.eventBus = eventBus;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	module.exports = require("events");
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -502,19 +552,7 @@
 
 
 /***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	module.exports = require("moment");
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	module.exports = require("node-uuid");
-
-/***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../server/typings/index.d.ts" />
@@ -629,7 +667,7 @@
 
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../server/typings/index.d.ts" />

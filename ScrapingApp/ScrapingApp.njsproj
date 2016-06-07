@@ -99,6 +99,7 @@
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
     <Folder Include="server\scrapers\" />
+    <Folder Include="server\services\scraping\" />
     <Folder Include="server\services\users\" />
     <Folder Include="server\web\routes\" />
     <Folder Include="server\services\" />
@@ -144,14 +145,15 @@
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
     <TypeScriptCompile Include="server\scrape-server.ts" />
-    <TypeScriptCompile Include="server\services\scrape-queue-service.ts" />
+    <TypeScriptCompile Include="server\services\event-bus.ts" />
+    <TypeScriptCompile Include="server\services\scraping\scrape-queue-service.ts" />
     <TypeScriptCompile Include="server\services\users\mongo-user-account-storage.ts" />
     <TypeScriptCompile Include="server\services\users\user-account-service.ts" />
     <TypeScriptCompile Include="server\web\routes\authentication-route.ts" />
     <TypeScriptCompile Include="server\web\routes\product-route.ts" />
     <TypeScriptCompile Include="server\scrapers\jsdom-scraper.ts" />
-    <TypeScriptCompile Include="server\services\scrape-scheduler-service.ts" />
-    <TypeScriptCompile Include="server\services\scrape-service.ts" />
+    <TypeScriptCompile Include="server\services\scraping\scrape-scheduler-service.ts" />
+    <TypeScriptCompile Include="server\services\scraping\scrape-service.ts" />
     <TypeScriptCompile Include="server\scrapers\value-parser.ts" />
     <TypeScriptCompile Include="server\services\authentication\authentication-token-provider.ts" />
     <TypeScriptCompile Include="server\services\authentication\in-memory-authentication-token-storage.ts" />
