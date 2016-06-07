@@ -30,8 +30,7 @@ router.post("/login", (req, res) => {
                 authenticationMiddleware.signIn(req, res, info.login)
                     .then(() => res.sendStatus(200).end());
             else
-                res.sendStatus(400).end();
-
+                res.sendStatus(401).end();
         });
 });
 

@@ -5,6 +5,8 @@ import WebShopService from "../web-shop/web-shop-service";
 
 import JsdomScraper from "../../scrapers/jsdom-scraper";
 
+import { eventBus, EventNames } from "../event-bus";
+
 interface WebShopHash {
     [webShopId: string]: Api.WebShop;
 }
@@ -32,7 +34,12 @@ export default class ScrapeService implements Scraping.IScrapeService {
         return this.webShops.then(shops => {
             return this.productService.one(productId)
                 .then(product => Promise.all(this.scrapeProduct(product, shops))
-                    .then(results => results.toHash(e => e.webShopId, e => e.scrapingResult)));
+                    .then(results => results.toHash(e => e.webShopId, e => e.scrapingResult)))
+                .then(r => {
+                    eventBus.emit(EventNames.ProductScraped, productId);
+
+                    return r;
+                });
         });
     }
 

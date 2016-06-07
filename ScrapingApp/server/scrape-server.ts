@@ -14,6 +14,8 @@ import ScrapeService from "./services/scraping/scrape-service";
 import ScrapeQueueService from "./services/scraping/scrape-queue-service";
 import ScrapeSchedulerService from "./services/scraping/scrape-scheduler-service";
 
+import { eventBus, EventNames } from "./services/event-bus";
+
 const db = new Database();
 
 
@@ -26,6 +28,13 @@ const queue = new ScrapeQueueService(scrapeService, configuration.scrapingThread
 const scheduler = new ScrapeSchedulerService(queue, productService, configuration.schedules);
 
 export function run() {
+
+    // Re-run scraping when product data is changed.
+    eventBus.on(EventNames.ProductUpdated, productId => {
+        queue.enqueuePriore(productId);
+    });
+
+
     if (scheduler.run())
         console.info("Scrape server running");
     else

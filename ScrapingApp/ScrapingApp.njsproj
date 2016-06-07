@@ -140,6 +140,7 @@
     <TypeScriptCompile Include="server\config.ts" />
     <TypeScriptCompile Include="server\data-access\db.ts" />
     <TypeScriptCompile Include="server\scrape-server.ts" />
+    <TypeScriptCompile Include="server\services\event-bus.ts" />
     <TypeScriptCompile Include="server\services\scraping\scrape-queue-service.ts" />
     <TypeScriptCompile Include="server\services\users\mongo-user-account-storage.ts" />
     <TypeScriptCompile Include="server\services\users\user-account-service.ts" />
