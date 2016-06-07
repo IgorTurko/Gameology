@@ -51,7 +51,7 @@
 	var search_box_1 = __webpack_require__(3);
 	var all_products_1 = __webpack_require__(4);
 	var product_repo_1 = __webpack_require__(5);
-	var shop_repo_1 = __webpack_require__(6);
+	var shop_repo_1 = __webpack_require__(16);
 	var event_bus_1 = __webpack_require__(7);
 	var App = (function () {
 	    function App() {
@@ -185,16 +185,16 @@
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var http_client_1 = __webpack_require__(6);
 	var ProductRepository = (function () {
 	    function ProductRepository() {
+	        this.httpClient = new http_client_1.default();
 	    }
 	    ProductRepository.prototype.getAllProducts = function () {
-	        return fetch('/api/products')
-	            .then(function (response) { return response.json(); })
-	            .then(function (json) { return json; }, function (err) { return console.log('error'); });
+	        return this.httpClient.get('/api/products');
 	    };
 	    ;
 	    return ProductRepository;
@@ -205,22 +205,50 @@
 
 /***/ },
 /* 6 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var ShopRepository = (function () {
-	    function ShopRepository() {
+	/// <reference path="../typings/index.d.ts"/>
+	var event_bus_1 = __webpack_require__(7);
+	var HttpClient = (function () {
+	    function HttpClient() {
 	    }
-	    ShopRepository.prototype.getAllShops = function () {
-	        return fetch('/api/shops')
-	            .then(function (response) { return response.json(); })
-	            .then(function (json) { return json; }, function (err) { return console.log('error'); });
+	    HttpClient.prototype.get = function (url) {
+	        return this.fetch(url);
 	    };
 	    ;
-	    return ShopRepository;
+	    HttpClient.prototype.fetch = function (url, body) {
+	        var options = {
+	            credentials: 'same-origin'
+	        };
+	        if (body) {
+	            options.body = JSON.stringify(body);
+	            options.method = 'POST';
+	            options.headers = { "Content-Type": "application/json" };
+	        }
+	        return new Promise(function (resolve, reject) {
+	            fetch(url, options).then(function (response) {
+	                if (response.status >= 200 && response.status < 300) {
+	                    response.json().then(function (data) { return resolve(data); });
+	                    return;
+	                }
+	                if (response.status == 401) {
+	                    event_bus_1.eventBus.emit(event_bus_1.Events.AuthorizationRequired);
+	                }
+	                else {
+	                    event_bus_1.eventBus.emit(event_bus_1.Events.NetworkError);
+	                }
+	                reject();
+	            }, function (error) {
+	                event_bus_1.eventBus.emit(event_bus_1.Events.NetworkError);
+	                reject();
+	            });
+	        });
+	    };
+	    return HttpClient;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ShopRepository;
+	exports.default = HttpClient;
 
 
 /***/ },
@@ -871,6 +899,26 @@
 	};
 	
 	module.exports = emptyFunction;
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var http_client_1 = __webpack_require__(6);
+	var ShopRepository = (function () {
+	    function ShopRepository() {
+	        this.httpClient = new http_client_1.default();
+	    }
+	    ShopRepository.prototype.getAllShops = function () {
+	        return this.httpClient.get('/api/shops');
+	    };
+	    ;
+	    return ShopRepository;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ShopRepository;
+
 
 /***/ }
 /******/ ]);

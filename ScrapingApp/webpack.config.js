@@ -13,6 +13,7 @@ fs.readdirSync("node_modules")
 
 module.exports = [
     {
+        debug: true,
         entry: "./client/app.tsx",
         output: {
             filename: "app.js",
@@ -66,7 +67,7 @@ module.exports = [
             }
         }
     },
-// Server-Test
+    // Server-Test
     {
         entry: {
             "import-test-data": "./server-test/test-data/import-test-data.ts",

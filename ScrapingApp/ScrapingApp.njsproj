@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="out\client\assets\app.js" />
+    <Compile Include="out\client\assets\fetch.js" />
     <Compile Include="out\server\app.js" />
     <Compile Include="out\test\import-test-data.js" />
     <Compile Include="out\test\run-page-parsing.js" />

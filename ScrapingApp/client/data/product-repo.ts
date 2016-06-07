@@ -1,10 +1,11 @@
 ﻿/// <reference path="../typings/index.d.ts"/>
 import Product = Api.Product;
+import HttpClient from './http-client'; 
 
 export default class ProductRepository {
+    private httpClient = new HttpClient();
+
     getAllProducts(): Promise<Product[]> {
-        return fetch('/api/products')
-            .then(response => response.json())
-            .then(json => json as Product[], err => console.log('error'));
+        return this.httpClient.get<Product[]>('/api/products');
     };
 }
