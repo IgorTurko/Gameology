@@ -25,7 +25,7 @@ export default class LoginForm extends React.Component<LoginFormProps, {}>
     render() {
         return (
             <div>
-                <form className="form-inline" onSubmit={e => this.onFormSubmit(e)}>
+                <form className="form-inline" onSubmit={e=>this.onFormSubmit(e)}>
                     <div className="form-group">
                         <label className="sr-only" for="login">Login</label>
                         <input type="text" className="form-control" name="login" id="login" placeholder="Login" />

@@ -6,6 +6,7 @@ class Events{
     static AuthorizationError = "authorization-error";
     static NetworkError = "network-error";
     static DoLogin = "do-login";
+    static DoFiltering = "do-filtering";
 }
 
 const eventBus = new EventEmitter();

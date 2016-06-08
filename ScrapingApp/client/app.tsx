@@ -12,6 +12,7 @@ import {eventBus, Events} from "./event-bus";
 
 interface IAppState {
     products: Api.Product[];
+    filteredProducts: Api.Product[];
     shops: Api.WebShop[];
     isAuthenticated: boolean;
     isNetworkError: boolean;
@@ -28,6 +29,7 @@ class App {
 
     private state: IAppState = {
         products: [],
+        filteredProducts: [],
         shops: [],
         isAuthenticated: true,
         isNetworkError: false,
@@ -38,6 +40,7 @@ class App {
         eventBus.addListener(Events.AuthorizationError, () => this.onAuthorizationError());
         eventBus.addListener(Events.NetworkError, () => this.onNetworkError());
         eventBus.addListener(Events.DoLogin, (credentials) => this.onDoLogin(credentials));
+        eventBus.addListener(Events.DoFiltering, (filter) => this.onDoFiltering(filter));
     }
 
     change(callback: StateChangeCallback): App {
@@ -51,6 +54,7 @@ class App {
             .all([this.productRepository.getAllProducts(), this.shopRepository.getAllShops()])
             .then(([products, shops]) => {
                 this.state.products = products;
+                this.state.filteredProducts = products;
                 this.state.shops = shops;
                 this.refreshState();
             })
@@ -85,6 +89,20 @@ class App {
                 this.state.authenticationErrorMessage = error;
             })
     }
+
+    private onDoFiltering(filter: string) {
+        filter = filter.toLowerCase();
+        this.state.filteredProducts = this.state.products.filter(x => {
+            let title = x.title;
+            if (title) {
+                title = title.toLowerCase();
+                return title.indexOf(filter) >= 0;
+            }
+            return false;
+        });
+
+        this.refreshState();
+    }
 }
 
 const app = new App();
@@ -98,8 +116,8 @@ app.change(function (state) {
                         }
                     })()
                 }
-                <SearchBox value="" placeholder="Search products..."/>
-                <ProductsGrid products={state.products} shops={state.shops} />
+                <SearchBox onFiltering={(filter) => eventBus.emit(Events.DoFiltering, filter)} placeholder="Search products..."/>
+                <ProductsGrid products={state.filteredProducts} shops={state.shops} />
             </div>,
             document.getElementsByClassName("container")[0]);
     })

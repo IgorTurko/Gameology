@@ -11,13 +11,12 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
     getHeader() {
         return (
             <div className="row">
-                <div className="col-md-1">Product</div>
+                <div className="col-md-2 product-cell">Product</div>
                 {
                     this.props
                         .shops
-                        .map(shop => (<div className="col-md-2">{ shop.title }</div>))
+                        .map(shop => (<div key={shop.id} className="col-md-2 product-cell">{ shop.title }</div>))
                 }
-                <div className="col-md-1 product-action">Actions</div>
             </div>);
     };
 
@@ -27,12 +26,14 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
 
     getData() {
         return this.props.products.map(product => {
-            return (<div className="row">
-                <div className="col-md-2">{product.title}</div>
+            return (
+            <div className="row" key={product.id}>
+                    <div className="col-md-2 product-cell">{product.title}</div>
                 {
-                    this.props.shops.map(shop => {
+                    this.props.shops.map((shop, index) => {
                         var p = product.values[shop.id];
-                        return (<div className="col-md-2">
+                        return (
+                        <div className="col-md-2 product-cell" key={product.id + index}>
                             <div className="product-url">{product.scrapingUrls[shop.id]}</div>
                             <img className="product-img" src={p != null ? p.image : ''} alt="no image" />
                             <div className="product-price">{p != null ? p.price : ''}</div>
@@ -44,9 +45,9 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
 
     render() {
         if (this.props.products == null || this.props.products.length == 0) {
-            return <div>{this.getHeader() }{this.getEmptyRow() }</div>;
+            return <div className="product-grid">{this.getHeader() }{this.getEmptyRow() }</div>;
         }
 
-        return <div>{this.getHeader()}{this.getData()}</div>;
+        return <div className="product-grid">{this.getHeader()}{this.getData()}</div>;
     }
 }
