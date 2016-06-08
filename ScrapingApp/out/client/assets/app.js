@@ -137,7 +137,7 @@
 	        if (!state.isAuthenticated) {
 	            return React.createElement(login_form_1.default, {errorMessage: state.authenticationErrorMessage, onLogin: function (credentials) { return event_bus_1.eventBus.emit(event_bus_1.Events.DoLogin, credentials); }});
 	        }
-	    })(), React.createElement(search_box_1.default, {onFiltering: function (filter) { return event_bus_1.eventBus.emit(event_bus_1.Events.DoFiltering, filter); }, previousFilter: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {products: state.filteredProducts, shops: state.shops})), document.getElementsByClassName("container")[0]);
+	    })(), React.createElement(search_box_1.default, {onFiltering: function (filter) { return event_bus_1.eventBus.emit(event_bus_1.Events.DoFiltering, filter); }, placeholder: "Search products..."}), React.createElement(all_products_1.default, {products: state.filteredProducts, shops: state.shops})), document.getElementsByClassName("container")[0]);
 	})
 	    .start();
 
@@ -214,9 +214,6 @@
 	    SearchBox.prototype.onFormSubmit = function (e) {
 	        e.preventDefault();
 	        var filter = e.target["filter"].value;
-	        //if (filter == this.props.previousFilter) {
-	        //    return;
-	        //}
 	        if (this.props.onFiltering) {
 	            this.props.onFiltering(filter);
 	        }
@@ -603,9 +600,6 @@
 	var queueIndex = -1;
 	
 	function cleanUpNextTick() {
-	    if (!draining || !currentQueue) {
-	        return;
-	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
