@@ -61,12 +61,16 @@ export default class JsdomScraper implements Scraping.IScraper {
         if (!valueScrapingSettings)
             throw new Error("valueScrapingSettings is undefined");
 
+        const parsingContext: Scraping.ParserContext = {
+            pageUrl: document.location.href
+        };
+
         const result = this.emptyValueScrapingResult();
 
         for (let scrapingSetting of valueScrapingSettings) {
             try {
                 const rawValue = this.extractRawValueFromDocument(document, scrapingSetting);
-                const parsedValue = this.valueParser[scrapingSetting.type](rawValue);
+                const parsedValue = this.valueParser[scrapingSetting.type](rawValue, parsingContext);
 
                 result.isSuccessful = true;
                 result.error = null;

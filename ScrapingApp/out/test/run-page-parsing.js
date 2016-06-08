@@ -195,19 +195,33 @@
 	        return this.db
 	            .collection(db_1.default.Collections.webshops)
 	            .then(function (c) { return c.find({ id: id }, { _id: 0 }); })
-	            .then(function (r) { return r.limit(1); })
-	            .then(function (c) { return c.next(); });
+	            .then(function (c) { return c.limit(1).next(); });
 	    };
 	    MongoWebShopStorage.prototype.save = function (webShop) {
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.webshops)
-	            .then(function (c) { return c.updateOne({ id: webShop.id }, {
+	            .then(function (c) { return c.updateOne({
+	            id: webShop.id
+	        }, {
 	            $set: {
+	                id: webShop.id,
 	                title: webShop.title,
 	                delivery: webShop.delivery
 	            }
+	        }); })
+	            .then(function () { return webShop; });
+	    };
+	    MongoWebShopStorage.prototype.put = function (webShop) {
+	        if (!webShop)
+	            throw new Error("webShop is undefined");
+	        return this.db
+	            .collection(db_1.default.Collections.webshops)
+	            .then(function (c) { return c.updateOne({
+	            id: webShop.id
+	        }, webShop, {
+	            upsert: true
 	        }); })
 	            .then(function () { return webShop; });
 	    };
@@ -253,7 +267,73 @@
 	                    _this.storage
 	                        .save(webShop)
 	                        .then(function () { return _this.one(webShop.id); })
-	                        .then(function (entity) { return resolve(entity); });
+	                        .then(function (entity) { return resolve(entity); })
+	                        .catch(function (err) {
+	                        var errorResult = {
+	                            isValid: false,
+	                            errorCount: 1,
+	                            errors: [{
+	                                    parameter: "",
+	                                    value: null,
+	                                    message: err
+	                                }]
+	                        };
+	                        resolve(errorResult);
+	                    });
+	            })
+	                .catch(function () {
+	                var errorResult = {
+	                    isValid: false,
+	                    errorCount: 1,
+	                    errors: [{
+	                            parameter: "",
+	                            value: null,
+	                            message: "Validation failed"
+	                        }]
+	                };
+	                resolve(errorResult);
+	            });
+	        });
+	    };
+	    WebShopService.prototype.put = function (webShop) {
+	        var _this = this;
+	        if (!webShop)
+	            throw new Error("webShop is undefined");
+	        return new Promise(function (resolve) {
+	            _this.validator
+	                .validate(webShop)
+	                .then(function (validationResult) {
+	                if (!validationResult.isValid)
+	                    resolve(validationResult);
+	                else
+	                    _this.storage
+	                        .put(webShop)
+	                        .then(function () { return _this.one(webShop.id); })
+	                        .then(function (entity) { return resolve(entity); })
+	                        .catch(function (err) {
+	                        var errorResult = {
+	                            isValid: false,
+	                            errorCount: 1,
+	                            errors: [{
+	                                    parameter: "",
+	                                    value: null,
+	                                    message: err
+	                                }]
+	                        };
+	                        resolve(errorResult);
+	                    });
+	            })
+	                .catch(function () {
+	                var errorResult = {
+	                    isValid: false,
+	                    errorCount: 1,
+	                    errors: [{
+	                            parameter: "",
+	                            value: null,
+	                            message: "Validation failed"
+	                        }]
+	                };
+	                resolve(errorResult);
 	            });
 	        });
 	    };
@@ -679,12 +759,15 @@
 	            throw new Error("document is undefined");
 	        if (!valueScrapingSettings)
 	            throw new Error("valueScrapingSettings is undefined");
+	        var parsingContext = {
+	            pageUrl: document.location.href
+	        };
 	        var result = this.emptyValueScrapingResult();
 	        for (var _i = 0, valueScrapingSettings_1 = valueScrapingSettings; _i < valueScrapingSettings_1.length; _i++) {
 	            var scrapingSetting = valueScrapingSettings_1[_i];
 	            try {
 	                var rawValue = this.extractRawValueFromDocument(document, scrapingSetting);
-	                var parsedValue = this.valueParser[scrapingSetting.type](rawValue);
+	                var parsedValue = this.valueParser[scrapingSetting.type](rawValue, parsingContext);
 	                result.isSuccessful = true;
 	                result.error = null;
 	                result.settings = scrapingSetting;
@@ -781,10 +864,11 @@
 
 /***/ },
 /* 22 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../typings/index.d.ts"/>
 	"use strict";
+	/// <reference path="../typings/index.d.ts"/>
+	var path = __webpack_require__(23);
 	var ValueParserHash = (function () {
 	    function ValueParserHash() {
 	        this.parsers = {};
@@ -803,11 +887,20 @@
 	            return number;
 	        throw new Error("Number format is not valid.");
 	    };
+	    ValueParserHash.prototype.relativeUrl = function (input, context) {
+	        return path.posix.join(context.pageUrl, input);
+	    };
 	    return ValueParserHash;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ValueParserHash;
 
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	module.exports = require("path");
 
 /***/ }
 /******/ ]);

@@ -1,4 +1,5 @@
 ﻿/// <reference path="../typings/index.d.ts"/>
+import * as path from "path";
 
 export default class ValueParserHash {
     parsers = {};
@@ -24,5 +25,9 @@ export default class ValueParserHash {
             return number;
 
         throw new Error("Number format is not valid.");
+    }
+
+    relativeUrl(input: string, context: Scraping.ParserContext) {
+        return path.posix.join(context.pageUrl, input);
     }
 }

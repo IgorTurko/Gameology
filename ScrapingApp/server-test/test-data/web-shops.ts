@@ -101,7 +101,7 @@ export const webShops: Api.WebShop[] =
                 regex: "\\(\\$([\\d\\.]*?)\\)"
             }],
             image: [{
-                type: "string",
+                type: "relativeUrl",
                 extract: "regex",
                 regex: '<img.*?src="(.*?)".*?\\>'
             }]
