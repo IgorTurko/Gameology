@@ -103,7 +103,7 @@ export const webShops: Api.WebShop[] =
             image: [{
                 type: "relativeUrl",
                 extract: "regex",
-                regex: '<img.*?src="(.*?)".*?\\>'
+                regex: '<img.*?src="(.*?images/games/.*?)".*?\\>'
             }]
         }
     }

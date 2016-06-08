@@ -888,7 +888,7 @@
 	        throw new Error("Number format is not valid.");
 	    };
 	    ValueParserHash.prototype.relativeUrl = function (input, context) {
-	        return path.posix.join(context.pageUrl, input);
+	        return path.posix.join(context.pageUrl, input).replace(":/", "://");
 	    };
 	    return ValueParserHash;
 	}());

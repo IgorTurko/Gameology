@@ -28,6 +28,6 @@ export default class ValueParserHash {
     }
 
     relativeUrl(input: string, context: Scraping.ParserContext) {
-        return path.posix.join(context.pageUrl, input);
+        return path.posix.join(context.pageUrl, input).replace(":/", "://");
     }
 }
