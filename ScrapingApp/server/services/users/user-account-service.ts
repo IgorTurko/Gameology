@@ -6,14 +6,20 @@ export default class UserAccountService {
             throw new Error("userAccountStorage is undefined");
     }
 
-    validateCredentials(userName: string, password: string): Promise<boolean> {
+    validateCredentials(userName: string, password: string): Promise<any> {
         if (!userName || !password)
-            return Promise.resolve(false);
+            return Promise.reject("Login and password required.");
 
-        return this.userAccountStorage
-            .findByUserName(userName)
-            .then(user => {
-                return user != null && user.isActive && user.password === password;
-            });
+
+        return new Promise((resolve, reject) => {
+            this.userAccountStorage
+                .findByUserName(userName)
+                .then(user => {
+                    if (user != null && user.isActive && user.password === password)
+                        resolve(true);
+                    else
+                        reject("User credentials is not valid.");
+                });
+        });
     }
 }

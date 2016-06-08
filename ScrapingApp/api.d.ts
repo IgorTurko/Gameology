@@ -129,6 +129,10 @@
      * VALIDATION
      * **********************************
      */
+
+    /**
+     * 
+     */
     interface ValidationResult {
         isValid: boolean;
         errorCount: number;
@@ -146,13 +150,19 @@
      * POST/PUT RESPONSE
      * **********************************
      */
-    interface IFailResponse {
+
+    /**
+     * 
+     */
+    interface IResponse {
         ok: boolean;
+    }
+
+    interface IFailResponse extends IResponse {
         errors: ValidationError[];
     }
 
-    interface ISuccessResponse<TEntity> {
-        ok: boolean;
+    interface ISuccessResponse<TEntity> extends IResponse {
         entity: TEntity;
     }
 
@@ -165,9 +175,16 @@
      * **********************************
      */
 
+    /**
+     * 
+     */
     interface AuthenticationCredentials {
         login: string;
         password: string;
+    }
+
+    interface IAuthenticationResponse extends IResponse {
+        error: string;
     }
 
 

@@ -21,16 +21,26 @@ const userAccountService = new UserAccountService(new MongoUserAccountStorage(db
 
 const router = express.Router();
 
-router.post("/login", (req, res) => {
+router.post("/login",
+(req, res) => {
     const info: Api.AuthenticationCredentials = req.body;
 
     userAccountService.validateCredentials(info.login, info.password)
-        .then(isOk => {
-            if (isOk)
-                authenticationMiddleware.signIn(req, res, info.login)
-                    .then(() => res.sendStatus(200).end());
-            else
-                res.sendStatus(401).end();
+        .then(() => {
+            const result: Api.IAuthenticationResponse = {
+                ok: true,
+                error: ""
+            };
+            authenticationMiddleware.signIn(req, res, info.login)
+                .then(() => res.json(result).end());
+        })
+        .catch(error => {
+            const result: Api.IAuthenticationResponse = {
+                ok: true,
+                error: error
+            };
+
+            res.json(result).end();
         });
 });
 
