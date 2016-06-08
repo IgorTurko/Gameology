@@ -64,6 +64,7 @@
 	        this.loginRepository = new login_repo_1.default();
 	        this.state = {
 	            products: [],
+	            filteredProducts: [],
 	            shops: [],
 	            isAuthenticated: true,
 	            isNetworkError: false,
@@ -72,6 +73,7 @@
 	        event_bus_1.eventBus.addListener(event_bus_1.Events.AuthorizationError, function () { return _this.onAuthorizationError(); });
 	        event_bus_1.eventBus.addListener(event_bus_1.Events.NetworkError, function () { return _this.onNetworkError(); });
 	        event_bus_1.eventBus.addListener(event_bus_1.Events.DoLogin, function (credentials) { return _this.onDoLogin(credentials); });
+	        event_bus_1.eventBus.addListener(event_bus_1.Events.DoFiltering, function (filter) { return _this.onDoFiltering(filter); });
 	    }
 	    App.prototype.change = function (callback) {
 	        this.callbacks.push(callback);
@@ -84,6 +86,7 @@
 	            .then(function (_a) {
 	            var products = _a[0], shops = _a[1];
 	            _this.state.products = products;
+	            _this.state.filteredProducts = products;
 	            _this.state.shops = shops;
 	            _this.refreshState();
 	        });
@@ -114,6 +117,18 @@
 	            _this.state.authenticationErrorMessage = error;
 	        });
 	    };
+	    App.prototype.onDoFiltering = function (filter) {
+	        filter = filter.toLowerCase();
+	        this.state.filteredProducts = this.state.products.filter(function (x) {
+	            var title = x.title;
+	            if (title) {
+	                title = title.toLowerCase();
+	                return title.indexOf(filter) >= 0;
+	            }
+	            return false;
+	        });
+	        this.refreshState();
+	    };
 	    return App;
 	}());
 	var app = new App();
@@ -122,7 +137,7 @@
 	        if (!state.isAuthenticated) {
 	            return React.createElement(login_form_1.default, {errorMessage: state.authenticationErrorMessage, onLogin: function (credentials) { return event_bus_1.eventBus.emit(event_bus_1.Events.DoLogin, credentials); }});
 	        }
-	    })(), React.createElement(search_box_1.default, {value: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {products: state.products, shops: state.shops})), document.getElementsByClassName("container")[0]);
+	    })(), React.createElement(search_box_1.default, {onFiltering: function (filter) { return event_bus_1.eventBus.emit(event_bus_1.Events.DoFiltering, filter); }, previousFilter: "", placeholder: "Search products..."}), React.createElement(all_products_1.default, {products: state.filteredProducts, shops: state.shops})), document.getElementsByClassName("container")[0]);
 	})
 	    .start();
 
@@ -196,12 +211,19 @@
 	    function SearchBox() {
 	        _super.apply(this, arguments);
 	    }
-	    SearchBox.prototype.handlerTextChange = function () {
-	        console.log('as');
+	    SearchBox.prototype.onFormSubmit = function (e) {
+	        e.preventDefault();
+	        var filter = e.target["filter"].value;
+	        //if (filter == this.props.previousFilter) {
+	        //    return;
+	        //}
+	        if (this.props.onFiltering) {
+	            this.props.onFiltering(filter);
+	        }
 	    };
-	    ;
 	    SearchBox.prototype.render = function () {
-	        return (React.createElement("div", {className: "input-group"}, React.createElement("input", {type: "text", value: this.props.value, className: "form-control", placeholder: this.props.placeholder, onChange: this.handlerTextChange}), React.createElement("span", {className: "input-group-btn"}, React.createElement("button", {className: "btn btn-default", type: "button"}, "Search"))));
+	        var _this = this;
+	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }}, React.createElement("div", {className: "search-box input-group"}, React.createElement("input", {name: "filter", type: "text", className: "form-control", placeholder: this.props.placeholder}), React.createElement("span", {className: "input-group-btn"}, React.createElement("button", {className: "btn btn-default", type: "submit"}, "Search")))));
 	    };
 	    return SearchBox;
 	}(React.Component));
@@ -227,9 +249,9 @@
 	        _super.apply(this, arguments);
 	    }
 	    ProductsGrid.prototype.getHeader = function () {
-	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-1"}, "Product"), this.props
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell"}, "Product"), this.props
 	            .shops
-	            .map(function (shop) { return (React.createElement("div", {className: "col-md-2"}, shop.title)); }), React.createElement("div", {className: "col-md-1 product-action"}, "Actions")));
+	            .map(function (shop) { return (React.createElement("div", {key: shop.id, className: "col-md-2 product-cell"}, shop.title)); })));
 	    };
 	    ;
 	    ProductsGrid.prototype.getEmptyRow = function () {
@@ -239,18 +261,18 @@
 	    ProductsGrid.prototype.getData = function () {
 	        var _this = this;
 	        return this.props.products.map(function (product) {
-	            return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2"}, product.title), _this.props.shops.map(function (shop) {
+	            return (React.createElement("div", {className: "row", key: product.id}, React.createElement("div", {className: "col-md-2 product-cell"}, product.title), _this.props.shops.map(function (shop, index) {
 	                var p = product.values[shop.id];
-	                return (React.createElement("div", {className: "col-md-2"}, React.createElement("div", {className: "product-url"}, product.scrapingUrls[shop.id]), React.createElement("img", {className: "product-img", src: p != null ? p.image : '', alt: "no image"}), React.createElement("div", {className: "product-price"}, p != null ? p.price : '')));
+	                return (React.createElement("div", {className: "col-md-2 product-cell", key: product.id + index}, React.createElement("div", {className: "product-url"}, product.scrapingUrls[shop.id]), React.createElement("img", {className: "product-img", src: p != null ? p.image : '', alt: "no image"}), React.createElement("div", {className: "product-price"}, p != null ? p.price : '')));
 	            })));
 	        });
 	    };
 	    ;
 	    ProductsGrid.prototype.render = function () {
 	        if (this.props.products == null || this.props.products.length == 0) {
-	            return React.createElement("div", null, this.getHeader(), this.getEmptyRow());
+	            return React.createElement("div", {className: "product-grid"}, this.getHeader(), this.getEmptyRow());
 	        }
-	        return React.createElement("div", null, this.getHeader(), this.getData());
+	        return React.createElement("div", {className: "product-grid"}, this.getHeader(), this.getData());
 	    };
 	    return ProductsGrid;
 	}(React.Component));
@@ -343,6 +365,7 @@
 	    Events.AuthorizationError = "authorization-error";
 	    Events.NetworkError = "network-error";
 	    Events.DoLogin = "do-login";
+	    Events.DoFiltering = "do-filtering";
 	    return Events;
 	}());
 	exports.Events = Events;
@@ -580,6 +603,9 @@
 	var queueIndex = -1;
 	
 	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
