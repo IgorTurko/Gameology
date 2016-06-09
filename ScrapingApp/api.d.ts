@@ -63,7 +63,7 @@
          * Value type. Can be one of value "number", "string" or "relative-url".
          * Default is "string".
          */
-        type?: "number" | "string",
+        type?: "number" | "string" | "relativeUrl",
         /**
          * Boolean value indicates whether failing of value scraping leads to total scraping fail.
          * Default false.
@@ -82,12 +82,12 @@
     }
 
     interface QuerySelectorExtractSettings {
-        elementSelector: string;
+        elementSelector?: string;
         attribute?: string;
     }
 
     interface RegexExtractSettings {
-        regex: string;
+        regex?: string;
     }
 
     type ValueScrapingSettings = ValueScrapingInfo & (QuerySelectorExtractSettings | RegexExtractSettings);

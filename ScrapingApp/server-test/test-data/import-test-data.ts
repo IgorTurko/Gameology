@@ -17,13 +17,16 @@ const webShopService = new WebShopService(new MongoWebShopStorage(db));
 const productService = new ProductService(new MongoProductStorage(db));
 
 function addWebShop(webShop: Api.WebShop): Promise<any> {
-    return webShopService.save(webShop)
-        .then(() => {
-            console.info(`Web shop ${webShop.title} added.`);
-
-            const index = webShops.indexOf(webShop);
-            if (index !== webShops.length - 1) {
-                return addWebShop(webShops[index + 1]);
+    return webShopService.put(webShop)
+        .then(res => {
+            if (res["isValid"] === undefined) {
+                const index = webShops.indexOf(webShop);
+                if (index !== webShops.length - 1) {
+                    return addWebShop(webShops[index + 1]);
+                }
+            } else {
+                console.error(`Error adding web shop ${webShop.title}`);
+                console.dir(res);
             }
         })
         .catch(err => {

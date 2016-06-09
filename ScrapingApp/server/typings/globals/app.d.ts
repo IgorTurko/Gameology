@@ -63,7 +63,10 @@ declare namespace Authentication {
 
 declare namespace Scraping {
 
-    
+    interface ParserContext {
+        pageUrl: string;
+    }
+
 
     interface ScrapingError {
         errorMessage: string;
@@ -127,7 +130,16 @@ declare namespace WebShops {
 
         one(id: string): Promise<Api.WebShop>;
 
+        /**
+         * Updates editable properties in existing web shop document.
+         */
         save(webShop: Api.WebShop): Promise<Api.WebShop>;
+
+        /**
+         * Inserts or updates the whole web shop document.
+         * Use in test data init only.
+         */
+        put(webShop: Api.WebShop): Promise<Api.WebShop>;
     }
 }
 

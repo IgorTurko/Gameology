@@ -22,8 +22,7 @@ export default class MongoWebShopStorage implements WebShops.IWebShopStorage {
         return this.db
             .collection(Database.Collections.webshops)
             .then(c => c.find({ id: id }, { _id: 0 }))
-            .then(r => r.limit(1))
-            .then(c => c.next());
+            .then(c => c.limit(1).next());
     }
 
     save(webShop: Api.WebShop): Promise<Api.WebShop> {
@@ -32,12 +31,36 @@ export default class MongoWebShopStorage implements WebShops.IWebShopStorage {
 
         return this.db
             .collection(Database.Collections.webshops)
-            .then(c => c.updateOne({ id: webShop.id }, {
-                $set: {
-                    title: webShop.title,
-                    delivery: webShop.delivery
+            .then(c => c.updateOne(
+                {
+                    id: webShop.id
+                },
+                {
+                    $set: {
+                        id: webShop.id,
+                        title: webShop.title,
+                        delivery: webShop.delivery
+                    }
                 }
-            }))
+            ))
+            .then(() => webShop);
+    }
+
+    put(webShop: Api.WebShop): Promise<Api.WebShop> {
+        if (!webShop)
+            throw new Error("webShop is undefined");
+
+        return this.db
+            .collection(Database.Collections.webshops)
+            .then(c => c.updateOne(
+                {
+                    id: webShop.id
+                },
+                webShop,
+                {
+                    upsert: true
+                }
+            ))
             .then(() => webShop);
     }
 }

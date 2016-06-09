@@ -44,48 +44,17 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1);
-	module.exports = __webpack_require__(2);
-
-
-/***/ },
-/* 1 */
-/***/ function(module, exports) {
-
-	/// <reference path="typings/index.d.ts" />
-	if (!Array.prototype.toHash) {
-	    Array.prototype.toHash = function toHash(keySelector, valueSelector) {
-	        valueSelector = valueSelector || (function (e) { return (e); });
-	        return this.reduce(function (hash, elem) {
-	            var key = keySelector(elem);
-	            var value = valueSelector(elem);
-	            hash[key] = value;
-	            return hash;
-	        }, {});
-	    };
-	}
-	if (!Object.entries) {
-	    Object.entries = function (obj) { return Object.keys(obj)
-	        .map(function (key) { return ([key, obj[key]]); }); };
-	}
-
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
 	/// <reference path="./typings/index.d.ts" />
 	"use strict";
-	var React = __webpack_require__(3);
-	var ReactDOM = __webpack_require__(4);
-	var login_form_1 = __webpack_require__(5);
-	var search_box_1 = __webpack_require__(6);
-	var product_form_1 = __webpack_require__(7);
-	var all_products_1 = __webpack_require__(8);
-	var product_repo_1 = __webpack_require__(9);
-	var shop_repo_1 = __webpack_require__(20);
-	var login_repo_1 = __webpack_require__(21);
-	var event_bus_1 = __webpack_require__(11);
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(2);
+	var login_form_1 = __webpack_require__(3);
+	var search_box_1 = __webpack_require__(4);
+	var all_products_1 = __webpack_require__(5);
+	var product_repo_1 = __webpack_require__(6);
+	var shop_repo_1 = __webpack_require__(17);
+	var login_repo_1 = __webpack_require__(18);
+	var event_bus_1 = __webpack_require__(8);
 	var App = (function () {
 	    function App() {
 	        var _this = this;
@@ -105,7 +74,6 @@
 	        event_bus_1.eventBus.addListener(event_bus_1.Events.NetworkError, function () { return _this.onNetworkError(); });
 	        event_bus_1.eventBus.addListener(event_bus_1.Events.DoLogin, function (credentials) { return _this.onDoLogin(credentials); });
 	        event_bus_1.eventBus.addListener(event_bus_1.Events.DoFiltering, function (filter) { return _this.onDoFiltering(filter); });
-	        event_bus_1.eventBus.addListener(event_bus_1.Events.SaveProduct, function (product) { return _this.onSaveProduct(product); });
 	    }
 	    App.prototype.change = function (callback) {
 	        this.callbacks.push(callback);
@@ -161,42 +129,33 @@
 	        });
 	        this.refreshState();
 	    };
-	    App.prototype.onSaveProduct = function (product) {
-	        this.productRepository.saveProduct(product)
-	            .then(function () { return console.log("saved"); });
-	    };
 	    return App;
 	}());
 	var app = new App();
 	app.change(function (state) {
-	    var emptyProduct = {
-	        title: '',
-	        id: '',
-	        scrapingUrls: {}
-	    };
 	    ReactDOM.render(React.createElement("div", {className: "container"}, (function () {
 	        if (!state.isAuthenticated) {
 	            return React.createElement(login_form_1.default, {errorMessage: state.authenticationErrorMessage, onLogin: function (credentials) { return event_bus_1.eventBus.emit(event_bus_1.Events.DoLogin, credentials); }});
 	        }
-	    })(), React.createElement(search_box_1.default, {onFiltering: function (filter) { return event_bus_1.eventBus.emit(event_bus_1.Events.DoFiltering, filter); }, placeholder: "Search products..."}), React.createElement(all_products_1.default, {products: state.filteredProducts, shops: state.shops}), React.createElement(product_form_1.default, {onSaveProduct: function (product) { return event_bus_1.eventBus.emit(event_bus_1.Events.SaveProduct, product); }, shops: state.shops, product: emptyProduct})), document.getElementsByClassName("container")[0]);
+	    })(), React.createElement(search_box_1.default, {onFiltering: function (filter) { return event_bus_1.eventBus.emit(event_bus_1.Events.DoFiltering, filter); }, placeholder: "Search products..."}), React.createElement(all_products_1.default, {products: state.filteredProducts, shops: state.shops})), document.getElementsByClassName("container")[0]);
 	})
 	    .start();
 
 
 /***/ },
-/* 3 */
+/* 1 */
 /***/ function(module, exports) {
 
 	module.exports = React;
 
 /***/ },
-/* 4 */
+/* 2 */
 /***/ function(module, exports) {
 
 	module.exports = ReactDOM;
 
 /***/ },
-/* 5 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -206,7 +165,7 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	///<reference path="../typings/index.d.ts" />
-	var React = __webpack_require__(3);
+	var React = __webpack_require__(1);
 	var LoginForm = (function (_super) {
 	    __extends(LoginForm, _super);
 	    function LoginForm() {
@@ -236,7 +195,7 @@
 
 
 /***/ },
-/* 6 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -246,7 +205,7 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	/// <reference path="./../typings/index.d.ts" />
-	var React = __webpack_require__(3);
+	var React = __webpack_require__(1);
 	var SearchBox = (function (_super) {
 	    __extends(SearchBox, _super);
 	    function SearchBox() {
@@ -270,7 +229,7 @@
 
 
 /***/ },
-/* 7 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -280,52 +239,16 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	/// <reference path="./../typings/index.d.ts" />
-	var React = __webpack_require__(3);
-	var ProductForm = (function (_super) {
-	    __extends(ProductForm, _super);
-	    function ProductForm() {
-	        _super.apply(this, arguments);
-	    }
-	    ProductForm.prototype.onFormSubmit = function (e) {
-	        e.preventDefault();
-	        var product = {
-	            title: e.target["title"].value,
-	            id: e.target["id"].value,
-	            scrapingUrls: this.props.shops.toHash(function (shop) { return shop.id; }, function (shop) { return e.target[shop.id].value; })
-	        };
-	        if (this.props.onSaveProduct) {
-	            this.props.onSaveProduct(product);
-	        }
-	    };
-	    ProductForm.prototype.render = function () {
-	        var _this = this;
-	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement("input", {type: "hidden", name: "id", value: this.props.product.id}), React.createElement("div", {className: "form-group"}, React.createElement("label", {for: "title", className: "col-md-2 control-label"}, "Product"), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.props.product.title, placeholder: "Product"}))), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "form-group", key: shop.id}, React.createElement("label", {for: shop.id, className: "col-md-2 control-label"}, "Url for ", shop.title), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: shop.id, name: shop.id, placeholder: "Product url"})))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement("button", {type: "submit", class: "btn btn-default"}, "Save")))));
-	    };
-	    return ProductForm;
-	}(React.Component));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProductForm;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	/// <reference path="./../typings/index.d.ts" />
-	var React = __webpack_require__(3);
+	var React = __webpack_require__(1);
 	var ProductsGrid = (function (_super) {
 	    __extends(ProductsGrid, _super);
 	    function ProductsGrid() {
 	        _super.apply(this, arguments);
 	    }
 	    ProductsGrid.prototype.getHeader = function () {
-	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement("div", {key: shop.id, className: "col-md-2 product-cell"}, shop.title)); })));
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell"}, "Product"), this.props
+	            .shops
+	            .map(function (shop) { return (React.createElement("div", {key: shop.id, className: "col-md-2 product-cell"}, shop.title)); })));
 	    };
 	    ;
 	    ProductsGrid.prototype.getEmptyRow = function () {
@@ -337,11 +260,7 @@
 	        return this.props.products.map(function (product) {
 	            return (React.createElement("div", {className: "row", key: product.id}, React.createElement("div", {className: "col-md-2 product-cell"}, product.title), _this.props.shops.map(function (shop, index) {
 	                var p = product.values[shop.id];
-	                return (React.createElement("div", {className: "col-md-2 product-cell", key: product.id + index}, (function () {
-	                    if (p) {
-	                        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: product.scrapingUrls[shop.id]}, p.title)), React.createElement("img", {className: "product-img", src: p != null ? p.image : ''}), React.createElement("div", {className: "product-price"}, p != null ? p.price : '')));
-	                    }
-	                })()));
+	                return (React.createElement("div", {className: "col-md-2 product-cell", key: product.id + index}, React.createElement("div", {className: "product-url"}, product.scrapingUrls[shop.id]), React.createElement("img", {className: "product-img", src: p != null ? p.image : '', alt: "no image"}), React.createElement("div", {className: "product-price"}, p != null ? p.price : '')));
 	            })));
 	        });
 	    };
@@ -359,22 +278,17 @@
 
 
 /***/ },
-/* 9 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../typings/index.d.ts"/>
 	"use strict";
-	var http_client_1 = __webpack_require__(10);
+	var http_client_1 = __webpack_require__(7);
 	var ProductRepository = (function () {
 	    function ProductRepository() {
 	        this.httpClient = new http_client_1.default();
 	    }
 	    ProductRepository.prototype.getAllProducts = function () {
 	        return this.httpClient.get('/api/products');
-	    };
-	    ;
-	    ProductRepository.prototype.saveProduct = function (product) {
-	        return this.httpClient.post("/api/products", product);
 	    };
 	    ;
 	    return ProductRepository;
@@ -384,12 +298,12 @@
 
 
 /***/ },
-/* 10 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts"/>
-	var event_bus_1 = __webpack_require__(11);
+	var event_bus_1 = __webpack_require__(8);
 	var HttpClient = (function () {
 	    function HttpClient() {
 	    }
@@ -436,12 +350,12 @@
 
 
 /***/ },
-/* 11 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="./typings/index.d.ts" />
 	"use strict";
-	var fbemitter_1 = __webpack_require__(12);
+	var fbemitter_1 = __webpack_require__(9);
 	var Events = (function () {
 	    function Events() {
 	    }
@@ -449,7 +363,6 @@
 	    Events.NetworkError = "network-error";
 	    Events.DoLogin = "do-login";
 	    Events.DoFiltering = "do-filtering";
-	    Events.SaveProduct = "save-product";
 	    return Events;
 	}());
 	exports.Events = Events;
@@ -458,7 +371,7 @@
 
 
 /***/ },
-/* 12 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -471,14 +384,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(13)
+	  EventEmitter: __webpack_require__(10)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 13 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -497,11 +410,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(15);
-	var EventSubscriptionVendor = __webpack_require__(17);
+	var EmitterSubscription = __webpack_require__(12);
+	var EventSubscriptionVendor = __webpack_require__(14);
 	
-	var emptyFunction = __webpack_require__(19);
-	var invariant = __webpack_require__(18);
+	var emptyFunction = __webpack_require__(16);
+	var invariant = __webpack_require__(15);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -672,10 +585,10 @@
 	})();
 	
 	module.exports = BaseEventEmitter;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ },
-/* 14 */
+/* 11 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -687,9 +600,6 @@
 	var queueIndex = -1;
 	
 	function cleanUpNextTick() {
-	    if (!draining || !currentQueue) {
-	        return;
-	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
@@ -775,7 +685,7 @@
 
 
 /***/ },
-/* 15 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -796,7 +706,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(16);
+	var EventSubscription = __webpack_require__(13);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -828,7 +738,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 16 */
+/* 13 */
 /***/ function(module, exports) {
 
 	/**
@@ -882,7 +792,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 17 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -901,7 +811,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(18);
+	var invariant = __webpack_require__(15);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -988,10 +898,10 @@
 	})();
 	
 	module.exports = EventSubscriptionVendor;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ },
-/* 18 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -1043,10 +953,10 @@
 	}
 	
 	module.exports = invariant;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ },
-/* 19 */
+/* 16 */
 /***/ function(module, exports) {
 
 	/**
@@ -1088,11 +998,11 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 20 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http_client_1 = __webpack_require__(10);
+	var http_client_1 = __webpack_require__(7);
 	var ShopRepository = (function () {
 	    function ShopRepository() {
 	        this.httpClient = new http_client_1.default();
@@ -1108,11 +1018,11 @@
 
 
 /***/ },
-/* 21 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http_client_1 = __webpack_require__(10);
+	var http_client_1 = __webpack_require__(7);
 	var LoginRepository = (function () {
 	    function LoginRepository() {
 	        this.httpClient = new http_client_1.default();

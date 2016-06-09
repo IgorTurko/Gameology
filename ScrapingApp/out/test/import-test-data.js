@@ -57,12 +57,17 @@
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
 	function addWebShop(webShop) {
-	    return webShopService.save(webShop)
-	        .then(function () {
-	        console.info("Web shop " + webShop.title + " added.");
-	        var index = web_shops_1.webShops.indexOf(webShop);
-	        if (index !== web_shops_1.webShops.length - 1) {
-	            return addWebShop(web_shops_1.webShops[index + 1]);
+	    return webShopService.put(webShop)
+	        .then(function (res) {
+	        if (res["isValid"] === undefined) {
+	            var index = web_shops_1.webShops.indexOf(webShop);
+	            if (index !== web_shops_1.webShops.length - 1) {
+	                return addWebShop(web_shops_1.webShops[index + 1]);
+	            }
+	        }
+	        else {
+	            console.error("Error adding web shop " + webShop.title);
+	            console.dir(res);
 	        }
 	    })
 	        .catch(function (err) {
@@ -189,19 +194,33 @@
 	        return this.db
 	            .collection(db_1.default.Collections.webshops)
 	            .then(function (c) { return c.find({ id: id }, { _id: 0 }); })
-	            .then(function (r) { return r.limit(1); })
-	            .then(function (c) { return c.next(); });
+	            .then(function (c) { return c.limit(1).next(); });
 	    };
 	    MongoWebShopStorage.prototype.save = function (webShop) {
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
 	        return this.db
 	            .collection(db_1.default.Collections.webshops)
-	            .then(function (c) { return c.updateOne({ id: webShop.id }, {
+	            .then(function (c) { return c.updateOne({
+	            id: webShop.id
+	        }, {
 	            $set: {
+	                id: webShop.id,
 	                title: webShop.title,
 	                delivery: webShop.delivery
 	            }
+	        }); })
+	            .then(function () { return webShop; });
+	    };
+	    MongoWebShopStorage.prototype.put = function (webShop) {
+	        if (!webShop)
+	            throw new Error("webShop is undefined");
+	        return this.db
+	            .collection(db_1.default.Collections.webshops)
+	            .then(function (c) { return c.updateOne({
+	            id: webShop.id
+	        }, webShop, {
+	            upsert: true
 	        }); })
 	            .then(function () { return webShop; });
 	    };
@@ -247,7 +266,73 @@
 	                    _this.storage
 	                        .save(webShop)
 	                        .then(function () { return _this.one(webShop.id); })
-	                        .then(function (entity) { return resolve(entity); });
+	                        .then(function (entity) { return resolve(entity); })
+	                        .catch(function (err) {
+	                        var errorResult = {
+	                            isValid: false,
+	                            errorCount: 1,
+	                            errors: [{
+	                                    parameter: "",
+	                                    value: null,
+	                                    message: err
+	                                }]
+	                        };
+	                        resolve(errorResult);
+	                    });
+	            })
+	                .catch(function () {
+	                var errorResult = {
+	                    isValid: false,
+	                    errorCount: 1,
+	                    errors: [{
+	                            parameter: "",
+	                            value: null,
+	                            message: "Validation failed"
+	                        }]
+	                };
+	                resolve(errorResult);
+	            });
+	        });
+	    };
+	    WebShopService.prototype.put = function (webShop) {
+	        var _this = this;
+	        if (!webShop)
+	            throw new Error("webShop is undefined");
+	        return new Promise(function (resolve) {
+	            _this.validator
+	                .validate(webShop)
+	                .then(function (validationResult) {
+	                if (!validationResult.isValid)
+	                    resolve(validationResult);
+	                else
+	                    _this.storage
+	                        .put(webShop)
+	                        .then(function () { return _this.one(webShop.id); })
+	                        .then(function (entity) { return resolve(entity); })
+	                        .catch(function (err) {
+	                        var errorResult = {
+	                            isValid: false,
+	                            errorCount: 1,
+	                            errors: [{
+	                                    parameter: "",
+	                                    value: null,
+	                                    message: err
+	                                }]
+	                        };
+	                        resolve(errorResult);
+	                    });
+	            })
+	                .catch(function () {
+	                var errorResult = {
+	                    isValid: false,
+	                    errorCount: 1,
+	                    errors: [{
+	                            parameter: "",
+	                            value: null,
+	                            message: "Validation failed"
+	                        }]
+	                };
+	                resolve(errorResult);
 	            });
 	        });
 	    };
@@ -657,9 +742,9 @@
 	                    regex: "\\(\\$([\\d\\.]*?)\\)"
 	                }],
 	            image: [{
-	                    type: "string",
+	                    type: "relativeUrl",
 	                    extract: "regex",
-	                    regex: '<img.*?src="(.*?)".*?\\>'
+	                    regex: '<img.*?src="(.*?images/games/.*?)".*?\\>'
 	                }]
 	        }
 	    }
