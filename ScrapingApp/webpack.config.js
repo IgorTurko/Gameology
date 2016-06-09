@@ -14,7 +14,7 @@ fs.readdirSync("node_modules")
 module.exports = [
     {
         debug: true,
-        entry: "./client/app.tsx",
+        entry: ["./client/extensions.ts", "./client/app.tsx"],
         output: {
             filename: "app.js",
             path: "./out/client/assets"

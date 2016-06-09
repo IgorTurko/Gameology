@@ -7,6 +7,7 @@ class Events{
     static NetworkError = "network-error";
     static DoLogin = "do-login";
     static DoFiltering = "do-filtering";
+    static SaveProduct = "save-product";
 }
 
 const eventBus = new EventEmitter();

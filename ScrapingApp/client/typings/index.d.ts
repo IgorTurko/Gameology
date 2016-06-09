@@ -1,4 +1,5 @@
 /// <reference path="../../api.d.ts" />
+/// <reference path="globals/app.d.ts" />
 /// <reference path="globals/es6-promise/index.d.ts" />
 /// <reference path="globals/fbemitter/index.d.ts" />
 /// <reference path="globals/react-dom/index.d.ts" />

@@ -2,8 +2,11 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import Product = Api.Product;
+import Shop = Api.WebShop;
 import LoginForm from "./login/login-form";
 import SearchBox from "./search/search-box";
+import ProductForm from "./product/product-form";
 import ProductsGrid from "./grid/all-products";
 import ProductRepository from "./data/product-repo";
 import ShopRepository from "./data/shop-repo";
@@ -11,9 +14,9 @@ import LoginRepository from "./data/login-repo";
 import {eventBus, Events} from "./event-bus";
 
 interface IAppState {
-    products: Api.Product[];
-    filteredProducts: Api.Product[];
-    shops: Api.WebShop[];
+    products: Product[];
+    filteredProducts: Product[];
+    shops: Shop[];
     isAuthenticated: boolean;
     isNetworkError: boolean;
     authenticationErrorMessage: string;
@@ -41,6 +44,7 @@ class App {
         eventBus.addListener(Events.NetworkError, () => this.onNetworkError());
         eventBus.addListener(Events.DoLogin, (credentials) => this.onDoLogin(credentials));
         eventBus.addListener(Events.DoFiltering, (filter) => this.onDoFiltering(filter));
+        eventBus.addListener(Events.SaveProduct, (product) => this.onSaveProduct(product))
     }
 
     change(callback: StateChangeCallback): App {
@@ -103,10 +107,21 @@ class App {
 
         this.refreshState();
     }
+
+    private onSaveProduct(product: Product) {
+        this.productRepository.saveProduct(product)
+            .then(() => console.log("saved"));
+    }
 }
 
 const app = new App();
+
 app.change(function (state) {
+        const emptyProduct: Product = {
+            title: '',
+            id: '',
+            scrapingUrls: {}
+        };
         ReactDOM.render(
             <div className="container">
                 {
@@ -118,6 +133,7 @@ app.change(function (state) {
                 }
                 <SearchBox onFiltering={(filter) => eventBus.emit(Events.DoFiltering, filter)} placeholder="Search products..."/>
                 <ProductsGrid products={state.filteredProducts} shops={state.shops} />
+                <ProductForm onSaveProduct={(product) => eventBus.emit(Events.SaveProduct, product) } shops={state.shops} product={emptyProduct} />
             </div>,
             document.getElementsByClassName("container")[0]);
     })

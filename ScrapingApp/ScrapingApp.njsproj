@@ -42,6 +42,7 @@
     <Content Include="client\app.tsx" />
     <Content Include="client\grid\all-products.tsx" />
     <Content Include="client\login\login-form.tsx" />
+    <Content Include="client\product\product-form.tsx" />
     <Content Include="client\search\search-box.tsx" />
     <Content Include="client\tsconfig.json" />
     <Content Include="client\typings\globals\es6-promise\typings.json" />
@@ -83,6 +84,7 @@
     <Folder Include="client\grid\" />
     <Folder Include="client\data\" />
     <Folder Include="client\login\" />
+    <Folder Include="client\product\" />
     <Folder Include="client\search\" />
     <Folder Include="client\typings\globals\es6-promise\" />
     <Folder Include="client\typings\globals\fbemitter\" />
@@ -137,6 +139,8 @@
     <TypeScriptCompile Include="client\data\shop-repo.ts" />
     <TypeScriptCompile Include="client\data\product-repo.ts" />
     <TypeScriptCompile Include="client\event-bus.ts" />
+    <TypeScriptCompile Include="client\extensions.ts" />
+    <TypeScriptCompile Include="client\typings\globals\app.d.ts" />
     <TypeScriptCompile Include="client\typings\globals\es6-promise\index.d.ts" />
     <TypeScriptCompile Include="client\typings\globals\fbemitter\index.d.ts" />
     <TypeScriptCompile Include="client\typings\globals\react-dom\index.d.ts" />
