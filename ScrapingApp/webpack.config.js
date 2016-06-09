@@ -26,7 +26,8 @@ module.exports = [
         externals: [
             {
                 react: "var React",
-                "react-dom": "var ReactDOM"
+                "react-dom": "var ReactDOM",
+                "react-router": "var ReactRouter" 
             }
         ],
         module: {

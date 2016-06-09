@@ -2,15 +2,18 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import {Router, Route, browserHistory} from "react-router";
+
 import Product = Api.Product;
 import Shop = Api.WebShop;
-import LoginForm from "./login/login-form";
-import SearchBox from "./search/search-box";
-import ProductForm from "./product/product-form";
-import ProductsGrid from "./grid/all-products";
+import LayoutPage from "./components/pages/layout-page";
+import MainPage from "./components/pages/main-page";
+import ProductPage from "./components/pages/product-page";
+
 import ProductRepository from "./data/product-repo";
 import ShopRepository from "./data/shop-repo";
 import LoginRepository from "./data/login-repo";
+
 import {eventBus, Events} from "./event-bus";
 
 interface IAppState {
@@ -42,7 +45,7 @@ class App {
     constructor() {
         eventBus.addListener(Events.AuthorizationError, () => this.onAuthorizationError());
         eventBus.addListener(Events.NetworkError, () => this.onNetworkError());
-        eventBus.addListener(Events.DoLogin, (credentials) => this.onDoLogin(credentials));
+        //eventBus.addListener(Events.DoLogin, (credentials) => this.onDoLogin(credentials));
         eventBus.addListener(Events.DoFiltering, (filter) => this.onDoFiltering(filter));
         eventBus.addListener(Events.SaveProduct, (product) => this.onSaveProduct(product))
     }
@@ -82,18 +85,6 @@ class App {
         this.refreshState();
     }
 
-    private onDoLogin(credentials: Api.AuthenticationCredentials) {
-        this.loginRepository.login(credentials)
-            .then(() => {
-                this.state.isAuthenticated = true;
-                this.state.authenticationErrorMessage = null;
-                this.start();    
-            })
-            .catch((error) => {
-                this.state.authenticationErrorMessage = error;
-            })
-    }
-
     private onDoFiltering(filter: string) {
         filter = filter.toLowerCase();
         this.state.filteredProducts = this.state.products.filter(x => {
@@ -114,27 +105,20 @@ class App {
     }
 }
 
-const app = new App();
+//app.change(function (state) {
+//        const emptyProduct: Product = {
+//            title: '',
+//            id: '',
+//            scrapingUrls: {}
+//        };
+//    })
+//    .start();
 
-app.change(function (state) {
-        const emptyProduct: Product = {
-            title: '',
-            id: '',
-            scrapingUrls: {}
-        };
-        ReactDOM.render(
-            <div className="container">
-                {
-                    (() => {
-                        if (!state.isAuthenticated) {
-                            return <LoginForm errorMessage={state.authenticationErrorMessage} onLogin={(credentials) => eventBus.emit(Events.DoLogin, credentials) } />;
-                        }
-                    })()
-                }
-                <SearchBox onFiltering={(filter) => eventBus.emit(Events.DoFiltering, filter)} placeholder="Search products..."/>
-                <ProductsGrid products={state.filteredProducts} shops={state.shops} />
-                <ProductForm onSaveProduct={(product) => eventBus.emit(Events.SaveProduct, product) } shops={state.shops} product={emptyProduct} />
-            </div>,
-            document.getElementsByClassName("container")[0]);
-    })
-    .start();
+
+ReactDOM.render(
+    <Router history={browserHistory}>
+        <Route component={LayoutPage}>
+            <Route path="/" component={MainPage} />
+            <Route path="/product/:productId" component={ProductPage} />
+        </Route>
+    </Router>, document.getElementsByClassName("container")[0]);

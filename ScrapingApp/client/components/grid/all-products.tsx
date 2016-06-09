@@ -1,4 +1,4 @@
-﻿/// <reference path="./../typings/index.d.ts" />
+﻿/// <reference path="./../../typings/index.d.ts" />
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Product = Api.Product;
@@ -33,7 +33,7 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
                 <div className="col-md-2 product-cell">{product.title}</div>
                 {
                     this.props.shops.map((shop, index) => {
-                        var p = product.values[shop.id];
+                        let p = product.values != null ? product.values[shop.id] : null;
                         return (
                             <div className="col-md-2 product-cell" key={product.id + index}>
                                 {
