@@ -134,9 +134,10 @@
      * 
      */
     interface ValidationResult {
-        isValid: boolean;
-        errorCount: number;
-        errors: ValidationError[];
+        ok: boolean;
+        errors: {
+            [path: string]: string[];
+        }
     }
 
     interface ValidationError {
@@ -159,7 +160,9 @@
     }
 
     interface IFailResponse extends IResponse {
-        errors: ValidationError[];
+        errors: {
+            [path: string]: string[];
+        };
     }
 
     interface ISuccessResponse<TEntity> extends IResponse {

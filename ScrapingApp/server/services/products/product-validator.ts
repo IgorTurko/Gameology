@@ -1,31 +1,26 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
 
-import * as validator from "node-validator";
+import { Validator } from "../../validation/validation";
 
 export default class ProductValidator {
-    private productValidator: validator.Validatable;
 
-    constructor() {
-        this.productValidator = validator.isAnyObject()
-            .withRequired("id", validator.isString())
-            .withRequired("title", validator.isString());
-
-    }
-
-    validate(product: Api.Product): Promise<Api.ValidationResult> {
+    validate(product: Api.Product): Api.ValidationResult {
         if (!product)
             throw new Error("product is undefined");
 
-        return new Promise(resolve => {
-            validator.run(this.productValidator,
-                product,
-                (errorCount, errors) => {
-                    resolve({
-                        isValid: errorCount === 0,
-                        errorCount: errorCount,
-                        errors: errors
-                    });
-                });
-        });
+        const validator = new Validator();
+
+        return validator
+            .property("id")
+                .errorIf(() => !product.id, "Product ID is required")
+            .end()
+            .property("title")
+                .errorIf(() => !product.title, "Product title is required")
+                .errorIf(() => product.title && product.title.length > 1024, "Product title too long")
+            .end()
+            .property("scrapingUrls")
+                .errorIf(() => !product.scrapingUrls || Object.keys(product.scrapingUrls).length === 0, "At least one scraping URL is required")
+            .end()
+            .result();
     }
 }

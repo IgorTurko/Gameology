@@ -286,85 +286,61 @@
 	        var _this = this;
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
+	        webShop = this.normalize(webShop);
 	        return new Promise(function (resolve) {
-	            _this.validator
-	                .validate(webShop)
-	                .then(function (validationResult) {
-	                if (!validationResult.isValid)
-	                    resolve(validationResult);
-	                else
-	                    _this.storage
-	                        .save(webShop)
-	                        .then(function () { return _this.one(webShop.id); })
-	                        .then(function (entity) { return resolve(entity); })
-	                        .catch(function (err) {
-	                        var errorResult = {
-	                            isValid: false,
-	                            errorCount: 1,
-	                            errors: [{
-	                                    parameter: "",
-	                                    value: null,
-	                                    message: err
-	                                }]
-	                        };
-	                        resolve(errorResult);
-	                    });
-	            })
-	                .catch(function () {
-	                var errorResult = {
-	                    isValid: false,
-	                    errorCount: 1,
-	                    errors: [{
-	                            parameter: "",
-	                            value: null,
-	                            message: "Validation failed"
-	                        }]
-	                };
-	                resolve(errorResult);
-	            });
+	            var validationResult = _this.validator.validate(webShop);
+	            if (!validationResult.ok)
+	                resolve(validationResult);
+	            else
+	                _this.storage
+	                    .save(webShop)
+	                    .then(function () { return _this.one(webShop.id); })
+	                    .then(function (entity) { return resolve(entity); })
+	                    .catch(function (err) {
+	                    var errorResult = {
+	                        ok: false,
+	                        errors: {
+	                            message: err
+	                        }
+	                    };
+	                    resolve(errorResult);
+	                });
 	        });
 	    };
 	    WebShopService.prototype.put = function (webShop) {
 	        var _this = this;
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
+	        webShop = this.normalize(webShop);
 	        return new Promise(function (resolve) {
-	            _this.validator
-	                .validate(webShop)
-	                .then(function (validationResult) {
-	                if (!validationResult.isValid)
-	                    resolve(validationResult);
-	                else
-	                    _this.storage
-	                        .put(webShop)
-	                        .then(function () { return _this.one(webShop.id); })
-	                        .then(function (entity) { return resolve(entity); })
-	                        .catch(function (err) {
-	                        var errorResult = {
-	                            isValid: false,
-	                            errorCount: 1,
-	                            errors: [{
-	                                    parameter: "",
-	                                    value: null,
-	                                    message: err
-	                                }]
-	                        };
-	                        resolve(errorResult);
-	                    });
-	            })
-	                .catch(function () {
-	                var errorResult = {
-	                    isValid: false,
-	                    errorCount: 1,
-	                    errors: [{
-	                            parameter: "",
-	                            value: null,
-	                            message: "Validation failed"
-	                        }]
-	                };
-	                resolve(errorResult);
-	            });
+	            var validationResult = _this.validator.validate(webShop);
+	            if (!validationResult.ok)
+	                resolve(validationResult);
+	            else
+	                _this.storage
+	                    .put(webShop)
+	                    .then(function () { return _this.one(webShop.id); })
+	                    .then(function (entity) { return resolve(entity); })
+	                    .catch(function (err) {
+	                    var errorResult = {
+	                        ok: false,
+	                        errors: {
+	                            message: err
+	                        }
+	                    };
+	                    resolve(errorResult);
+	                });
 	        });
+	    };
+	    WebShopService.prototype.normalize = function (webShop) {
+	        if (webShop.delivery && webShop.delivery.length) {
+	            webShop.delivery = webShop.delivery
+	                .map(function (d) { return ({
+	                deliveryMethod: d.deliveryMethod,
+	                price: parseFloat("" + d.price)
+	            }); });
+	        }
+	        return webShop;
 	    };
 	    return WebShopService;
 	}());
@@ -378,28 +354,32 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var validator = __webpack_require__(10);
+	var validation_1 = __webpack_require__(10);
 	var WebShopValidator = (function () {
 	    function WebShopValidator() {
-	        this.deliveryMethodValidator = validator.isAnyObject()
-	            .withRequired("deliveryMethod", validator.isString())
-	            .withRequired("price", validator.isNumber({ min: 0 }));
-	        this.webShopValidator = validator.isAnyObject()
-	            .withRequired("title", validator.isString());
 	    }
 	    WebShopValidator.prototype.validate = function (webShop) {
-	        var _this = this;
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
-	        return new Promise(function (resolve) {
-	            validator.run(_this.webShopValidator, webShop, function (errorCount, errors) {
-	                resolve({
-	                    isValid: errorCount === 0,
-	                    errorCount: errorCount,
-	                    errors: errors
-	                });
-	            });
-	        });
+	        var validator = new validation_1.Validator();
+	        return validator
+	            .property("title")
+	            .errorIf(function () { return !webShop.title; }, "Title is required")
+	            .errorIf(function () { return webShop.title && webShop.title.length > 1024; }, "Title too long")
+	            .end()
+	            .property("delivery")
+	            .array(webShop.delivery, function (delivery, validator) {
+	            validator
+	                .property("deliveryMethod")
+	                .errorIf(function () { return !delivery.deliveryMethod; }, "Delivery method is required")
+	                .errorIf(function () { return delivery.deliveryMethod && delivery.deliveryMethod.length > 1024; }, "Delivery method too long")
+	                .end()
+	                .property("price")
+	                .errorIf(function () { return isNaN(delivery.price) || !delivery.price || delivery.price < 0; }, "Price is required and must be greater than zero")
+	                .end();
+	        })
+	            .end()
+	            .result();
 	    };
 	    return WebShopValidator;
 	}());
@@ -411,7 +391,78 @@
 /* 10 */
 /***/ function(module, exports) {
 
-	module.exports = require("node-validator");
+	/// <reference path="../typings/index.d.ts"/>
+	"use strict";
+	var Validator = (function () {
+	    function Validator() {
+	        this.context = "";
+	        this.errors = {};
+	    }
+	    Validator.prototype.errorIf = function (isError, errorMessage) {
+	        if (!isError)
+	            throw new Error("isError check is required");
+	        if (!isError())
+	            return this;
+	        var path = this.fullPath();
+	        var errors = this.errors[path];
+	        if (!errors) {
+	            errors = [];
+	            this.errors[path] = errors;
+	        }
+	        errors.push(errorMessage);
+	        return this;
+	    };
+	    Validator.prototype.property = function (propertyName) {
+	        var nested = new Validator();
+	        var context = propertyName;
+	        if (this.context)
+	            context = this.context + "." + propertyName;
+	        nested.context = context;
+	        nested.errors = this.errors;
+	        return nested;
+	    };
+	    Validator.prototype.indexer = function (index) {
+	        var nested = new Validator();
+	        var context = "[" + index + "]";
+	        if (this.context)
+	            context = "" + this.context + context;
+	        nested.context = context;
+	        nested.errors = this.errors;
+	        return nested;
+	    };
+	    Validator.prototype.array = function (array, validator) {
+	        var _this = this;
+	        array = array || [];
+	        array.forEach(function (element, index) {
+	            var indexerValidator = _this.indexer(index);
+	            validator(element, indexerValidator);
+	        });
+	        return this;
+	    };
+	    Validator.prototype.end = function () {
+	        if (!this.parent)
+	            throw new Error("No parent");
+	        return this.parent;
+	    };
+	    Validator.prototype.result = function () {
+	        return {
+	            ok: Object.keys(this.errors).length === 0,
+	            errors: this.errors
+	        };
+	    };
+	    Validator.prototype.fullPath = function (path) {
+	        if (!path && !this.context)
+	            throw new Error("Use property() or indexer() to define value to validate");
+	        if (!path)
+	            return this.context;
+	        if (!this.context)
+	            return path;
+	        return this.context + "." + path;
+	    };
+	    return Validator;
+	}());
+	exports.Validator = Validator;
+
 
 /***/ },
 /* 11 */
@@ -515,22 +566,19 @@
 	        if (!product.id)
 	            product.id = uuid.v1();
 	        return new Promise(function (resolve) {
-	            _this.validator
-	                .validate(product)
-	                .then(function (validationResult) {
-	                if (!validationResult.isValid)
-	                    resolve(validationResult);
-	                else {
-	                    _this.storage
-	                        .save(product)
-	                        .then(function () { return _this.one(product.id); })
-	                        .then(function (p) {
-	                        event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, p.id);
-	                        return p;
-	                    })
-	                        .then(function (entity) { return resolve(entity); });
-	                }
-	            });
+	            var validationResult = _this.validator.validate(product);
+	            if (!validationResult.ok)
+	                resolve(validationResult);
+	            else {
+	                _this.storage
+	                    .save(product)
+	                    .then(function () { return _this.one(product.id); })
+	                    .then(function (p) {
+	                    event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, p.id);
+	                    return p;
+	                })
+	                    .then(function (entity) { return resolve(entity); });
+	            }
 	        });
 	    };
 	    ProductService.prototype.one = function (productId) {
@@ -551,20 +599,22 @@
 	            .then(function (product) {
 	            if (!product.values)
 	                product.values = {};
-	            var values = product.values[webshopId] || {
-	                title: null,
-	                price: null,
-	                image: null
-	            };
+	            var values = product.values[webshopId] ||
+	                {
+	                    title: null,
+	                    price: null,
+	                    image: null
+	                };
 	            product.values[webshopId] = values;
 	            if (!product.log)
 	                product.log = {};
-	            var log = product.log[webshopId] || {
-	                url: null,
-	                scrapedAt: null,
-	                error: data.error,
-	                values: {}
-	            };
+	            var log = product.log[webshopId] ||
+	                {
+	                    url: null,
+	                    scrapedAt: null,
+	                    error: data.error,
+	                    values: {}
+	                };
 	            product.log[webshopId] = log;
 	            log.url = product.scrapingUrls[webshopId];
 	            log.scrapedAt = now;
@@ -639,26 +689,26 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var validator = __webpack_require__(10);
+	var validation_1 = __webpack_require__(10);
 	var ProductValidator = (function () {
 	    function ProductValidator() {
-	        this.productValidator = validator.isAnyObject()
-	            .withRequired("id", validator.isString())
-	            .withRequired("title", validator.isString());
 	    }
 	    ProductValidator.prototype.validate = function (product) {
-	        var _this = this;
 	        if (!product)
 	            throw new Error("product is undefined");
-	        return new Promise(function (resolve) {
-	            validator.run(_this.productValidator, product, function (errorCount, errors) {
-	                resolve({
-	                    isValid: errorCount === 0,
-	                    errorCount: errorCount,
-	                    errors: errors
-	                });
-	            });
-	        });
+	        var validator = new validation_1.Validator();
+	        return validator
+	            .property("id")
+	            .errorIf(function () { return !product.id; }, "Product ID is required")
+	            .end()
+	            .property("title")
+	            .errorIf(function () { return !product.title; }, "Product title is required")
+	            .errorIf(function () { return product.title && product.title.length > 1024; }, "Product title too long")
+	            .end()
+	            .property("scrapingUrls")
+	            .errorIf(function () { return !product.scrapingUrls || Object.keys(product.scrapingUrls).length === 0; }, "At least one scraping URL is required")
+	            .end()
+	            .result();
 	    };
 	    return ProductValidator;
 	}());

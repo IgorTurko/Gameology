@@ -25,45 +25,28 @@ export default class WebShopService {
         if (!webShop)
             throw new Error("webShop is undefined");
 
+        webShop = this.normalize(webShop);
+
         return new Promise(resolve => {
-            this.validator
-                .validate(webShop)
-                .then(validationResult => {
+            const validationResult = this.validator.validate(webShop);
 
-                    if (!validationResult.isValid)
-                        resolve(validationResult);
-                    else
-                        this.storage
-                            .save(webShop)
-                            .then(() => this.one(webShop.id))
-                            .then(entity => resolve(entity))
-                            .catch(err => {
-                                const errorResult: Api.ValidationResult = {
-                                    isValid: false,
-                                    errorCount: 1,
-                                    errors: [{
-                                        parameter: "",
-                                        value: null,
-                                        message: err
-                                    }]
-                                };
+            if (!validationResult.ok)
+                resolve(validationResult);
+            else
+                this.storage
+                    .save(webShop)
+                    .then(() => this.one(webShop.id))
+                    .then(entity => resolve(entity))
+                    .catch(err => {
+                        const errorResult: Api.ValidationResult = {
+                            ok: false,
+                            errors: {
+                                message: err
+                            }
+                        };
 
-                                resolve(errorResult);
-                            });
-                })
-                .catch(() => {
-                    const errorResult: Api.ValidationResult = {
-                        isValid: false,
-                        errorCount: 1,
-                        errors: [{
-                            parameter: "",
-                            value: null,
-                            message: "Validation failed"
-                        }]
-                    };
-
-                    resolve(errorResult);
-                });
+                        resolve(errorResult);
+                    });
         });
     }
 
@@ -71,45 +54,42 @@ export default class WebShopService {
         if (!webShop)
             throw new Error("webShop is undefined");
 
+        webShop = this.normalize(webShop);
+
         return new Promise(resolve => {
-            this.validator
-                .validate(webShop)
-                .then(validationResult => {
 
-                    if (!validationResult.isValid)
-                        resolve(validationResult);
-                    else
-                        this.storage
-                            .put(webShop)
-                            .then(() => this.one(webShop.id))
-                            .then(entity => resolve(entity))
-                            .catch(err => {
-                                const errorResult: Api.ValidationResult = {
-                                    isValid: false,
-                                    errorCount: 1,
-                                    errors: [{
-                                        parameter: "",
-                                        value: null,
-                                        message: err
-                                    }]
-                                };
+            const validationResult = this.validator.validate(webShop);
 
-                                resolve(errorResult);
-                            });
-                })
-                .catch(() => {
-                    const errorResult: Api.ValidationResult = {
-                        isValid: false,
-                        errorCount: 1,
-                        errors: [{
-                            parameter: "",
-                            value: null,
-                            message: "Validation failed"
-                        }]
-                    };
+            if (!validationResult.ok)
+                resolve(validationResult);
+            else
+                this.storage
+                    .put(webShop)
+                    .then(() => this.one(webShop.id))
+                    .then(entity => resolve(entity))
+                    .catch(err => {
+                        const errorResult: Api.ValidationResult = {
+                            ok: false,
+                            errors: {
+                                message: err
+                            }
+                        };
+                        resolve(errorResult);
+                    });
 
-                    resolve(errorResult);
-                });
         });
+    }
+
+    private normalize(webShop: Api.WebShop): Api.WebShop {
+
+        if (webShop.delivery && webShop.delivery.length) {
+            webShop.delivery = webShop.delivery
+                .map(d => ({
+                    deliveryMethod: d.deliveryMethod,
+                    price: parseFloat(`${d.price}`)
+                }));
+        }
+
+        return webShop;
     }
 }
