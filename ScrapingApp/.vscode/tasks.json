@@ -4,6 +4,7 @@
     "version": "0.1.0",
     "command": "webpack",
     "isShellCommand": true,
-    "args": [],
-    "showOutput": "always"
+    "args": ["--watch"],
+    "showOutput": "always",
+    "isWatching": true
 }

@@ -1,4 +1,8 @@
-﻿.product-grid {
+﻿body {
+    padding-top: 70px;
+}
+
+.product-grid {
     margin-top: 20px;
 }
 .product-url {

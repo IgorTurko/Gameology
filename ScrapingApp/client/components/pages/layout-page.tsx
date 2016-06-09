@@ -14,7 +14,16 @@ export default class LayoutPage extends React.Component<{}, {}> {
     render() {
         return (
             <div className="container">
-                <LoginForm />
+                <nav className="navbar navbar-default navbar-fixed-top">
+                    <div className="container">
+                        <div className="navbar-left">
+                            <h3>Gameology</h3>
+                        </div>
+                        <div className="navbar-right">
+                            <LoginForm /> 
+                        </div>
+                    </div>
+                </nav>
                 {this.props.children}
             </div>);
     }

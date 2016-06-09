@@ -55,12 +55,12 @@ export default class LoginForm extends React.Component<{}, ILoginFormState>
 
     render() {
         if (this.state.isAuthenticated) {
-            return (<div>You are logged in</div>);
+            return (<div className="navbar-text">You are logged in</div>);
         }
 
         return (
             <div>
-                <form className="form-inline" onSubmit={e=>this.onFormSubmit(e)}>
+                <form className="navbar-form" onSubmit={e=>this.onFormSubmit(e)}>
                     <div className="form-group">
                         <label className="sr-only" for="login">Login</label>
                         <input type="text" className="form-control" name="login" id="login" placeholder="Login" />
