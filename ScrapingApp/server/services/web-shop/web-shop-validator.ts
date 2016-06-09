@@ -1,35 +1,33 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
 
-import * as validator from "node-validator";
+import { Validator } from "../../validation/validation";
 
 export default class WebShopValidator {
-    private webShopValidator: validator.Validatable;
-    private deliveryMethodValidator: validator.Validatable;
 
-    constructor() {
-        this.deliveryMethodValidator = validator.isAnyObject()
-            .withRequired("deliveryMethod", validator.isString())
-            .withRequired("price", validator.isNumber({ min: 0 }));
-
-        
-        this.webShopValidator = validator.isAnyObject()
-            .withRequired("title", validator.isString());
-    }
-
-    validate(webShop: Api.WebShop): Promise<Api.ValidationResult> {
+    validate(webShop: Api.WebShop): Api.ValidationResult {
         if (!webShop)
             throw new Error("webShop is undefined");
 
-        return new Promise(resolve => {
-            validator.run(this.webShopValidator,
-                webShop,
-                (errorCount, errors) => {
-                    resolve({
-                        isValid: errorCount === 0,
-                        errorCount: errorCount,
-                        errors: errors
-                    });
-                });
-        });
+        const validator = new Validator();
+
+        return validator
+            .property("title")
+                .errorIf(() => !webShop.title, "Title is required")
+                .errorIf(() => webShop.title && webShop.title.length > 1024, "Title too long")
+            .end()
+            .property("delivery")
+                .array(webShop.delivery,
+                (delivery, validator) => {
+                    validator
+                        .property("deliveryMethod")
+                            .errorIf(() => !delivery.deliveryMethod, "Delivery method is required")
+                            .errorIf(() => delivery.deliveryMethod && delivery.deliveryMethod.length > 1024, "Delivery method too long")
+                        .end()
+                        .property("price")
+                            .errorIf(() => isNaN(delivery.price) || !delivery.price || delivery.price < 0, "Price is required and must be greater than zero")
+                        .end();
+                })
+            .end()
+            .result();
     }
 }

@@ -1,5 +1,4 @@
 ﻿/// <reference path="../typings/index.d.ts" />
-require("../extensions");
 
 import * as jsdom from "jsdom";
 import ValueParserHash from "./value-parser";

@@ -36,15 +36,8 @@ router.post("/", (request, response) => {
     else {
         webShopService.save(webShop)
             .then(result => {
-                if (result["isValid"] === false) {
-                    const validationResult = <Api.ValidationResult>result;
-
-                    const failResponse: Api.IFailResponse = {
-                        ok: false,
-                        errors: validationResult.errors
-                    };
-
-                    response.json(failResponse).end();
+                if (result["ok"] === false) {
+                    response.json(result).end();
                 }
                 else {
                     const updatedWebShop = <Api.WebShop>result;
@@ -55,6 +48,9 @@ router.post("/", (request, response) => {
 
                     response.json(okResponse).end();
                 }
+            })
+            .catch(err => {
+                response.send(500, err).end();
             });
     }
 });

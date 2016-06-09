@@ -38,15 +38,8 @@ router.post("/", (request, response) => {
 
     productService.save(product)
         .then(result => {
-            if (result["isValid"] === false) {
-                const validationResult = <Api.ValidationResult>result;
-
-                const failResponse: Api.IFailResponse = {
-                    ok: false,
-                    errors: validationResult.errors
-                };
-
-                response.json(failResponse).end();
+            if (result["ok"] === false) {
+                response.json(result).end();
             }
             else {
                 const updatedProduct = <Api.Product>result;

@@ -27,23 +27,20 @@ export default class ProductService {
             product.id = uuid.v1();
 
         return new Promise(resolve => {
-            this.validator
-                .validate(product)
-                .then(validationResult => {
-                    if (!validationResult.isValid)
-                        resolve(validationResult);
-                    else {
-                        this.storage
-                            .save(product)
-                            .then(() => this.one(product.id))
-                            .then(p => {
-                                eventBus.emit(EventNames.ProductUpdated, p.id);
+            const validationResult = this.validator.validate(product);
+            if (!validationResult.ok)
+                resolve(validationResult);
+            else {
+                this.storage
+                    .save(product)
+                    .then(() => this.one(product.id))
+                    .then(p => {
+                        eventBus.emit(EventNames.ProductUpdated, p.id);
 
-                                return p;
-                            })
-                            .then(entity => resolve(entity));
-                    }
-                });
+                        return p;
+                    })
+                    .then(entity => resolve(entity));
+            }
         });
     }
 
@@ -68,18 +65,19 @@ export default class ProductService {
                 if (!product.values)
                     product.values = {};
 
-                let values = product.values[webshopId] || {
+                const values = product.values[webshopId] ||
+                {
                     title: null,
                     price: null,
                     image: null
                 };
                 product.values[webshopId] = values;
 
-
                 if (!product.log)
                     product.log = {};
 
-                let log = product.log[webshopId] || {
+                const log = product.log[webshopId] ||
+                {
                     url: null,
                     scrapedAt: null,
                     error: data.error,

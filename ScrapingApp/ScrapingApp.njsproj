@@ -112,6 +112,7 @@
     <Folder Include="server-test\test-parsing\" />
     <Folder Include="server\" />
     <Folder Include="server\data-access\" />
+    <Folder Include="server\validation\" />
     <Folder Include="server\scrapers\" />
     <Folder Include="server\services\scraping\" />
     <Folder Include="server\services\users\" />
@@ -169,6 +170,7 @@
     <TypeScriptCompile Include="server\services\scraping\scrape-queue-service.ts" />
     <TypeScriptCompile Include="server\services\users\mongo-user-account-storage.ts" />
     <TypeScriptCompile Include="server\services\users\user-account-service.ts" />
+    <TypeScriptCompile Include="server\validation\validation.ts" />
     <TypeScriptCompile Include="server\web\routes\authentication-route.ts" />
     <TypeScriptCompile Include="server\web\routes\product-route.ts" />
     <TypeScriptCompile Include="server\scrapers\jsdom-scraper.ts" />
