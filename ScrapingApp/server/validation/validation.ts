@@ -42,6 +42,7 @@ export class Validator {
 
         nested.context = context;
         nested.errors = this.errors;
+        nested.parent = this;
 
         return nested;
     }
@@ -55,6 +56,7 @@ export class Validator {
 
         nested.context = context;
         nested.errors = this.errors;
+        nested.parent = this;
 
         return nested;
     }
