@@ -1127,7 +1127,7 @@
 	        _super.apply(this, arguments);
 	    }
 	    ProductsGrid.prototype.getHeader = function () {
-	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement("div", {key: shop.id, className: "col-md-2 product-cell"}, shop.title)); })));
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell header"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement("div", {key: shop.id, className: "col-md-2 product-cell header"}, shop.title)); })));
 	    };
 	    ;
 	    ProductsGrid.prototype.getEmptyRow = function () {
@@ -1141,7 +1141,7 @@
 	                var p = product.values != null ? product.values[shop.id] : null;
 	                return (React.createElement("div", {className: "col-md-2 product-cell", key: product.id + index}, (function () {
 	                    if (p) {
-	                        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: product.scrapingUrls[shop.id]}, p.title)), React.createElement("img", {className: "product-img", src: p != null ? p.image : ''}), React.createElement("div", {className: "product-price"}, p != null ? p.price : '')));
+	                        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: product.scrapingUrls[shop.id]}, p.title)), React.createElement("img", {className: "product-img", src: p != null ? p.image : ''}), React.createElement("div", {className: "product-price"}, p != null ? "$" + p.price.toFixed(2) : '')));
 	                    }
 	                })()));
 	            })));
@@ -1150,7 +1150,7 @@
 	    ;
 	    ProductsGrid.prototype.render = function () {
 	        if (this.props.products == null || this.props.products.length == 0) {
-	            return React.createElement("div", {className: "product-grid"}, this.getHeader(), this.getEmptyRow());
+	            return React.createElement("div", {className: "product-grid"}, this.getEmptyRow());
 	        }
 	        return React.createElement("div", {className: "product-grid"}, this.getHeader(), this.getData());
 	    };

@@ -7,11 +7,14 @@
 }
 .product-url {
     overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+    height: 3.6em;
 }
 .product-img {
-    width: 60px;
+    height: 6em;
     display: block;
-    margin: 0 auto;
+    margin: 0 auto 1em auto;
 }
 .product-price {
     text-align: center;
@@ -21,8 +24,13 @@
 .product-cell {
     border-top: 1px solid black;
     border-left: 1px solid black;
-    height: 150px;
+    height: 13em;
     overflow: hidden;
+    padding: 0.3em;
+}
+
+.product-cell.header {
+    background: #eee;
 }
 
 /*header*/
