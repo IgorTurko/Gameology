@@ -44,15 +44,45 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	__webpack_require__(1);
+	module.exports = __webpack_require__(2);
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+	/// <reference path="typings/index.d.ts" />
+	if (!Array.prototype.toHash) {
+	    Array.prototype.toHash = function toHash(keySelector, valueSelector) {
+	        valueSelector = valueSelector || (function (e) { return (e); });
+	        return this.reduce(function (hash, elem) {
+	            var key = keySelector(elem);
+	            var value = valueSelector(elem);
+	            hash[key] = value;
+	            return hash;
+	        }, {});
+	    };
+	}
+	if (!Object.entries) {
+	    Object.entries = function (obj) { return Object.keys(obj)
+	        .map(function (key) { return ([key, obj[key]]); }); };
+	}
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/// <reference path="../../server/typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(1);
-	var mongo_web_shop_storage_1 = __webpack_require__(5);
-	var web_shop_service_1 = __webpack_require__(6);
-	var mongo_product_storage_1 = __webpack_require__(9);
-	var product_service_1 = __webpack_require__(10);
-	var web_shops_1 = __webpack_require__(16);
-	var products_1 = __webpack_require__(17);
+	var db_1 = __webpack_require__(3);
+	var mongo_web_shop_storage_1 = __webpack_require__(7);
+	var web_shop_service_1 = __webpack_require__(8);
+	var mongo_product_storage_1 = __webpack_require__(11);
+	var product_service_1 = __webpack_require__(12);
+	var web_shops_1 = __webpack_require__(18);
+	var products_1 = __webpack_require__(19);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
@@ -100,13 +130,13 @@
 
 
 /***/ },
-/* 1 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	var mongo = __webpack_require__(2);
-	var config_1 = __webpack_require__(3);
+	var mongo = __webpack_require__(4);
+	var config_1 = __webpack_require__(5);
 	var db = new Promise(function (resolve, reject) {
 	    mongo.MongoClient.connect(config_1.default.mongoUrl, function (err, db) {
 	        if (err) {
@@ -145,18 +175,18 @@
 
 
 /***/ },
-/* 2 */
+/* 4 */
 /***/ function(module, exports) {
 
 	module.exports = require("mongodb");
 
 /***/ },
-/* 3 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="typings/index.d.ts"/>
-	var fs = __webpack_require__(4);
+	var fs = __webpack_require__(6);
 	var configContent = fs.readFileSync("./config.json", "utf8");
 	var configuration = JSON.parse(configContent);
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -164,18 +194,18 @@
 
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = require("fs");
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(1);
+	var db_1 = __webpack_require__(3);
 	var MongoWebShopStorage = (function () {
 	    function MongoWebShopStorage(db) {
 	        this.db = db;
@@ -231,12 +261,12 @@
 
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var web_shop_validator_1 = __webpack_require__(7);
+	var web_shop_validator_1 = __webpack_require__(9);
 	var WebShopService = (function () {
 	    function WebShopService(storage) {
 	        this.storage = storage;
@@ -343,12 +373,12 @@
 
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var validator = __webpack_require__(8);
+	var validator = __webpack_require__(10);
 	var WebShopValidator = (function () {
 	    function WebShopValidator() {
 	        this.deliveryMethodValidator = validator.isAnyObject()
@@ -378,18 +408,18 @@
 
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports) {
 
 	module.exports = require("node-validator");
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(1);
+	var db_1 = __webpack_require__(3);
 	var MongoProductStorage = (function () {
 	    function MongoProductStorage(db) {
 	        this.db = db;
@@ -459,15 +489,15 @@
 
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var moment = __webpack_require__(11);
-	var uuid = __webpack_require__(12);
-	var event_bus_1 = __webpack_require__(13);
-	var product_validator_1 = __webpack_require__(15);
+	var moment = __webpack_require__(13);
+	var uuid = __webpack_require__(14);
+	var event_bus_1 = __webpack_require__(15);
+	var product_validator_1 = __webpack_require__(17);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -559,24 +589,24 @@
 
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports) {
 
 	module.exports = require("moment");
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports) {
 
 	module.exports = require("node-uuid");
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../typings/index.d.ts"/>
 	"use strict";
-	var events_1 = __webpack_require__(14);
+	var events_1 = __webpack_require__(16);
 	var EventNames = (function () {
 	    function EventNames() {
 	    }
@@ -598,18 +628,18 @@
 
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports) {
 
 	module.exports = require("events");
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var validator = __webpack_require__(8);
+	var validator = __webpack_require__(10);
 	var ProductValidator = (function () {
 	    function ProductValidator() {
 	        this.productValidator = validator.isAnyObject()
@@ -637,7 +667,7 @@
 
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../server/typings/index.d.ts" />
@@ -752,7 +782,7 @@
 
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../server/typings/index.d.ts" />

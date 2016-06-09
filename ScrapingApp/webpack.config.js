@@ -42,7 +42,7 @@ module.exports = [
     },
     // Server
     {
-        entry: "./server/app.ts",
+        entry: ["./server/extensions.ts", "./server/app.ts"],
         output: {
             filename: "app.js",
             path: "./out/server/"
@@ -70,8 +70,8 @@ module.exports = [
     // Server-Test
     {
         entry: {
-            "import-test-data": "./server-test/test-data/import-test-data.ts",
-            "run-page-parsing": "./server-test/test-parsing/run-page-parsing.ts"
+            "import-test-data": ["./server/extensions.ts", "./server-test/test-data/import-test-data.ts"],
+            "run-page-parsing": ["./server/extensions.ts", "./server-test/test-parsing/run-page-parsing.ts"]
         },
         output: {
             filename: "[name].js",

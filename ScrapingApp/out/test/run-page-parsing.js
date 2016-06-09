@@ -44,70 +44,41 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../server/typings/index.d.ts" />
-	"use strict";
-	var db_1 = __webpack_require__(1);
-	var mongo_product_storage_1 = __webpack_require__(9);
-	var product_service_1 = __webpack_require__(10);
-	var mongo_web_shop_storage_1 = __webpack_require__(5);
-	var web_shop_service_1 = __webpack_require__(6);
-	var scrape_service_1 = __webpack_require__(18);
-	var db = new db_1.default();
-	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
-	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
-	var scrapeService = new scrape_service_1.default(productService, webShopService);
-	function outputProductScrapeResult(scrapeResult, product, shops) {
-	    Object.keys(scrapeResult)
-	        .forEach(function (shopId) {
-	        var shop = shops.filter(function (s) { return s.id === shopId; })[0];
-	        var result = scrapeResult[shopId];
-	        console.log("Scrapping of " + product.title + " successful for shop " + shop.title);
-	        var out = {};
-	        Object.keys(result.values)
-	            .forEach(function (k) {
-	            var v = result.values[k];
-	            if (v.isSuccessful) {
-	                out[k] = v.value;
-	            }
-	            else {
-	                out[k] = {
-	                    error: v.error
-	                };
-	            }
-	        });
-	        console.dir(out);
-	    });
-	}
-	webShopService.all()
-	    .then(function (shops) {
-	    return productService.all()
-	        .then(function (products) {
-	        var productScrapePromises = products.map(function (product) {
-	            return scrapeService.scrapeProductData(product.id)
-	                .then(function (productScrapeResultHash) { return outputProductScrapeResult(productScrapeResultHash, product, shops); });
-	        });
-	        return Promise.all(productScrapePromises);
-	    });
-	})
-	    .then(function () {
-	    console.info("Scraping completed successfully");
-	    process.exit();
-	})
-	    .catch(function (err) {
-	    console.error("Scraping failed");
-	    console.error(err);
-	    process.exit();
-	});
+	__webpack_require__(1);
+	module.exports = __webpack_require__(20);
 
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	/// <reference path="typings/index.d.ts" />
+	if (!Array.prototype.toHash) {
+	    Array.prototype.toHash = function toHash(keySelector, valueSelector) {
+	        valueSelector = valueSelector || (function (e) { return (e); });
+	        return this.reduce(function (hash, elem) {
+	            var key = keySelector(elem);
+	            var value = valueSelector(elem);
+	            hash[key] = value;
+	            return hash;
+	        }, {});
+	    };
+	}
+	if (!Object.entries) {
+	    Object.entries = function (obj) { return Object.keys(obj)
+	        .map(function (key) { return ([key, obj[key]]); }); };
+	}
+
+
+/***/ },
+/* 2 */,
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	var mongo = __webpack_require__(2);
-	var config_1 = __webpack_require__(3);
+	var mongo = __webpack_require__(4);
+	var config_1 = __webpack_require__(5);
 	var db = new Promise(function (resolve, reject) {
 	    mongo.MongoClient.connect(config_1.default.mongoUrl, function (err, db) {
 	        if (err) {
@@ -146,18 +117,18 @@
 
 
 /***/ },
-/* 2 */
+/* 4 */
 /***/ function(module, exports) {
 
 	module.exports = require("mongodb");
 
 /***/ },
-/* 3 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="typings/index.d.ts"/>
-	var fs = __webpack_require__(4);
+	var fs = __webpack_require__(6);
 	var configContent = fs.readFileSync("./config.json", "utf8");
 	var configuration = JSON.parse(configContent);
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -165,18 +136,18 @@
 
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = require("fs");
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(1);
+	var db_1 = __webpack_require__(3);
 	var MongoWebShopStorage = (function () {
 	    function MongoWebShopStorage(db) {
 	        this.db = db;
@@ -232,12 +203,12 @@
 
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var web_shop_validator_1 = __webpack_require__(7);
+	var web_shop_validator_1 = __webpack_require__(9);
 	var WebShopService = (function () {
 	    function WebShopService(storage) {
 	        this.storage = storage;
@@ -344,12 +315,12 @@
 
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var validator = __webpack_require__(8);
+	var validator = __webpack_require__(10);
 	var WebShopValidator = (function () {
 	    function WebShopValidator() {
 	        this.deliveryMethodValidator = validator.isAnyObject()
@@ -379,18 +350,18 @@
 
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports) {
 
 	module.exports = require("node-validator");
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(1);
+	var db_1 = __webpack_require__(3);
 	var MongoProductStorage = (function () {
 	    function MongoProductStorage(db) {
 	        this.db = db;
@@ -460,15 +431,15 @@
 
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var moment = __webpack_require__(11);
-	var uuid = __webpack_require__(12);
-	var event_bus_1 = __webpack_require__(13);
-	var product_validator_1 = __webpack_require__(15);
+	var moment = __webpack_require__(13);
+	var uuid = __webpack_require__(14);
+	var event_bus_1 = __webpack_require__(15);
+	var product_validator_1 = __webpack_require__(17);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -560,24 +531,24 @@
 
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports) {
 
 	module.exports = require("moment");
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports) {
 
 	module.exports = require("node-uuid");
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../typings/index.d.ts"/>
 	"use strict";
-	var events_1 = __webpack_require__(14);
+	var events_1 = __webpack_require__(16);
 	var EventNames = (function () {
 	    function EventNames() {
 	    }
@@ -599,18 +570,18 @@
 
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports) {
 
 	module.exports = require("events");
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var validator = __webpack_require__(8);
+	var validator = __webpack_require__(10);
 	var ProductValidator = (function () {
 	    function ProductValidator() {
 	        this.productValidator = validator.isAnyObject()
@@ -638,15 +609,75 @@
 
 
 /***/ },
-/* 16 */,
-/* 17 */,
-/* 18 */
+/* 18 */,
+/* 19 */,
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../server/typings/index.d.ts" />
+	"use strict";
+	var db_1 = __webpack_require__(3);
+	var mongo_product_storage_1 = __webpack_require__(11);
+	var product_service_1 = __webpack_require__(12);
+	var mongo_web_shop_storage_1 = __webpack_require__(7);
+	var web_shop_service_1 = __webpack_require__(8);
+	var scrape_service_1 = __webpack_require__(21);
+	var db = new db_1.default();
+	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
+	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
+	var scrapeService = new scrape_service_1.default(productService, webShopService);
+	function outputProductScrapeResult(scrapeResult, product, shops) {
+	    Object.keys(scrapeResult)
+	        .forEach(function (shopId) {
+	        var shop = shops.filter(function (s) { return s.id === shopId; })[0];
+	        var result = scrapeResult[shopId];
+	        console.log("Scrapping of " + product.title + " successful for shop " + shop.title);
+	        var out = {};
+	        Object.keys(result.values)
+	            .forEach(function (k) {
+	            var v = result.values[k];
+	            if (v.isSuccessful) {
+	                out[k] = v.value;
+	            }
+	            else {
+	                out[k] = {
+	                    error: v.error
+	                };
+	            }
+	        });
+	        console.dir(out);
+	    });
+	}
+	webShopService.all()
+	    .then(function (shops) {
+	    return productService.all()
+	        .then(function (products) {
+	        var productScrapePromises = products.map(function (product) {
+	            return scrapeService.scrapeProductData(product.id)
+	                .then(function (productScrapeResultHash) { return outputProductScrapeResult(productScrapeResultHash, product, shops); });
+	        });
+	        return Promise.all(productScrapePromises);
+	    });
+	})
+	    .then(function () {
+	    console.info("Scraping completed successfully");
+	    process.exit();
+	})
+	    .catch(function (err) {
+	    console.error("Scraping failed");
+	    console.error(err);
+	    process.exit();
+	});
+
+
+/***/ },
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var jsdom_scraper_1 = __webpack_require__(19);
-	var event_bus_1 = __webpack_require__(13);
+	var jsdom_scraper_1 = __webpack_require__(22);
+	var event_bus_1 = __webpack_require__(15);
 	var ScrapeService = (function () {
 	    function ScrapeService(productService, webShopService) {
 	        this.productService = productService;
@@ -698,14 +729,13 @@
 
 
 /***/ },
-/* 19 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	__webpack_require__(20);
-	var jsdom = __webpack_require__(21);
-	var value_parser_1 = __webpack_require__(22);
+	"use strict";
+	var jsdom = __webpack_require__(23);
+	var value_parser_1 = __webpack_require__(24);
 	var JsdomScraper = (function () {
 	    function JsdomScraper() {
 	        this.valueParser = new value_parser_1.default();
@@ -835,40 +865,18 @@
 
 
 /***/ },
-/* 20 */
-/***/ function(module, exports) {
-
-	/// <reference path="typings/index.d.ts" />
-	if (!Array.prototype.toHash) {
-	    Array.prototype.toHash = function toHash(keySelector, valueSelector) {
-	        valueSelector = valueSelector || (function (e) { return (e); });
-	        return this.reduce(function (hash, elem) {
-	            var key = keySelector(elem);
-	            var value = valueSelector(elem);
-	            hash[key] = value;
-	            return hash;
-	        }, {});
-	    };
-	}
-	if (!Object.entries) {
-	    Object.entries = function (obj) { return Object.keys(obj)
-	        .map(function (key) { return ([key, obj[key]]); }); };
-	}
-
-
-/***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports) {
 
 	module.exports = require("jsdom");
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts"/>
-	var path = __webpack_require__(23);
+	var path = __webpack_require__(25);
 	var ValueParserHash = (function () {
 	    function ValueParserHash() {
 	        this.parsers = {};
@@ -897,7 +905,7 @@
 
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports) {
 
 	module.exports = require("path");
