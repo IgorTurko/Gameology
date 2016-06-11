@@ -47,7 +47,7 @@ export default class JsdomScraper implements Scraping.IScraper {
                             .map(valueName => result.values[valueName])
                             .every(v => v.isSuccessful);
 
-                        resolve(result);  
+                        resolve(result);
                     }
                 }
             });
@@ -61,7 +61,7 @@ export default class JsdomScraper implements Scraping.IScraper {
             throw new Error("valueScrapingSettings is undefined");
 
         const parsingContext: Scraping.ParserContext = {
-            pageUrl: document.location.href
+            location: document.location
         };
 
         const result = this.emptyValueScrapingResult();
@@ -95,39 +95,39 @@ export default class JsdomScraper implements Scraping.IScraper {
 
         switch (extractMethod) {
             case "queryselector":
-            {
-                const querySelectorSettings = valueScrapingSetting as Api.QuerySelectorExtractSettings;
+                {
+                    const querySelectorSettings = valueScrapingSetting as Api.QuerySelectorExtractSettings;
 
-                if (!querySelectorSettings.elementSelector)
-                    throw new Error(`elementSelector is missing`);
+                    if (!querySelectorSettings.elementSelector)
+                        throw new Error(`elementSelector is missing`);
 
-                const elements = document.querySelectorAll(querySelectorSettings.elementSelector);
-                if (elements.length === 0)
-                    throw new Error(`Element with selector ${querySelectorSettings.elementSelector} is missing`);
-                if (elements.length > 1)
-                    throw new Error(`There are more than one element with selector ${querySelectorSettings.elementSelector}`);
+                    const elements = document.querySelectorAll(querySelectorSettings.elementSelector);
+                    if (elements.length === 0)
+                        throw new Error(`Element with selector ${querySelectorSettings.elementSelector} is missing`);
+                    if (elements.length > 1)
+                        throw new Error(`There are more than one element with selector ${querySelectorSettings.elementSelector}`);
 
-                if (querySelectorSettings.attribute)
-                    return elements[0].getAttribute(querySelectorSettings.attribute);
-                else
-                    return elements[0].textContent;
-            };
+                    if (querySelectorSettings.attribute)
+                        return elements[0].getAttribute(querySelectorSettings.attribute);
+                    else
+                        return elements[0].textContent;
+                };
             case "regex":
-            {
-                const regexSettings = valueScrapingSetting as Api.RegexExtractSettings;
-                if (!regexSettings.regex)
-                    throw new Error("regex missing");
+                {
+                    const regexSettings = valueScrapingSetting as Api.RegexExtractSettings;
+                    if (!regexSettings.regex)
+                        throw new Error("regex missing");
 
-                const text = document.querySelector("html").innerHTML;
+                    const text = document.querySelector("html").innerHTML;
 
-                const regex = new RegExp(regexSettings.regex, "gmi");
+                    const regex = new RegExp(regexSettings.regex, "gmi");
 
-                const matches = regex.exec(text);
-                if (!matches.length)
-                    throw new Error("No value matches");
+                    const matches = regex.exec(text);
+                    if (!matches.length)
+                        throw new Error("No value matches");
 
-                return matches[1];
-            };
+                    return matches[1];
+                };
             default:
                 throw new Error("Unknown extract method");
         }

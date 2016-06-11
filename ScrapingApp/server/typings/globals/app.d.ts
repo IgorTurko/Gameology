@@ -64,7 +64,17 @@ declare namespace Authentication {
 declare namespace Scraping {
 
     interface ParserContext {
-        pageUrl: string;
+        location: {
+            hash: string;
+            host: string;
+            hostname: string;
+            href: string;
+            origin: string;
+            pathname: string;
+            port: string;
+            protocol: string;
+            search: string;
+        };
     }
 
 
@@ -121,7 +131,7 @@ declare namespace Scraping {
 }
 
 declare namespace WebShops {
-    
+
     /**
      * Persistent storage for web shop.
      */
@@ -144,7 +154,7 @@ declare namespace WebShops {
 }
 
 declare namespace Products {
-    
+
     /**
     * Persistent storage for web shop.
     */
