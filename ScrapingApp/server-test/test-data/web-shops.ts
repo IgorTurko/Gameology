@@ -85,25 +85,46 @@ export const webShops: Api.WebShop[] =
             }]
         }
     },
+    // {
+    //     id: "unhalfbricking",
+    //     title: "Unhalfbricking",
+    //     isBase: false,
+    //     scrapingSettings: {
+    //         title: [{
+    //             type: "string",
+    //             extract: "regex",
+    //             regex: "<font.*?>(.*?)<\\/font>"
+    //         }],
+    //         price: [{
+    //             type: "number",
+    //             extract: "regex",
+    //             regex: "\\(\\$([\\d\\.]*?)\\)"
+    //         }],
+    //         image: [{
+    //             type: "relativeUrl",
+    //             extract: "regex",
+    //             regex: '<img.*?src="(.*?images/games/.*?)".*?\\>'
+    //         }]
+    //     }
+    // },
     {
-        id: "unhalfbricking",
-        title: "Unhalfbricking",
+        id: "dungeoncrawl",
+        title: "Dungeon Crawl",
         isBase: false,
         scrapingSettings: {
             title: [{
                 type: "string",
-                extract: "regex",
-                regex: "<font.*?>(.*?)<\\/font>"
+                elementSelector: "h1[itemprop='name']"
             }],
             price: [{
                 type: "number",
-                extract: "regex",
-                regex: "\\(\\$([\\d\\.]*?)\\)"
+                elementSelector: "div.productprice.productpricetext[itemprop='price']"
+
             }],
             image: [{
                 type: "relativeUrl",
-                extract: "regex",
-                regex: '<img.*?src="(.*?images/games/.*?)".*?\\>'
+                elementSelector: "meta[property='og:image'][content*='/assets/full']",
+                attribute: "content"
             }]
         }
     }

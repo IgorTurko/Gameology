@@ -9,7 +9,7 @@ export const products: Api.Product[] = [
             "spieledeluxe": "http://spieledeluxe.com/products/dixit-2014-edition",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_373_374&products_id=1038",
             "mightyape": "https://www.mightyape.com.au/product/Dixit/10339571",
-            "unhalfbricking": "http://www.unhalfbricking.com/display_game.php?gameid=453"
+            "dungeoncrawl": "http://www.dungeoncrawl.com.au/dixit"
         }
     },
     {
@@ -20,7 +20,7 @@ export const products: Api.Product[] = [
             "spieledeluxe": "http://spieledeluxe.com/products/king-of-tokyo",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_438_439&products_id=1092",
             "mightyape": "https://www.mightyape.com.au/product/King-of-New-York/22831407",
-            "unhalfbricking": "http://www.unhalfbricking.com/display_game.php?gameid=747"
+            "dungeoncrawl": "http://www.dungeoncrawl.com.au/king-of-tokyo"
         }
     },
     {
@@ -30,7 +30,8 @@ export const products: Api.Product[] = [
             "gameology": "http://www.gameology.com.au/products/b175_talisman_b?variant=11511245893",
             "spieledeluxe": "http://spieledeluxe.com/products/talisman-revised-4th-edition",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_28_66&products_id=49",
-            "mightyape": "https://www.mightyape.com.au/product/Talisman-4th-edition/10515428"
+            "mightyape": "https://www.mightyape.com.au/product/Talisman-4th-edition/10515428",
+            "dungeoncrawl": "http://www.dungeoncrawl.com.au/talisman-revised-4th-edition"
         }
     },
     {
@@ -41,7 +42,7 @@ export const products: Api.Product[] = [
             "spieledeluxe": "http://spieledeluxe.com/products/takenoko-1",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_373_376&products_id=1533",
             "mightyape": "https://www.mightyape.com.au/product/Takenoko/19756515",
-            "unhalfbricking": "http://www.unhalfbricking.com/display_game.php?gameid=662"
+            "dungeoncrawl": "http://www.dungeoncrawl.com.au/takenoko"
         }
     },
     {
@@ -52,7 +53,7 @@ export const products: Api.Product[] = [
             "spieledeluxe": "http://spieledeluxe.com/products/tokaido",
             "joedodgy": "http://www.joedodgy.com.au/index.php?main_page=product_info&cPath=3_276&products_id=1644",
             "mightyape": "https://www.mightyape.com.au/product/Tokaido/21890321",
-            "unhalfbricking": "http://www.unhalfbricking.com/display_game.php?gameid=997"
+            "dungeoncrawl": "http://www.dungeoncrawl.com.au/tokaido"
         }
     },
 ];
