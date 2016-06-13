@@ -67,14 +67,7 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
         );
     }
 
-    render() {
-        if (this.props.products == null || this.props.products.length == 0) {
-            return (
-                <div className="product-grid">
-                    { this.renderEmptyRow() }
-                </div>);
-        }
-
+    render() {        
         if (this.props.isLoading) {
             return (
                 <div className="product-grid">
@@ -82,6 +75,13 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
                     { this.renderLoadingIndicator() }
                 </div>
             );
+        }
+
+        if (this.props.products == null || this.props.products.length == 0) {
+            return (
+                <div className="product-grid">
+                    { this.renderEmptyRow() }
+                </div>);
         }
 
         return (

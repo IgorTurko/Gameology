@@ -2668,11 +2668,11 @@
 	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement("div", {className: "product-price"}, values.price ? "$" + values.price.toFixed(2) : '')));
 	    };
 	    ProductsGrid.prototype.render = function () {
-	        if (this.props.products == null || this.props.products.length == 0) {
-	            return (React.createElement("div", {className: "product-grid"}, this.renderEmptyRow()));
-	        }
 	        if (this.props.isLoading) {
 	            return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderLoadingIndicator()));
+	        }
+	        if (this.props.products == null || this.props.products.length == 0) {
+	            return (React.createElement("div", {className: "product-grid"}, this.renderEmptyRow()));
 	        }
 	        return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderData()));
 	    };
