@@ -28,7 +28,7 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
     );
 }
 
-const ProductListPage = connect(
+const ProductListPart = connect(
 
     (state: AppState.App) => ({
         products: state.products.filteredProducts,
@@ -45,4 +45,4 @@ const ProductListPage = connect(
 
 )(ProductListPageComponent);
 
-export default ProductListPage;
+export default ProductListPart;

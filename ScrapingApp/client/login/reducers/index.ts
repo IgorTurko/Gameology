@@ -10,11 +10,7 @@ import loginSuccess from "./login-success";
 const loginInitialState: AppState.Login = {
     isLoginRequired: false,
     isLogging: false,
-    error: "",
-    credentials: {
-        login: "",
-        password: ""
-    }
+    error: ""
 };
 
 const actionMap = {

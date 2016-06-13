@@ -3,14 +3,16 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-interface LoginFormProps {
-    crendentials: Api.AuthenticationCredentials;
-    errorMessage: string;
+export interface LoginFormProps {
+    errorMessage: string;    
+}
+
+export interface LoginFormHandlers {
     onLogin: (credentials: Api.AuthenticationCredentials) => void;
 }
 
 /** Login form here is presentation of login credentials and error message */
-export default class LoginForm extends React.Component<LoginFormProps, {}>
+export class LoginForm extends React.Component<LoginFormProps & LoginFormHandlers, {}>
 {
     onFormSubmit(e: React.FormEvent) {
         e.preventDefault();

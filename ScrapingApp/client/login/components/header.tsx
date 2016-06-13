@@ -3,17 +3,14 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import LoginForm from "./login-form";
+import { LoginForm, LoginFormProps, LoginFormHandlers } from "./login-form";
 
-interface HeaderProps {
-    credentials: Api.AuthenticationCredentials;
-    credentialsErrorMessage: string;
-    onLogin: (credentials: Api.AuthenticationCredentials) => void;
+export interface HeaderProps extends LoginFormProps {
     isLoggedIn: boolean;
 }
 
 
-export default function Header(props: HeaderProps) {
+export function Header(props: HeaderProps & LoginFormHandlers) {    
     return (
         <nav className="navbar navbar-default navbar-fixed-top">
             <div className="container">
@@ -24,9 +21,8 @@ export default function Header(props: HeaderProps) {
                     {
                         props.isLoggedIn 
                         ? (<div className="navbar-text">You are logged in</div>)
-                        : (<LoginForm crendentials={ props.credentials } 
-                                    errorMessage={ props.credentialsErrorMessage } 
-                                    onLogin={ c => props.onLogin(c) } />) 
+                        : (<LoginForm errorMessage={ props.errorMessage } 
+                                      onLogin={ c => props.onLogin(c) } />) 
                     }                    
                 </div>
             </div>

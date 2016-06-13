@@ -80,25 +80,33 @@
 	var ReactDOM = __webpack_require__(4);
 	var redux_1 = __webpack_require__(5);
 	var react_redux_1 = __webpack_require__(19);
+	var event_bus_1 = __webpack_require__(37);
 	var ProductActions = __webpack_require__(28);
 	var index_1 = __webpack_require__(29);
-	var product_1 = __webpack_require__(33);
-	var product_list_1 = __webpack_require__(46);
-	var productMiddleware = new product_1.default();
-	var reducers = redux_1.combineReducers({ products: index_1.default });
-	var enhancer = redux_1.applyMiddleware(function (s) { return productMiddleware.run(s); });
+	var product_middleware_1 = __webpack_require__(50);
+	var product_list_part_1 = __webpack_require__(53);
+	var LoginActions = __webpack_require__(49);
+	var index_2 = __webpack_require__(57);
+	var login_middleware_1 = __webpack_require__(51);
+	var login_part_1 = __webpack_require__(54);
+	var productMiddleware = new product_middleware_1.default();
+	var loginMiddleware = new login_middleware_1.default();
+	var reducers = redux_1.combineReducers({
+	    products: index_1.default,
+	    login: index_2.default
+	});
+	var enhancer = redux_1.applyMiddleware(function (s) { return loginMiddleware.run(s); }, function (s) { return productMiddleware.run(s); });
 	var store = redux_1.createStore(reducers, undefined, enhancer);
+	event_bus_1.eventBus.addListener(event_bus_1.Events.AuthorizationError, function () {
+	    var action = {
+	        type: LoginActions.LOGIN_REQUIRED
+	    };
+	    store.dispatch(action);
+	});
 	store.dispatch({
 	    type: ProductActions.PRODUCT_LOAD_REQUEST
 	});
-	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, React.createElement(product_list_1.default, null)), document.getElementsByClassName("container")[0]);
-	// ReactDOM.render(
-	//     <Router history={browserHistory}>
-	//         <Route component={LayoutPage}>
-	//             <Route path="/" component={MainPage} />
-	//             <Route path="/product/:productId" component={ProductPage} />
-	//         </Route>
-	//     </Router>, document.getElementsByClassName("container")[0]); 
+	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, React.createElement("div", null, React.createElement(login_part_1.default, null), React.createElement(product_list_part_1.default, null))), document.getElementsByClassName("container")[0]);
 
 
 /***/ },
@@ -1851,48 +1859,7 @@
 
 
 /***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// <reference path="../../typings/index.d.ts" />
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var middleware_base_1 = __webpack_require__(34);
-	var product_repo_1 = __webpack_require__(35);
-	var shop_repo_1 = __webpack_require__(45);
-	var Actions = __webpack_require__(28);
-	var ProductMiddleware = (function (_super) {
-	    __extends(ProductMiddleware, _super);
-	    function ProductMiddleware() {
-	        _super.apply(this, arguments);
-	        this.productRepo = new product_repo_1.default();
-	        this.shopRepo = new shop_repo_1.default();
-	    }
-	    ProductMiddleware.prototype[Actions.PRODUCT_LOAD_REQUEST] = function (state, action, dispatch) {
-	        Promise.all([
-	            this.productRepo.getAllProducts(),
-	            this.shopRepo.getAllShops()
-	        ]).then(function (_a) {
-	            var products = _a[0], shops = _a[1];
-	            var action = {
-	                type: Actions.PRODUCTS_LOADED,
-	                products: products,
-	                shops: shops
-	            };
-	            dispatch(action);
-	        });
-	    };
-	    return ProductMiddleware;
-	}(middleware_base_1.default));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProductMiddleware;
-
-
-/***/ },
+/* 33 */,
 /* 34 */
 /***/ function(module, exports) {
 
@@ -2568,34 +2535,7 @@
 
 
 /***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// <reference path="../../typings/index.d.ts" />
-	"use strict";
-	var React = __webpack_require__(3);
-	var react_redux_1 = __webpack_require__(19);
-	var search_box_1 = __webpack_require__(47);
-	var product_grid_1 = __webpack_require__(48);
-	var Actions = __webpack_require__(28);
-	function ProductListPageComponent(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading})));
-	}
-	var ProductListPage = react_redux_1.connect(function (state) { return ({
-	    products: state.products.filteredProducts,
-	    shops: state.products.shops,
-	    isLoading: state.products.isLoading
-	}); }, function (dispatch) { return ({
-	    onFilter: function (filter) { return dispatch({
-	        type: Actions.PRODUCT_SEARCH,
-	        filter: filter
-	    }); }
-	}); })(ProductListPageComponent);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProductListPage;
-
-
-/***/ },
+/* 46 */,
 /* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -2680,6 +2620,332 @@
 	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ProductsGrid;
+
+
+/***/ },
+/* 49 */
+/***/ function(module, exports) {
+
+	/// <reference path="../typings/index.d.ts" />
+	"use strict";
+	exports.LOGIN_REQUIRED = "login-required";
+	exports.LOGIN_ON_SERVER = "login-on-server";
+	exports.LOGIN_ERROR = "login-error";
+	exports.LOGIN_SUCCESS = "login-success";
+
+
+/***/ },
+/* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var middleware_base_1 = __webpack_require__(34);
+	var product_repo_1 = __webpack_require__(35);
+	var shop_repo_1 = __webpack_require__(45);
+	var Actions = __webpack_require__(28);
+	var ProductMiddleware = (function (_super) {
+	    __extends(ProductMiddleware, _super);
+	    function ProductMiddleware() {
+	        _super.apply(this, arguments);
+	        this.productRepo = new product_repo_1.default();
+	        this.shopRepo = new shop_repo_1.default();
+	    }
+	    ProductMiddleware.prototype[Actions.PRODUCT_LOAD_REQUEST] = function (state, action, dispatch) {
+	        Promise.all([
+	            this.productRepo.getAllProducts(),
+	            this.shopRepo.getAllShops()
+	        ]).then(function (_a) {
+	            var products = _a[0], shops = _a[1];
+	            var action = {
+	                type: Actions.PRODUCTS_LOADED,
+	                products: products,
+	                shops: shops
+	            };
+	            dispatch(action);
+	        });
+	    };
+	    return ProductMiddleware;
+	}(middleware_base_1.default));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ProductMiddleware;
+
+
+/***/ },
+/* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var login_repo_1 = __webpack_require__(52);
+	var middleware_base_1 = __webpack_require__(34);
+	var Actions = __webpack_require__(49);
+	var LoginMiddleware = (function (_super) {
+	    __extends(LoginMiddleware, _super);
+	    function LoginMiddleware() {
+	        _super.apply(this, arguments);
+	        this.loginRepo = new login_repo_1.default();
+	    }
+	    LoginMiddleware.prototype[Actions.LOGIN_ON_SERVER] = function (state, action, dispatch) {
+	        this.loginRepo
+	            .login(action.credentials)
+	            .then(function (r) {
+	            if (r.ok) {
+	                var action_1 = {
+	                    type: Actions.LOGIN_SUCCESS
+	                };
+	                dispatch(action_1);
+	            }
+	            else {
+	                var action_2 = {
+	                    type: Actions.LOGIN_ERROR,
+	                    errorMessage: r.error
+	                };
+	                dispatch(action_2);
+	            }
+	        });
+	    };
+	    return LoginMiddleware;
+	}(middleware_base_1.default));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = LoginMiddleware;
+
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var http_client_1 = __webpack_require__(36);
+	var LoginRepository = (function () {
+	    function LoginRepository() {
+	        this.httpClient = new http_client_1.default();
+	    }
+	    LoginRepository.prototype.login = function (credentials) {
+	        return this.httpClient.post('/api/login', credentials);
+	    };
+	    ;
+	    return LoginRepository;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = LoginRepository;
+
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var React = __webpack_require__(3);
+	var react_redux_1 = __webpack_require__(19);
+	var search_box_1 = __webpack_require__(47);
+	var product_grid_1 = __webpack_require__(48);
+	var Actions = __webpack_require__(28);
+	function ProductListPageComponent(props) {
+	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading})));
+	}
+	var ProductListPart = react_redux_1.connect(function (state) { return ({
+	    products: state.products.filteredProducts,
+	    shops: state.products.shops,
+	    isLoading: state.products.isLoading
+	}); }, function (dispatch) { return ({
+	    onFilter: function (filter) { return dispatch({
+	        type: Actions.PRODUCT_SEARCH,
+	        filter: filter
+	    }); }
+	}); })(ProductListPageComponent);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ProductListPart;
+
+
+/***/ },
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var react_redux_1 = __webpack_require__(19);
+	var Actions = __webpack_require__(49);
+	var header_1 = __webpack_require__(55);
+	var LoginPart = react_redux_1.connect(function (state) { return ({
+	    isLoggedIn: !state.login.isLoginRequired,
+	    errorMessage: state.login.error
+	}); }, function (dispatch) { return ({
+	    onLogin: function (credentials) {
+	        var action = {
+	            type: Actions.LOGIN_ON_SERVER,
+	            credentials: credentials
+	        };
+	        dispatch(action);
+	    }
+	}); })(header_1.Header);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = LoginPart;
+
+
+/***/ },
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	///<reference path="../../typings/index.d.ts" />
+	"use strict";
+	var React = __webpack_require__(3);
+	var login_form_1 = __webpack_require__(56);
+	function Header(props) {
+	    return (React.createElement("nav", {className: "navbar navbar-default navbar-fixed-top"}, React.createElement("div", {className: "container"}, React.createElement("div", {className: "navbar-left"}, React.createElement("h3", null, "Gameology")), React.createElement("div", {className: "navbar-right"}, props.isLoggedIn
+	        ? (React.createElement("div", {className: "navbar-text"}, "You are logged in"))
+	        : (React.createElement(login_form_1.LoginForm, {errorMessage: props.errorMessage, onLogin: function (c) { return props.onLogin(c); }}))))));
+	}
+	exports.Header = Header;
+
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	///<reference path="../../typings/index.d.ts" />
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(3);
+	/** Login form here is presentation of login credentials and error message */
+	var LoginForm = (function (_super) {
+	    __extends(LoginForm, _super);
+	    function LoginForm() {
+	        _super.apply(this, arguments);
+	    }
+	    LoginForm.prototype.onFormSubmit = function (e) {
+	        e.preventDefault();
+	        var credentials = {
+	            login: e.target["login"].value,
+	            password: e.target["password"].value
+	        };
+	        if (this.props.onLogin) {
+	            this.props.onLogin(credentials);
+	        }
+	    };
+	    LoginForm.prototype.render = function () {
+	        var _this = this;
+	        return (React.createElement("form", {className: "navbar-form", onSubmit: function (e) { return _this.onFormSubmit(e); }}, React.createElement("div", {className: "form-group"}, React.createElement("label", {className: "sr-only", for: "login"}, "Login"), React.createElement("input", {type: "text", className: "form-control", name: "login", id: "login", placeholder: "Login"})), React.createElement("div", {className: "form-group"}, React.createElement("label", {className: "sr-only", for: "password"}, "Password"), React.createElement("input", {type: "password", className: "form-control", name: "password", id: "password", placeholder: "Password"})), React.createElement("button", {type: "submit", className: "btn btn-default"}, "Log in"), (function () {
+	            if (_this.props.errorMessage)
+	                return (React.createElement("div", {className: "help-block"}, React.createElement("div", {className: "alert alert-danger", role: "alert"}, _this.props.errorMessage)));
+	        })()));
+	    };
+	    return LoginForm;
+	}(React.Component));
+	exports.LoginForm = LoginForm;
+
+
+/***/ },
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var Actions = __webpack_require__(49);
+	var login_required_1 = __webpack_require__(58);
+	var login_on_server_1 = __webpack_require__(59);
+	var login_error_1 = __webpack_require__(60);
+	var login_success_1 = __webpack_require__(61);
+	var loginInitialState = {
+	    isLoginRequired: false,
+	    isLogging: false,
+	    error: ""
+	};
+	var actionMap = (_a = {},
+	    _a[Actions.LOGIN_REQUIRED] = login_required_1.default,
+	    _a[Actions.LOGIN_ON_SERVER] = login_on_server_1.default,
+	    _a[Actions.LOGIN_ERROR] = login_error_1.default,
+	    _a[Actions.LOGIN_SUCCESS] = login_success_1.default,
+	    _a
+	);
+	function reduce(state, action) {
+	    if (state === void 0) { state = loginInitialState; }
+	    var reducer = actionMap[action.type];
+	    if (!reducer)
+	        return state;
+	    return reducer(state, action);
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = reduce;
+	var _a;
+
+
+/***/ },
+/* 58 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function loginRequired(state, action) {
+	    return Object.assign({}, state, {
+	        isLogging: false,
+	        isLoginRequired: true,
+	        credentials: {},
+	        error: ""
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = loginRequired;
+
+
+/***/ },
+/* 59 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function loginOnServer(state, action) {
+	    return Object.assign({}, state, {
+	        isLogging: true
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = loginOnServer;
+
+
+/***/ },
+/* 60 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function loginError(state, action) {
+	    return Object.assign({}, state, {
+	        isLogging: false,
+	        error: action.errorMessage
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = loginError;
+
+
+/***/ },
+/* 61 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function loginSuccess(state, action) {
+	    return Object.assign({}, state, {
+	        isLogging: false,
+	        isLoginRequired: false,
+	        credentials: null,
+	        error: null
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = loginSuccess;
 
 
 /***/ }

@@ -16,7 +16,6 @@ declare namespace AppState {
     interface Login {
         isLoginRequired: boolean;
         isLogging: boolean;
-        credentials: Api.AuthenticationCredentials;
         error: string;
     }
 
