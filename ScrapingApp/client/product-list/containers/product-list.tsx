@@ -29,6 +29,7 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
 }
 
 const ProductListPage = connect(
+
     (state: AppState.App) => ({
         products: state.products.products,
         shops: state.products.shops,
@@ -38,6 +39,7 @@ const ProductListPage = connect(
     (dispatch) => ({
         onFilter: filter => dispatch(new Actions.ProductListSearchAction(filter))
     } as ProductListPageHandlers)
+
 )(ProductListPageComponent);
 
 export default ProductListPage;

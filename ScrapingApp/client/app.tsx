@@ -2,16 +2,23 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import * as redux from "redux";
+import { createStore, applyMiddleware, combineReducers } from "redux";
 import { Provider } from "react-redux";
 
 import { reduce as productListReduce } from "./product-list/reducer";
 
+import ProductMiddleware from "./product-list/middlewares/product";
 import ProductList from "./product-list/containers/product-list";
 
-const store = redux.createStore(redux.combineReducers({
-    products: productListReduce
-}));
+const productMiddleware = new ProductMiddleware();
+
+const reducers = combineReducers({ products: productListReduce });
+
+const storeFactory = applyMiddleware<AppState.App>(
+         s => productMiddleware.run(s)
+         )(createStore);
+
+const store = storeFactory(reducers);
 
 ReactDOM.render(
     <Provider store={ store }>
