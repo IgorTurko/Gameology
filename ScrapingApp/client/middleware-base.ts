@@ -3,13 +3,14 @@
 import * as redux from "redux";
 
 export default class MiddlewareBase<TState> {
-    
+
     run(store: redux.IMiddlewareStore<TState>) {
         return (dispatch: redux.IDispatch) => (action: redux.IAction) => {            
             const handler = this[action.type];
 
             if (handler) {
-                handler.call(this, action, dispatch);
+                const state = store.getState();
+                return handler.call(this, state, action, dispatch) || state;
             }
 
             return dispatch(action);
