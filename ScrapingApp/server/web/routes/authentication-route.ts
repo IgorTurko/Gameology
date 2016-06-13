@@ -36,7 +36,7 @@ router.post("/login",
         })
         .catch(error => {
             const result: Api.IAuthenticationResponse = {
-                ok: true,
+                ok: false,
                 error: error
             };
 

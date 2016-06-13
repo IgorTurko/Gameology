@@ -5,7 +5,7 @@ import HttpClient from './http-client';
 export default class LoginRepository {
     private httpClient = new HttpClient();
 
-    login(credentials: Credentials): Promise<any> {
+    login(credentials: Credentials): Promise<Api.IAuthenticationResponse> {
         return this.httpClient.post('/api/login', credentials);
     };
 }
