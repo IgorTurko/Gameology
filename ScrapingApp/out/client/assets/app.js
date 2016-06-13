@@ -1874,7 +1874,7 @@
 	            var handler = _this[action.type];
 	            if (handler) {
 	                var state = store.getState();
-	                return handler.call(_this, state, action, dispatch) || state;
+	                handler.call(_this, state, action, dispatch);
 	            }
 	            return dispatch(action);
 	        }; };
@@ -2649,6 +2649,7 @@
 	var product_repo_1 = __webpack_require__(35);
 	var shop_repo_1 = __webpack_require__(45);
 	var Actions = __webpack_require__(28);
+	var LoginActions = __webpack_require__(49);
 	var ProductMiddleware = (function (_super) {
 	    __extends(ProductMiddleware, _super);
 	    function ProductMiddleware() {
@@ -2669,6 +2670,12 @@
 	            };
 	            dispatch(action);
 	        });
+	    };
+	    ProductMiddleware.prototype[LoginActions.LOGIN_SUCCESS] = function (state, action, dispatch) {
+	        var reloadProductList = {
+	            type: Actions.PRODUCT_LOAD_REQUEST
+	        };
+	        this[Actions.PRODUCT_LOAD_REQUEST](state, reloadProductList, dispatch);
 	    };
 	    return ProductMiddleware;
 	}(middleware_base_1.default));

@@ -10,7 +10,7 @@ export default class MiddlewareBase<TState> {
 
             if (handler) {
                 const state = store.getState();
-                return handler.call(this, state, action, dispatch) || state;
+                handler.call(this, state, action, dispatch);
             }
 
             return dispatch(action);

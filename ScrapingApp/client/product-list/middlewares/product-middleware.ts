@@ -7,12 +7,13 @@ import MiddlewareBase from "../../middleware-base";
 import ProductRepository from "../../data/product-repo";
 import ShopRepository from "../../data/shop-repo";
 import * as Actions from "../actions";
+import * as LoginActions from "../../login/actions";
 
 export default class ProductMiddleware extends MiddlewareBase<AppState.App> {
     private productRepo = new ProductRepository();
     private shopRepo = new ShopRepository();
     
-    [Actions.PRODUCT_LOAD_REQUEST](state: AppState.App, action: Actions.LoadProductListRequestAction, dispatch: redux.IDispatch) {
+    [Actions.PRODUCT_LOAD_REQUEST](state, action, dispatch: redux.IDispatch) {
         Promise.all([
             this.productRepo.getAllProducts(),
             this.shopRepo.getAllShops()
@@ -26,5 +27,13 @@ export default class ProductMiddleware extends MiddlewareBase<AppState.App> {
             
             dispatch(action);
         });
+    }
+
+    [LoginActions.LOGIN_SUCCESS](state, action, dispatch: redux.IDispatch) {
+        const reloadProductList: Actions.LoadProductListRequestAction = {
+            type: Actions.PRODUCT_LOAD_REQUEST
+        };
+
+        this[Actions.PRODUCT_LOAD_REQUEST](state, reloadProductList, dispatch);
     }
 }
