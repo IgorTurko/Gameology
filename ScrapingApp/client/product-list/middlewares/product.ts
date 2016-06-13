@@ -1,28 +1,18 @@
 /// <reference path="../../typings/index.d.ts" />
 
 import * as redux from "redux";
-import {} from "react-redux";
+
+import MiddlewareBase from "../../middleware-base";
 
 import ProductRepository from "../../data/product-repo";
 import ShopRepository from "../../data/shop-repo";
 import * as Actions from "../actions";
 
-export default class ProductMiddleware {
+export default class ProductMiddleware extends MiddlewareBase<AppState.App> {
     private productRepo = new ProductRepository();
     private shopRepo = new ShopRepository();
-
-    run(store: redux.IMiddlewareStore<AppState.App>) {
-        return (dispatch: redux.IDispatch) => (action: redux.IAction) => {
-            switch (action.type) {
-                case Actions.LOAD_REQUEST:
-                    this.reloadProducts(dispatch);
-                    break;
-            }
-            return dispatch(action);
-        };
-    }
-
-    reloadProducts(dispatch: redux.IDispatch) {
+    
+    [Actions.LOAD_REQUEST](action: Actions.LoadProductListRequestAction, dispatch: redux.IDispatch) {
         Promise.all([
             this.productRepo.getAllProducts(),
             this.shopRepo.getAllShops()

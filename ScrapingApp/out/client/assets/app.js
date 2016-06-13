@@ -1818,26 +1818,23 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var middleware_base_1 = __webpack_require__(45);
 	var product_repo_1 = __webpack_require__(31);
 	var shop_repo_1 = __webpack_require__(41);
 	var Actions = __webpack_require__(28);
-	var ProductMiddleware = (function () {
+	var ProductMiddleware = (function (_super) {
+	    __extends(ProductMiddleware, _super);
 	    function ProductMiddleware() {
+	        _super.apply(this, arguments);
 	        this.productRepo = new product_repo_1.default();
 	        this.shopRepo = new shop_repo_1.default();
 	    }
-	    ProductMiddleware.prototype.run = function (store) {
-	        var _this = this;
-	        return function (dispatch) { return function (action) {
-	            switch (action.type) {
-	                case Actions.LOAD_REQUEST:
-	                    _this.reloadProducts(dispatch);
-	                    break;
-	            }
-	            return dispatch(action);
-	        }; };
-	    };
-	    ProductMiddleware.prototype.reloadProducts = function (dispatch) {
+	    ProductMiddleware.prototype[Actions.LOAD_REQUEST] = function (action, dispatch) {
 	        Promise.all([
 	            this.productRepo.getAllProducts(),
 	            this.shopRepo.getAllShops()
@@ -1852,7 +1849,7 @@
 	        });
 	    };
 	    return ProductMiddleware;
-	}());
+	}(middleware_base_1.default));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ProductMiddleware;
 
@@ -2619,6 +2616,31 @@
 	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ProductsGrid;
+
+
+/***/ },
+/* 45 */
+/***/ function(module, exports) {
+
+	/// <reference path="./typings/index.d.ts" />
+	"use strict";
+	var MiddlewareBase = (function () {
+	    function MiddlewareBase() {
+	    }
+	    MiddlewareBase.prototype.run = function (store) {
+	        var _this = this;
+	        return function (dispatch) { return function (action) {
+	            var handler = _this[action.type];
+	            if (handler) {
+	                handler.call(_this, action, dispatch);
+	            }
+	            return dispatch(action);
+	        }; };
+	    };
+	    return MiddlewareBase;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = MiddlewareBase;
 
 
 /***/ }
