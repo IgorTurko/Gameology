@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "es6-shim": "^0.35.1",
+    "react-redux": "^4.4.5",
     "typescript": "^1.8.10"
   }
 }
