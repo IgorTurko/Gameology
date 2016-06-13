@@ -28,5 +28,4 @@ export default function reduce(state: AppState.Products = productInitialState, a
         return state; 
 
     return reducer(state, action);
-}
- 
+} 
