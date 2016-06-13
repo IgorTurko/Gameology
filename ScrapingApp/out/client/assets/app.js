@@ -81,15 +81,15 @@
 	var redux_1 = __webpack_require__(5);
 	var react_redux_1 = __webpack_require__(19);
 	var ProductActions = __webpack_require__(28);
-	var reducer_1 = __webpack_require__(29);
-	var product_1 = __webpack_require__(30);
-	var product_list_1 = __webpack_require__(42);
+	var index_1 = __webpack_require__(29);
+	var product_1 = __webpack_require__(33);
+	var product_list_1 = __webpack_require__(46);
 	var productMiddleware = new product_1.default();
-	var reducers = redux_1.combineReducers({ products: reducer_1.reduce });
+	var reducers = redux_1.combineReducers({ products: index_1.default });
 	var enhancer = redux_1.applyMiddleware(function (s) { return productMiddleware.run(s); });
 	var store = redux_1.createStore(reducers, undefined, enhancer);
 	store.dispatch({
-	    type: ProductActions.LOAD_REQUEST
+	    type: ProductActions.PRODUCT_LOAD_REQUEST
 	});
 	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, React.createElement(product_list_1.default, null)), document.getElementsByClassName("container")[0]);
 	// ReactDOM.render(
@@ -1760,17 +1760,20 @@
 
 	/// <reference path="../typings/index.d.ts" />
 	"use strict";
-	exports.SEARCH = "product-list-search";
+	exports.PRODUCT_SEARCH = "product-list-search";
 	exports.PRODUCTS_LOADED = "product-list-loaded";
-	exports.LOAD_REQUEST = "load-product-list-request";
+	exports.PRODUCT_LOAD_REQUEST = "load-product-list-request";
 
 
 /***/ },
 /* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../typings/index.d.ts" />
+	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
+	var product_list_loaded_1 = __webpack_require__(30);
+	var search_product_list_1 = __webpack_require__(31);
+	var load_product_list_request_1 = __webpack_require__(32);
 	var Actions = __webpack_require__(28);
 	var productInitialState = {
 	    isLoading: false,
@@ -1779,26 +1782,10 @@
 	    filteredProducts: [],
 	    search: ""
 	};
-	function searchProductList(state, action) {
-	    return Object.assign({}, state, {
-	        filteredProducts: state.products
-	            .filter(function (p) { return !action.filter || p.title.toLowerCase().indexOf(action.filter.toLowerCase()) !== -1; })
-	    });
-	}
-	exports.searchProductList = searchProductList;
-	function productListLoaded(state, action) {
-	    return Object.assign({}, state, {
-	        isLoading: false,
-	        products: action.products,
-	        search: "",
-	        filteredProducts: action.products,
-	        shops: action.shops
-	    });
-	}
-	exports.productListLoaded = productListLoaded;
 	var actionMap = (_a = {},
-	    _a[Actions.SEARCH] = searchProductList,
-	    _a[Actions.PRODUCTS_LOADED] = productListLoaded,
+	    _a[Actions.PRODUCT_SEARCH] = search_product_list_1.default,
+	    _a[Actions.PRODUCTS_LOADED] = product_list_loaded_1.default,
+	    _a[Actions.PRODUCT_LOAD_REQUEST] = load_product_list_request_1.default,
 	    _a
 	);
 	function reduce(state, action) {
@@ -1808,12 +1795,63 @@
 	        return state;
 	    return reducer(state, action);
 	}
-	exports.reduce = reduce;
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = reduce;
 	var _a;
 
 
 /***/ },
 /* 30 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function productListLoaded(state, action) {
+	    return Object.assign({}, state, {
+	        isLoading: false,
+	        products: action.products,
+	        search: "",
+	        filteredProducts: action.products,
+	        shops: action.shops
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = productListLoaded;
+
+
+/***/ },
+/* 31 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function searchProductList(state, action) {
+	    return Object.assign({}, state, {
+	        filteredProducts: state.products
+	            .filter(function (p) { return !action.filter || p.title.toLowerCase().indexOf(action.filter.toLowerCase()) !== -1; })
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = searchProductList;
+
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function productListLoadRequest(state, action) {
+	    return Object.assign({}, state, {
+	        isLoading: true
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = productListLoadRequest;
+
+
+/***/ },
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -1823,9 +1861,9 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var middleware_base_1 = __webpack_require__(45);
-	var product_repo_1 = __webpack_require__(31);
-	var shop_repo_1 = __webpack_require__(41);
+	var middleware_base_1 = __webpack_require__(34);
+	var product_repo_1 = __webpack_require__(35);
+	var shop_repo_1 = __webpack_require__(45);
 	var Actions = __webpack_require__(28);
 	var ProductMiddleware = (function (_super) {
 	    __extends(ProductMiddleware, _super);
@@ -1834,7 +1872,7 @@
 	        this.productRepo = new product_repo_1.default();
 	        this.shopRepo = new shop_repo_1.default();
 	    }
-	    ProductMiddleware.prototype[Actions.LOAD_REQUEST] = function (action, dispatch) {
+	    ProductMiddleware.prototype[Actions.PRODUCT_LOAD_REQUEST] = function (state, action, dispatch) {
 	        Promise.all([
 	            this.productRepo.getAllProducts(),
 	            this.shopRepo.getAllShops()
@@ -1855,12 +1893,38 @@
 
 
 /***/ },
-/* 31 */
+/* 34 */
+/***/ function(module, exports) {
+
+	/// <reference path="./typings/index.d.ts" />
+	"use strict";
+	var MiddlewareBase = (function () {
+	    function MiddlewareBase() {
+	    }
+	    MiddlewareBase.prototype.run = function (store) {
+	        var _this = this;
+	        return function (dispatch) { return function (action) {
+	            var handler = _this[action.type];
+	            if (handler) {
+	                var state = store.getState();
+	                return handler.call(_this, state, action, dispatch) || state;
+	            }
+	            return dispatch(action);
+	        }; };
+	    };
+	    return MiddlewareBase;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = MiddlewareBase;
+
+
+/***/ },
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../typings/index.d.ts"/>
 	"use strict";
-	var http_client_1 = __webpack_require__(32);
+	var http_client_1 = __webpack_require__(36);
 	var ProductRepository = (function () {
 	    function ProductRepository() {
 	        this.httpClient = new http_client_1.default();
@@ -1880,12 +1944,12 @@
 
 
 /***/ },
-/* 32 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts"/>
-	var event_bus_1 = __webpack_require__(33);
+	var event_bus_1 = __webpack_require__(37);
 	var HttpClient = (function () {
 	    function HttpClient() {
 	    }
@@ -1932,12 +1996,12 @@
 
 
 /***/ },
-/* 33 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="./typings/index.d.ts" />
 	"use strict";
-	var fbemitter_1 = __webpack_require__(34);
+	var fbemitter_1 = __webpack_require__(38);
 	var Events = (function () {
 	    function Events() {
 	    }
@@ -1954,7 +2018,7 @@
 
 
 /***/ },
-/* 34 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1967,14 +2031,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(35)
+	  EventEmitter: __webpack_require__(39)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 35 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -1993,11 +2057,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(36);
-	var EventSubscriptionVendor = __webpack_require__(38);
+	var EmitterSubscription = __webpack_require__(40);
+	var EventSubscriptionVendor = __webpack_require__(42);
 	
-	var emptyFunction = __webpack_require__(40);
-	var invariant = __webpack_require__(39);
+	var emptyFunction = __webpack_require__(44);
+	var invariant = __webpack_require__(43);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -2171,7 +2235,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
-/* 36 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2192,7 +2256,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(37);
+	var EventSubscription = __webpack_require__(41);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -2224,7 +2288,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 37 */
+/* 41 */
 /***/ function(module, exports) {
 
 	/**
@@ -2278,7 +2342,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 38 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -2297,7 +2361,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(39);
+	var invariant = __webpack_require__(43);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -2387,7 +2451,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
-/* 39 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -2442,7 +2506,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
-/* 40 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/**
@@ -2484,11 +2548,11 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 41 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http_client_1 = __webpack_require__(32);
+	var http_client_1 = __webpack_require__(36);
 	var ShopRepository = (function () {
 	    function ShopRepository() {
 	        this.httpClient = new http_client_1.default();
@@ -2504,15 +2568,15 @@
 
 
 /***/ },
-/* 42 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var React = __webpack_require__(3);
 	var react_redux_1 = __webpack_require__(19);
-	var search_box_1 = __webpack_require__(43);
-	var product_grid_1 = __webpack_require__(44);
+	var search_box_1 = __webpack_require__(47);
+	var product_grid_1 = __webpack_require__(48);
 	var Actions = __webpack_require__(28);
 	function ProductListPageComponent(props) {
 	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading})));
@@ -2523,7 +2587,7 @@
 	    isLoading: state.products.isLoading
 	}); }, function (dispatch) { return ({
 	    onFilter: function (filter) { return dispatch({
-	        type: Actions.SEARCH,
+	        type: Actions.PRODUCT_SEARCH,
 	        filter: filter
 	    }); }
 	}); })(ProductListPageComponent);
@@ -2532,7 +2596,7 @@
 
 
 /***/ },
-/* 43 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2566,7 +2630,7 @@
 
 
 /***/ },
-/* 44 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -2616,31 +2680,6 @@
 	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ProductsGrid;
-
-
-/***/ },
-/* 45 */
-/***/ function(module, exports) {
-
-	/// <reference path="./typings/index.d.ts" />
-	"use strict";
-	var MiddlewareBase = (function () {
-	    function MiddlewareBase() {
-	    }
-	    MiddlewareBase.prototype.run = function (store) {
-	        var _this = this;
-	        return function (dispatch) { return function (action) {
-	            var handler = _this[action.type];
-	            if (handler) {
-	                handler.call(_this, action, dispatch);
-	            }
-	            return dispatch(action);
-	        }; };
-	    };
-	    return MiddlewareBase;
-	}());
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = MiddlewareBase;
 
 
 /***/ }

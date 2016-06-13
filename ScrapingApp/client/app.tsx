@@ -7,13 +7,13 @@ import { Provider } from "react-redux";
 
 
 import * as ProductActions from "./product-list/actions";
-import { reduce as productListReduce } from "./product-list/reducer";
+import productListReducer from "./product-list/reducers/index";
 import ProductMiddleware from "./product-list/middlewares/product";
 import ProductList from "./product-list/containers/product-list";
 
 const productMiddleware = new ProductMiddleware();
 
-const reducers = combineReducers({ products: productListReduce });
+const reducers = combineReducers({ products: productListReducer });
 
 const enhancer = applyMiddleware<AppState.App>(
     s => productMiddleware.run(s)
@@ -22,7 +22,7 @@ const enhancer = applyMiddleware<AppState.App>(
 const store = createStore(reducers, undefined, enhancer);
 
 store.dispatch({
-    type: ProductActions.LOAD_REQUEST
+    type: ProductActions.PRODUCT_LOAD_REQUEST
 } as ProductActions.LoadProductListRequestAction);
 
 ReactDOM.render(

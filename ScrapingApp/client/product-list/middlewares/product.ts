@@ -12,11 +12,12 @@ export default class ProductMiddleware extends MiddlewareBase<AppState.App> {
     private productRepo = new ProductRepository();
     private shopRepo = new ShopRepository();
     
-    [Actions.LOAD_REQUEST](action: Actions.LoadProductListRequestAction, dispatch: redux.IDispatch) {
+    [Actions.PRODUCT_LOAD_REQUEST](state: AppState.App, action: Actions.LoadProductListRequestAction, dispatch: redux.IDispatch) {
         Promise.all([
             this.productRepo.getAllProducts(),
             this.shopRepo.getAllShops()
         ]).then(([products, shops]) => {
+
             const action: Actions.ProductListLoadedAction = {
                 type: Actions.PRODUCTS_LOADED,
                 products: products,

@@ -38,7 +38,7 @@ const ProductListPage = connect(
 
     (dispatch) => ({
         onFilter: filter => dispatch({
-            type: Actions.SEARCH,
+            type: Actions.PRODUCT_SEARCH,
             filter: filter
         } as Actions.ProductListSearchAction)
     } as ProductListPageHandlers)

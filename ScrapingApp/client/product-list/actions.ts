@@ -2,7 +2,7 @@
 
 import * as redux from "redux";
 
-export const SEARCH = "product-list-search";
+export const PRODUCT_SEARCH = "product-list-search";
 
 export interface ProductListSearchAction extends redux.IAction {
     filter: string;
@@ -15,7 +15,7 @@ export interface ProductListLoadedAction extends redux.IAction {
     shops: Api.WebShop[];
 }
 
-export const LOAD_REQUEST = "load-product-list-request";
+export const PRODUCT_LOAD_REQUEST = "load-product-list-request";
 
 export interface LoadProductListRequestAction extends redux.IAction {        
 }
