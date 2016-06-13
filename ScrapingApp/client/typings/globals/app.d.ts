@@ -7,24 +7,29 @@ interface Array<T> {
 
 interface ObjectConstructor {
     entries(obj: any): any[][];
+    assign(target: any, ...sources: any[]): any;
 }
 
-interface LoginState {
-    isLoginRequired: boolean;    
-    isLogging: boolean;
-    credentials: Api.AuthenticationCredentials;
-    error: string;
-}
 
-interface Products {
-    isLoading: boolean;
-    products: Api.Product[];
-    shops: Api.WebShop[];
-    search: string;
-    filteredProducts: Api.Product[];
-}
+declare namespace AppState {
 
-interface AppState {
-    login: LoginState;
-    products: Products;
+    interface Login {
+        isLoginRequired: boolean;
+        isLogging: boolean;
+        credentials: Api.AuthenticationCredentials;
+        error: string;
+    }
+
+    interface Products {
+        isLoading: boolean;
+        products: Api.Product[];
+        shops: Api.WebShop[];
+        search: string;
+        filteredProducts: Api.Product[];
+    }
+
+    interface App {
+        login: Login;
+        products: Products;
+    }
 }
