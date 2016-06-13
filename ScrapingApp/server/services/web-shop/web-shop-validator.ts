@@ -15,18 +15,15 @@ export default class WebShopValidator {
                 .errorIf(() => !webShop.title, "Title is required")
                 .errorIf(() => webShop.title && webShop.title.length > 1024, "Title too long")
             .end()
-            .property("delivery")
-                .array(webShop.delivery,
-                (delivery, validator) => {
-                    validator
-                        .property("deliveryMethod")
-                            .errorIf(() => !delivery.deliveryMethod, "Delivery method is required")
-                            .errorIf(() => delivery.deliveryMethod && delivery.deliveryMethod.length > 1024, "Delivery method too long")
-                        .end()
-                        .property("price")
-                            .errorIf(() => isNaN(delivery.price) || !delivery.price || delivery.price < 0, "Price is required and must be greater than zero")
-                        .end();
-                })
+            .property("deliveryPrice")
+                .errorIf(() => 
+                    webShop.deliveryPrice != null && 
+                    webShop.deliveryPrice !== undefined &&                
+                    (isNaN(webShop.deliveryPrice) ||
+                        !webShop.deliveryPrice ||
+                        webShop.deliveryPrice < 0), 
+                    
+                    "Delivery price is not valid")
             .end()
             .result();
     }

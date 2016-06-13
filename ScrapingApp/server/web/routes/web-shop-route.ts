@@ -20,7 +20,7 @@ router.get("/", (request, response) => {
                 id: s.id,
                 isBase: s.isBase,
                 title: s.title,
-                delivery: s.delivery
+                deliveryPrice: s.deliveryPrice 
             }));
             response.json(model).end();
         })

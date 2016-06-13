@@ -37,7 +37,7 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
                             return (
                                 <div className="col-md-2 product-cell" key={ `${product.id}::${index}` }>
                                     {
-                                        values ? this.renderProductDetails(values, product.scrapingUrls[shop.id]) : null
+                                        values ? this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null
                                     }
                                 </div>)
                         })
@@ -55,14 +55,27 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
         );
     }
 
-    renderProductDetails(values: Api.ScrapedValues, productUrl: string) {
+    renderProductDetails(values: Api.ScrapedValues, productUrl: string, shop: Api.WebShop) {
         return (
             <div>
                 <div className="product-url">
                     <a href={ productUrl } target="_blank">{values.title}</a>
                 </div>
                 <img className="product-img" src={ values.image } />
-                <div className="product-price">{ values.price ? `$${values.price.toFixed(2)}` : ''}</div>
+                <div className="product-price">
+                    {
+                        shop.deliveryPrice 
+                        ? this.formatPrice(values.price + shop.deliveryPrice)
+                        : this.formatPrice(values.price)
+                    }
+                </div>
+                <div className="product-price delivery">
+                    {
+                        shop.deliveryPrice 
+                        ? `${this.formatPrice(values.price)} + ${this.formatPrice(shop.deliveryPrice)}`
+                        : ''
+                    }
+                </div>
             </div>
         );
     }
@@ -92,5 +105,13 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
                 { this.renderData() }
             </div>
         );
+    }
+
+    private formatPrice(price: number): string {
+        if (price == null || price === undefined || isNaN(price))
+            return "";
+
+
+        return `$${price.toFixed(2)}`;
     }
 }

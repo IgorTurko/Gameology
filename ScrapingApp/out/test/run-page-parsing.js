@@ -179,7 +179,7 @@
 	            $set: {
 	                id: webShop.id,
 	                title: webShop.title,
-	                delivery: webShop.delivery
+	                deliveryPrice: webShop.deliveryPrice
 	            }
 	        }); })
 	            .then(function () { return webShop; });
@@ -275,13 +275,6 @@
 	        });
 	    };
 	    WebShopService.prototype.normalize = function (webShop) {
-	        if (webShop.delivery && webShop.delivery.length) {
-	            webShop.delivery = webShop.delivery
-	                .map(function (d) { return ({
-	                deliveryMethod: d.deliveryMethod,
-	                price: parseFloat("" + d.price)
-	            }); });
-	        }
 	        return webShop;
 	    };
 	    return WebShopService;
@@ -309,17 +302,14 @@
 	            .errorIf(function () { return !webShop.title; }, "Title is required")
 	            .errorIf(function () { return webShop.title && webShop.title.length > 1024; }, "Title too long")
 	            .end()
-	            .property("delivery")
-	            .array(webShop.delivery, function (delivery, validator) {
-	            validator
-	                .property("deliveryMethod")
-	                .errorIf(function () { return !delivery.deliveryMethod; }, "Delivery method is required")
-	                .errorIf(function () { return delivery.deliveryMethod && delivery.deliveryMethod.length > 1024; }, "Delivery method too long")
-	                .end()
-	                .property("price")
-	                .errorIf(function () { return isNaN(delivery.price) || !delivery.price || delivery.price < 0; }, "Price is required and must be greater than zero")
-	                .end();
-	        })
+	            .property("deliveryPrice")
+	            .errorIf(function () {
+	            return webShop.deliveryPrice != null &&
+	                webShop.deliveryPrice !== undefined &&
+	                (isNaN(webShop.deliveryPrice) ||
+	                    !webShop.deliveryPrice ||
+	                    webShop.deliveryPrice < 0);
+	        }, "Delivery price is not valid")
 	            .end()
 	            .result();
 	    };

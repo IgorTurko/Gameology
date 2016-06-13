@@ -39,7 +39,7 @@ export default class MongoWebShopStorage implements WebShops.IWebShopStorage {
                     $set: {
                         id: webShop.id,
                         title: webShop.title,
-                        delivery: webShop.delivery
+                        deliveryPrice: webShop.deliveryPrice
                     }
                 }
             ))

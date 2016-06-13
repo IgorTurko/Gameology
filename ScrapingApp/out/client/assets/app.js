@@ -2597,15 +2597,19 @@
 	        return this.props.products.map(function (product) {
 	            return (React.createElement("div", {className: "row", key: product.id}, React.createElement("div", {className: "col-md-2 product-cell"}, product.title), _this.props.shops.map(function (shop, index) {
 	                var values = (product.values || {})[shop.id];
-	                return (React.createElement("div", {className: "col-md-2 product-cell", key: product.id + "::" + index}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id]) : null));
+	                return (React.createElement("div", {className: "col-md-2 product-cell", key: product.id + "::" + index}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null));
 	            })));
 	        });
 	    };
 	    ProductsGrid.prototype.renderLoadingIndicator = function () {
 	        return (React.createElement("div", {className: "row"}, "Loading..."));
 	    };
-	    ProductsGrid.prototype.renderProductDetails = function (values, productUrl) {
-	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement("div", {className: "product-price"}, values.price ? "$" + values.price.toFixed(2) : '')));
+	    ProductsGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
+	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement("div", {className: "product-price"}, shop.deliveryPrice
+	            ? this.formatPrice(values.price + shop.deliveryPrice)
+	            : this.formatPrice(values.price)), React.createElement("div", {className: "product-price delivery"}, shop.deliveryPrice
+	            ? this.formatPrice(values.price) + " + " + this.formatPrice(shop.deliveryPrice)
+	            : '')));
 	    };
 	    ProductsGrid.prototype.render = function () {
 	        if (this.props.isLoading) {
@@ -2615,6 +2619,11 @@
 	            return (React.createElement("div", {className: "product-grid"}, this.props.shops != null && this.props.shops.length ? this.renderHeader() : null, this.renderEmptyRow()));
 	        }
 	        return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderData()));
+	    };
+	    ProductsGrid.prototype.formatPrice = function (price) {
+	        if (price == null || price === undefined || isNaN(price))
+	            return "";
+	        return "$" + price.toFixed(2);
 	    };
 	    return ProductsGrid;
 	}(React.Component));

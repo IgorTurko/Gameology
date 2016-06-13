@@ -21,10 +21,15 @@
     font-weight: bold;
 }
 
+.product-price.delivery {
+    color: #cecece;
+    font-weight: normal;
+}
+
 .product-cell {
     border-top: 1px solid black;
     border-left: 1px solid black;
-    height: 13em;
+    height: 15em;
     overflow: hidden;
     padding: 0.3em;
 }

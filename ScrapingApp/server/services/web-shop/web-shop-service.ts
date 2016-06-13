@@ -81,15 +81,6 @@ export default class WebShopService {
     }
 
     private normalize(webShop: Api.WebShop): Api.WebShop {
-
-        if (webShop.delivery && webShop.delivery.length) {
-            webShop.delivery = webShop.delivery
-                .map(d => ({
-                    deliveryMethod: d.deliveryMethod,
-                    price: parseFloat(`${d.price}`)
-                }));
-        }
-
         return webShop;
     }
 }
