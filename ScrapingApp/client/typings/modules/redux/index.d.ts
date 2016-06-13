@@ -49,7 +49,7 @@ module redux {
 		(createStore: ICreateStoreGeneric<TState>): ICreateStoreGeneric<TState>;
 	}
 
-	export function createStore<TState>(reducer: IReducer<TState>, initialState?: TState): IStore<TState>;
+	export function createStore<TState>(reducer: IReducer<TState>, initialState?: TState, enhancer?: IStoreEnhancerGeneric<TState>): IStore<TState>;
 
 	export function combineReducers(reducers: IReducerMap): IReducer<any>;
 	export function combineReducers<TState>(reducers: IReducerMap): IReducer<TState>;

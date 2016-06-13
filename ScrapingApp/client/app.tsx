@@ -5,8 +5,9 @@ import * as ReactDOM from "react-dom";
 import { createStore, applyMiddleware, combineReducers } from "redux";
 import { Provider } from "react-redux";
 
-import { reduce as productListReduce } from "./product-list/reducer";
 
+import * as ProductActions from "./product-list/actions";
+import { reduce as productListReduce } from "./product-list/reducer";
 import ProductMiddleware from "./product-list/middlewares/product";
 import ProductList from "./product-list/containers/product-list";
 
@@ -14,11 +15,15 @@ const productMiddleware = new ProductMiddleware();
 
 const reducers = combineReducers({ products: productListReduce });
 
-const storeFactory = applyMiddleware<AppState.App>(
-         s => productMiddleware.run(s)
-         )(createStore);
+const enhancer = applyMiddleware<AppState.App>(
+    s => productMiddleware.run(s)
+);
 
-const store = storeFactory(reducers);
+const store = createStore(reducers, undefined, enhancer);
+
+store.dispatch({
+    type: ProductActions.LOAD_REQUEST
+} as ProductActions.LoadProductListRequestAction);
 
 ReactDOM.render(
     <Provider store={ store }>

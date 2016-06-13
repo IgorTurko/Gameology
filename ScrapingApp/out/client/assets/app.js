@@ -80,13 +80,17 @@
 	var ReactDOM = __webpack_require__(4);
 	var redux_1 = __webpack_require__(5);
 	var react_redux_1 = __webpack_require__(19);
-	var reducer_1 = __webpack_require__(28);
+	var ProductActions = __webpack_require__(28);
+	var reducer_1 = __webpack_require__(29);
 	var product_1 = __webpack_require__(30);
 	var product_list_1 = __webpack_require__(42);
 	var productMiddleware = new product_1.default();
 	var reducers = redux_1.combineReducers({ products: reducer_1.reduce });
-	var storeFactory = redux_1.applyMiddleware(function (s) { return productMiddleware.run(s); })(redux_1.createStore);
-	var store = storeFactory(reducers);
+	var enhancer = redux_1.applyMiddleware(function (s) { return productMiddleware.run(s); });
+	var store = redux_1.createStore(reducers, undefined, enhancer);
+	store.dispatch({
+	    type: ProductActions.LOAD_REQUEST
+	});
 	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, React.createElement(product_list_1.default, null)), document.getElementsByClassName("container")[0]);
 	// ReactDOM.render(
 	//     <Router history={browserHistory}>
@@ -1752,11 +1756,29 @@
 
 /***/ },
 /* 28 */
+/***/ function(module, exports) {
+
+	/// <reference path="../typings/index.d.ts" />
+	"use strict";
+	exports.SEARCH = "product-list-search";
+	exports.PRODUCTS_LOADED = "product-list-loaded";
+	exports.LOAD_REQUEST = "load-product-list-request";
+
+
+/***/ },
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../typings/index.d.ts" />
 	"use strict";
-	var Actions = __webpack_require__(29);
+	var Actions = __webpack_require__(28);
+	var productInitialState = {
+	    isLoading: false,
+	    products: [],
+	    shops: [],
+	    filteredProducts: [],
+	    search: ""
+	};
 	function searchProductList(state, action) {
 	    return Object.assign({}, state, {
 	        filteredProducts: state.products
@@ -1768,16 +1790,19 @@
 	    return Object.assign({}, state, {
 	        isLoading: false,
 	        products: action.products,
+	        search: "",
+	        filteredProducts: action.products,
 	        shops: action.shops
 	    });
 	}
 	exports.productListLoaded = productListLoaded;
 	var actionMap = (_a = {},
-	    _a[Actions.ProductListSearchAction.ID] = searchProductList,
-	    _a[Actions.ProductListLoadedAction.ID] = productListLoaded,
+	    _a[Actions.SEARCH] = searchProductList,
+	    _a[Actions.PRODUCTS_LOADED] = productListLoaded,
 	    _a
 	);
 	function reduce(state, action) {
+	    if (state === void 0) { state = productInitialState; }
 	    var reducer = actionMap[action.type];
 	    if (!reducer)
 	        return state;
@@ -1788,45 +1813,6 @@
 
 
 /***/ },
-/* 29 */
-/***/ function(module, exports) {
-
-	/// <reference path="../typings/index.d.ts" />
-	"use strict";
-	var ProductListSearchAction = (function () {
-	    function ProductListSearchAction(filter) {
-	        this.filter = filter;
-	        this.type = ProductListSearchAction.ID;
-	    }
-	    ProductListSearchAction.ID = "product-list-search";
-	    return ProductListSearchAction;
-	}());
-	exports.ProductListSearchAction = ProductListSearchAction;
-	var ProductListLoadedAction = (function () {
-	    function ProductListLoadedAction(products, shops) {
-	        this.products = products;
-	        this.shops = shops;
-	        this.type = ProductListLoadedAction.ID;
-	        if (!products)
-	            throw new Error("product is undefined");
-	        if (!shops)
-	            throw new Error("shops is undefined");
-	    }
-	    ProductListLoadedAction.ID = "product-list-loaded";
-	    return ProductListLoadedAction;
-	}());
-	exports.ProductListLoadedAction = ProductListLoadedAction;
-	var LoadProductListRequestAction = (function () {
-	    function LoadProductListRequestAction() {
-	        this.type = LoadProductListRequestAction.ID;
-	    }
-	    LoadProductListRequestAction.ID = "load-product-list-request";
-	    return LoadProductListRequestAction;
-	}());
-	exports.LoadProductListRequestAction = LoadProductListRequestAction;
-
-
-/***/ },
 /* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1834,7 +1820,7 @@
 	"use strict";
 	var product_repo_1 = __webpack_require__(31);
 	var shop_repo_1 = __webpack_require__(41);
-	var Actions = __webpack_require__(29);
+	var Actions = __webpack_require__(28);
 	var ProductMiddleware = (function () {
 	    function ProductMiddleware() {
 	        this.productRepo = new product_repo_1.default();
@@ -1844,7 +1830,7 @@
 	        var _this = this;
 	        return function (dispatch) { return function (action) {
 	            switch (action.type) {
-	                case Actions.LoadProductListRequestAction.ID:
+	                case Actions.LOAD_REQUEST:
 	                    _this.reloadProducts(dispatch);
 	                    break;
 	            }
@@ -1857,7 +1843,11 @@
 	            this.shopRepo.getAllShops()
 	        ]).then(function (_a) {
 	            var products = _a[0], shops = _a[1];
-	            var action = new Actions.ProductListLoadedAction(products, shops);
+	            var action = {
+	                type: Actions.PRODUCTS_LOADED,
+	                products: products,
+	                shops: shops
+	            };
 	            dispatch(action);
 	        });
 	    };
@@ -2526,16 +2516,19 @@
 	var react_redux_1 = __webpack_require__(19);
 	var search_box_1 = __webpack_require__(43);
 	var product_grid_1 = __webpack_require__(44);
-	var Actions = __webpack_require__(29);
+	var Actions = __webpack_require__(28);
 	function ProductListPageComponent(props) {
 	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading})));
 	}
 	var ProductListPage = react_redux_1.connect(function (state) { return ({
-	    products: state.products.products,
+	    products: state.products.filteredProducts,
 	    shops: state.products.shops,
 	    isLoading: state.products.isLoading
 	}); }, function (dispatch) { return ({
-	    onFilter: function (filter) { return dispatch(new Actions.ProductListSearchAction(filter)); }
+	    onFilter: function (filter) { return dispatch({
+	        type: Actions.SEARCH,
+	        filter: filter
+	    }); }
 	}); })(ProductListPageComponent);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ProductListPage;

@@ -31,13 +31,16 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
 const ProductListPage = connect(
 
     (state: AppState.App) => ({
-        products: state.products.products,
+        products: state.products.filteredProducts,
         shops: state.products.shops,
         isLoading: state.products.isLoading
     } as ProductListPageProps),
 
     (dispatch) => ({
-        onFilter: filter => dispatch(new Actions.ProductListSearchAction(filter))
+        onFilter: filter => dispatch({
+            type: Actions.SEARCH,
+            filter: filter
+        } as Actions.ProductListSearchAction)
     } as ProductListPageHandlers)
 
 )(ProductListPageComponent);
