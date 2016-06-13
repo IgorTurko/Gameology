@@ -12,7 +12,7 @@ import * as LoginActions from "../../login/actions";
 export default class ProductMiddleware extends MiddlewareBase<AppState.App> {
     private productRepo = new ProductRepository();
     private shopRepo = new ShopRepository();
-    
+
     [Actions.PRODUCT_LOAD_REQUEST](state, action, dispatch: redux.IDispatch) {
         Promise.all([
             this.productRepo.getAllProducts(),
@@ -24,7 +24,16 @@ export default class ProductMiddleware extends MiddlewareBase<AppState.App> {
                 products: products,
                 shops: shops
             };
-            
+
+            dispatch(action);
+        }).catch(err => {
+
+            const action: Actions.ProductListLoadedAction = {
+                type: Actions.PRODUCTS_LOADED,
+                products: [],
+                shops: []
+            };
+
             dispatch(action);
         });
     }

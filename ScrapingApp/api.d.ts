@@ -117,10 +117,7 @@
         isBase: boolean;
         title: string;
         scrapingSettings: ScrapingSettings;
-        delivery?: Array<{
-            deliveryMethod: string;
-            price: number;
-        }>;
+        deliveryPrice?: number;
     }
 
 

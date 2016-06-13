@@ -2609,10 +2609,10 @@
 	    };
 	    ProductsGrid.prototype.render = function () {
 	        if (this.props.isLoading) {
-	            return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderLoadingIndicator()));
+	            return (React.createElement("div", {className: "product-grid"}, this.renderLoadingIndicator()));
 	        }
 	        if (this.props.products == null || this.props.products.length == 0) {
-	            return (React.createElement("div", {className: "product-grid"}, this.renderEmptyRow()));
+	            return (React.createElement("div", {className: "product-grid"}, this.props.shops != null && this.props.shops.length ? this.renderHeader() : null, this.renderEmptyRow()));
 	        }
 	        return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderData()));
 	    };
@@ -2667,6 +2667,13 @@
 	                type: Actions.PRODUCTS_LOADED,
 	                products: products,
 	                shops: shops
+	            };
+	            dispatch(action);
+	        }).catch(function (err) {
+	            var action = {
+	                type: Actions.PRODUCTS_LOADED,
+	                products: [],
+	                shops: []
 	            };
 	            dispatch(action);
 	        });
