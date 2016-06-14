@@ -46,6 +46,7 @@
     <Content Include="client\product-list\components\product-grid.tsx" />
     <Content Include="client\product-list\components\search-box.tsx" />
     <Content Include="client\product-list\containers\product-list-part.tsx" />
+    <Content Include="client\product-details\product-form.tsx" />
     <Content Include="client\tsconfig.json" />
     <Content Include="client\typings\globals\es6-promise\typings.json" />
     <Content Include="client\typings\globals\fbemitter\typings.json" />
@@ -93,6 +94,7 @@
     <Folder Include="client\login\containers\" />
     <Folder Include="client\login\middleware\" />
     <Folder Include="client\login\reducers\" />
+    <Folder Include="client\product-details\" />
     <Folder Include="client\product-list\" />
     <Folder Include="client\product-list\components\" />
     <Folder Include="client\product-list\containers\" />
