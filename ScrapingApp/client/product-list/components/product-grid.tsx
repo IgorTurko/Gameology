@@ -30,7 +30,9 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
         return this.props.products.map(product => {
             return (
                 <div className="row" key={product.id}>
-                    <div className="col-md-2 product-cell">{product.title}</div>
+                    <div className="col-md-2 product-cell">
+                        <a>{product.title}</a>
+                    </div>
                     {
                         this.props.shops.map((shop, index) => {
                             let values = (product.values || {})[shop.id];
