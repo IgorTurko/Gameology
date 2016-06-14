@@ -9,7 +9,7 @@
     "email": "sales@rd-dev.net"
   },
   "dependencies": {
-    "async": "^2.0.0-rc.5",
+    "async": "^2.0.0-rc.6",
     "body-parser": "^1.15.1",
     "cookie-parser": "^1.4.3",
     "es6-promise": "^3.2.1",
@@ -23,14 +23,15 @@
     "node-uuid": "^1.4.7",
     "node-validator": "^0.1.23",
     "react": "^15.1.0",
+    "react-redux": "^4.4.5",
     "react-router": "^2.4.1",
+    "redux": "^3.5.2",
     "ts-loader": "^0.8.2",
     "typescript": "^1.8.10",
     "whatwg-fetch": "^1.0.0"
   },
   "devDependencies": {
     "es6-shim": "^0.35.1",
-    "react-redux": "^4.4.5",
     "typescript": "^1.8.10"
   }
 }

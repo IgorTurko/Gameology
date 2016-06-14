@@ -27,7 +27,9 @@ module.exports = [
             {
                 react: "var React",
                 "react-dom": "var ReactDOM",
-                "react-router": "var ReactRouter" 
+                "react-router": "var ReactRouter",
+                redux: "var Redux",
+                "react-redux": "var ReactRedux"
             }
         ],
         module: {
