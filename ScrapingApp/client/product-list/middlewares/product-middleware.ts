@@ -38,11 +38,11 @@ export default class ProductMiddleware extends MiddlewareBase<AppState.App> {
         });
     }
 
-    [LoginActions.LOGIN_SUCCESS](state, action, dispatch: redux.IDispatch) {
+    [LoginActions.LOGIN_SUCCESS](state, action, dispatch: redux.IDispatch, store: redux.IMiddlewareStore<AppState.App>) {
         const reloadProductList: Actions.LoadProductListRequestAction = {
             type: Actions.PRODUCT_LOAD_REQUEST
         };
 
-        this[Actions.PRODUCT_LOAD_REQUEST](state, reloadProductList, dispatch);
+        store.dispatch(reloadProductList);
     }
 }

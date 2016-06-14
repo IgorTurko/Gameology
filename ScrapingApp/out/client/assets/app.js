@@ -2454,11 +2454,11 @@
 	            dispatch(action);
 	        });
 	    };
-	    ProductMiddleware.prototype[LoginActions.LOGIN_SUCCESS] = function (state, action, dispatch) {
+	    ProductMiddleware.prototype[LoginActions.LOGIN_SUCCESS] = function (state, action, dispatch, store) {
 	        var reloadProductList = {
 	            type: Actions.PRODUCT_LOAD_REQUEST
 	        };
-	        this[Actions.PRODUCT_LOAD_REQUEST](state, reloadProductList, dispatch);
+	        store.dispatch(reloadProductList);
 	    };
 	    return ProductMiddleware;
 	}(middleware_base_1.default));
@@ -2481,7 +2481,7 @@
 	            var handler = _this[action.type];
 	            if (handler) {
 	                var state = store.getState();
-	                handler.call(_this, state, action, dispatch);
+	                handler.call(_this, state, action, dispatch, store);
 	            }
 	            return dispatch(action);
 	        }; };
