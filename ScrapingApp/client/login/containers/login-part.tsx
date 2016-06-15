@@ -9,7 +9,15 @@ import * as Actions from "../actions";
 import { LoginFormHandlers } from "../components/login-form";
 import { Header, HeaderProps } from "../components/header";
 
-const LoginPart = connect(
+function loginPart(props: React.Props<any> & HeaderProps & LoginFormHandlers) {
+    return (
+        <div>
+            <Header {...props} />
+            {props.children}
+        </div>);
+}
+
+export default connect(
     (state: AppState.App): HeaderProps => ({
         isLoggedIn: !state.login.isLoginRequired,
         errorMessage: state.login.error
@@ -26,6 +34,4 @@ const LoginPart = connect(
         }
     })
 
-)(Header);
-
-export default LoginPart;
+)(loginPart);

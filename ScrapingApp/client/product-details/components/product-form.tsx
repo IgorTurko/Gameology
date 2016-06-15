@@ -1,16 +1,19 @@
-﻿/// <reference path="../typings/index.d.ts" />
+﻿/// <reference path="../../typings/index.d.ts" />
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Product = Api.Product;
 import Shop = Api.WebShop;
 
-interface ProductFormProps extends React.Props<any> {
+export interface ProductFormProps {
     product: Product;
     shops: Shop[];
+}
+
+export interface ProductFormHandlers {
     onSaveProduct: (Product) => void;
 }
 
-export default class ProductForm extends React.Component<ProductFormProps, {}> {
+export class ProductForm extends React.Component<ProductFormProps & ProductFormHandlers, {}> {
     onFormSubmit(e: React.FormEvent) {
         e.preventDefault();
 

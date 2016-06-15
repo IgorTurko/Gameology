@@ -10,6 +10,10 @@ export default class ProductRepository {
         return this.httpClient.get<Product[]>('/api/products');
     };
 
+    getProductById(id): Promise<Product> {
+        return this.httpClient.get<Product>(`/api/products/${id}`);
+    };
+
     saveProduct(product: Product): Promise<Api.IPostResponse<Product>> {
         return this.httpClient.post("/api/products", product);
     };

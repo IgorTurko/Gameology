@@ -13,7 +13,8 @@ const productInitialState: AppState.Products = {
     products:[],
     shops: [],
     filteredProducts: [],
-    search: ""
+    search: "",
+    currentProduct: null
 };
 
 const actionMap = {

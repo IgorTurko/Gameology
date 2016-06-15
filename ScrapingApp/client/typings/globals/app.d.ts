@@ -19,12 +19,18 @@ declare namespace AppState {
         error: string;
     }
 
+    interface CurrentProduct {
+        product: Api.Product,
+        shops: Api.WebShop[]
+    }
+
     interface Products {
         isLoading: boolean;
         products: Api.Product[];
         shops: Api.WebShop[];
         search: string;
         filteredProducts: Api.Product[];
+        currentProduct: Api.Product;
     }
 
     interface App {

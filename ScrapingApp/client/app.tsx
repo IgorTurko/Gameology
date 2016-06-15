@@ -9,16 +9,17 @@ import { eventBus, Events } from "./event-bus";
 
 import * as ProductActions from "./product-list/actions";
 import productListReducer from "./product-list/reducers/index";
-import ProductMiddleware from "./product-list/middlewares/product-middleware";
-import ProductListPart from "./product-list/containers/product-list-part";
+import ProductListMiddleware from "./product-list/middlewares/product-list-middleware";
+import ProductDetailsMiddleware from "./product-details/middlewares/product-details-middleware"
 
 import * as LoginActions from "./login/actions";
 import loginReducer from "./login/reducers/index";
 import LoginMiddleware from "./login/middleware/login-middleware";
-import LoginPart from "./login/containers/login-part";
+import router from "./router"
 
-const productMiddleware = new ProductMiddleware();
 const loginMiddleware = new LoginMiddleware();
+const productListMiddleware = new ProductListMiddleware();
+const productDetailsMiddleware = new ProductDetailsMiddleware();
 
 const reducers = combineReducers({ 
     products: productListReducer,
@@ -27,7 +28,8 @@ const reducers = combineReducers({
 
 const enhancer = applyMiddleware<AppState.App>(
     s => loginMiddleware.run(s), 
-    s => productMiddleware.run(s)
+    s => productListMiddleware.run(s),
+    s => productDetailsMiddleware.run(s)
 );
 
 const store = createStore(reducers, undefined, enhancer);
@@ -46,9 +48,6 @@ store.dispatch({
 
 ReactDOM.render(
     <Provider store={ store }>
-        <div>
-            <LoginPart />
-            <ProductListPart /> 
-        </div>
+        {router}
     </Provider>,
     document.getElementsByClassName("container")[0]);

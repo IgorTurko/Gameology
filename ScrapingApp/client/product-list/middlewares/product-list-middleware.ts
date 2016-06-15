@@ -9,7 +9,7 @@ import ShopRepository from "../../data/shop-repo";
 import * as Actions from "../actions";
 import * as LoginActions from "../../login/actions";
 
-export default class ProductMiddleware extends MiddlewareBase<AppState.App> {
+export default class ProductListMiddleware extends MiddlewareBase<AppState.App> {
     private productRepo = new ProductRepository();
     private shopRepo = new ShopRepository();
 

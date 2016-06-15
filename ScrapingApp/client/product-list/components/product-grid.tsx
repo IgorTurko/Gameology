@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Router} from "react-router"
+import {Link} from "react-router"
 
 interface GridProps extends React.Props<any> {
     isLoading: boolean;
@@ -32,7 +32,7 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
             return (
                 <div className="row" key={product.id}>
                     <div className="col-md-2 product-cell">
-                        <Link to="/product/:productId">{product.title}</Link>
+                        <Link to={`/product/${product.id}`}>{product.title}</Link>
                     </div>
                     {
                         this.props.shops.map((shop, index) => {
