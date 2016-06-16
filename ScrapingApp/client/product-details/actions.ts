@@ -7,9 +7,9 @@ export interface SaveProductAction extends redux.IAction {
     product: Api.Product;
 }
 
-export const SELECT_PRODUCT = "select-product";
-export interface SelectProductAction extends redux.IAction {
-    product: Api.Product;
+export const PRODUCT_LOAD_REQUEST = "load-product";
+export interface LoadProductDetailsRequestAction extends redux.IAction {
+    productId: string;
 }
 
 export const SAVE_ERROR = "save-error";
@@ -19,7 +19,6 @@ export interface SaveProductErrorAction extends redux.IAction {
 
 export const SAVE_SUCCESS = "save-success";
 export interface SaveProductSuccessAction extends redux.IAction {
-    
 }
 
 export const PRODUCT_LOADED = "product-details-loaded";

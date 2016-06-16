@@ -14,6 +14,18 @@ export interface ProductFormHandlers {
 }
 
 export class ProductForm extends React.Component<ProductFormProps & ProductFormHandlers, {}> {
+
+    constructor() {
+        super();
+        this.state = {
+            title: ''
+        };
+    }
+
+    handleTitleChange(e) {
+        this.setState({ title: e.target.value });
+    }
+
     onFormSubmit(e: React.FormEvent) {
         e.preventDefault();
 
@@ -34,7 +46,7 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                 <div className="form-group">
                     <label for="title" className="col-md-2 control-label">Product</label>
                     <div className="col-md-10">
-                        <input type="text" className="form-control" id="title" name="title" value={this.props.product.title} placeholder="Product" />
+                        <input type="text" className="form-control" id="title" name="title" value={this.props.product.title} placeholder="Product" onChange={this.handleTitleChange} />
                     </div>
                 </div>
                 {
@@ -42,7 +54,7 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                         <div className="form-group" key={shop.id}>
                             <label for={shop.id} className="col-md-2 control-label">Url for {shop.title}</label>
                             <div className="col-md-10">
-                                <input type="text" className="form-control" id={shop.id} name={shop.id} placeholder="Product url" />
+                                <input type="text" className="form-control" value={this.props.product.scrapingUrls[shop.id]} id={shop.id} name={shop.id} onChange={this.handleTitleChange} />
                             </div>
                         </div>
                     ))

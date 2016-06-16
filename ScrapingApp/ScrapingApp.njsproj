@@ -183,7 +183,7 @@
     <TypeScriptCompile Include="client\product-list\reducers\index.ts" />
     <TypeScriptCompile Include="client\product-list\reducers\load-product-list-request.ts" />
     <TypeScriptCompile Include="client\product-list\reducers\product-list-loaded.ts" />
-    <TypeScriptCompile Include="client\product-details\reducers\select-product.ts" />
+    <TypeScriptCompile Include="client\product-details\reducers\load-product-details-request.ts" />
     <TypeScriptCompile Include="client\product-list\reducers\search-product-list.ts" />
     <TypeScriptCompile Include="client\router.tsx" />
     <TypeScriptCompile Include="client\typings\globals\app.d.ts" />

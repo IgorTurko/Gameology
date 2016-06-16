@@ -81,20 +81,23 @@
 	var redux_1 = __webpack_require__(5);
 	var react_redux_1 = __webpack_require__(6);
 	var event_bus_1 = __webpack_require__(7);
-	var ProductActions = __webpack_require__(16);
+	var ProductListActions = __webpack_require__(16);
 	var index_1 = __webpack_require__(17);
 	var product_list_middleware_1 = __webpack_require__(21);
-	var product_details_middleware_1 = __webpack_require__(27);
 	var LoginActions = __webpack_require__(26);
-	var index_2 = __webpack_require__(29);
-	var login_middleware_1 = __webpack_require__(34);
-	var router_1 = __webpack_require__(36);
+	var index_2 = __webpack_require__(27);
+	var login_middleware_1 = __webpack_require__(32);
+	var ProductDetailsActions = __webpack_require__(34);
+	var index_3 = __webpack_require__(35);
+	var product_details_middleware_1 = __webpack_require__(39);
+	var router_1 = __webpack_require__(40);
 	var loginMiddleware = new login_middleware_1.default();
 	var productListMiddleware = new product_list_middleware_1.default();
 	var productDetailsMiddleware = new product_details_middleware_1.default();
 	var reducers = redux_1.combineReducers({
 	    products: index_1.default,
-	    login: index_2.default
+	    login: index_2.default,
+	    currentProduct: index_3.default
 	});
 	var enhancer = redux_1.applyMiddleware(function (s) { return loginMiddleware.run(s); }, function (s) { return productListMiddleware.run(s); }, function (s) { return productDetailsMiddleware.run(s); });
 	var store = redux_1.createStore(reducers, undefined, enhancer);
@@ -104,10 +107,9 @@
 	    };
 	    store.dispatch(action);
 	});
-	store.dispatch({
-	    type: ProductActions.PRODUCT_LOAD_REQUEST
-	});
-	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, router_1.default), document.getElementsByClassName("container")[0]);
+	var loadProducts = function () { return store.dispatch({ type: ProductListActions.PRODUCT_LOAD_REQUEST }); };
+	var loadProductDetails = function (productId) { return store.dispatch({ type: ProductDetailsActions.PRODUCT_LOAD_REQUEST, productId: productId }); };
+	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, router_1.default(loadProducts, function (productId) { return loadProductDetails(productId); })), document.getElementsByClassName("container")[0]);
 
 
 /***/ },
@@ -1082,93 +1084,12 @@
 /* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
-	///<reference path="../../typings/index.d.ts"/>
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var product_repo_1 = __webpack_require__(23);
-	var shop_repo_1 = __webpack_require__(25);
-	var middleware_base_1 = __webpack_require__(22);
-	var Actions = __webpack_require__(28);
-	var ProductDetailsMiddleware = (function (_super) {
-	    __extends(ProductDetailsMiddleware, _super);
-	    function ProductDetailsMiddleware() {
-	        _super.apply(this, arguments);
-	        this.productRepository = new product_repo_1.default();
-	        this.shopRepository = new shop_repo_1.default();
-	    }
-	    ProductDetailsMiddleware.prototype[Actions.SAVE_PRODUCT] = function (state, action, dispatch) {
-	        this.productRepository
-	            .saveProduct(action.product)
-	            .then(function (result) {
-	            if (result.ok) {
-	                var action_1 = {
-	                    type: Actions.SAVE_SUCCESS
-	                };
-	                dispatch(action_1);
-	            }
-	            else {
-	                var action_2 = {
-	                    type: Actions.SAVE_ERROR,
-	                    error: result
-	                };
-	                dispatch(action_2);
-	            }
-	        });
-	    };
-	    ProductDetailsMiddleware.prototype[Actions.SELECT_PRODUCT] = function (state, action, dispatch) {
-	        Promise.all([
-	            this.productRepository.getProductById(11),
-	            this.shopRepository.getAllShops()
-	        ]).then(function (_a) {
-	            var product = _a[0], shops = _a[1];
-	            var action = {
-	                type: Actions.PRODUCT_LOADED,
-	                product: product,
-	                shops: shops
-	            };
-	            dispatch(action);
-	        }).catch(function (err) {
-	            var action = {
-	                type: Actions.PRODUCT_LOADED,
-	                product: null,
-	                shops: []
-	            };
-	            dispatch(action);
-	        });
-	    };
-	    return ProductDetailsMiddleware;
-	}(middleware_base_1.default));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProductDetailsMiddleware;
-
-
-/***/ },
-/* 28 */
-/***/ function(module, exports) {
-
-	/// <reference path="../typings/index.d.ts" />
-	"use strict";
-	exports.SAVE_PRODUCT = "save-product";
-	exports.SELECT_PRODUCT = "select-product";
-	exports.SAVE_ERROR = "save-error";
-	exports.SAVE_SUCCESS = "save-success";
-	exports.PRODUCT_LOADED = "product-details-loaded";
-
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
 	"use strict";
 	var Actions = __webpack_require__(26);
-	var login_required_1 = __webpack_require__(30);
-	var login_on_server_1 = __webpack_require__(31);
-	var login_error_1 = __webpack_require__(32);
-	var login_success_1 = __webpack_require__(33);
+	var login_required_1 = __webpack_require__(28);
+	var login_on_server_1 = __webpack_require__(29);
+	var login_error_1 = __webpack_require__(30);
+	var login_success_1 = __webpack_require__(31);
 	var loginInitialState = {
 	    isLoginRequired: false,
 	    isLogging: false,
@@ -1194,7 +1115,7 @@
 
 
 /***/ },
-/* 30 */
+/* 28 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1211,7 +1132,7 @@
 
 
 /***/ },
-/* 31 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -1226,7 +1147,7 @@
 
 
 /***/ },
-/* 32 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -1242,7 +1163,7 @@
 
 
 /***/ },
-/* 33 */
+/* 31 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1259,7 +1180,7 @@
 
 
 /***/ },
-/* 34 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1268,7 +1189,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var login_repo_1 = __webpack_require__(35);
+	var login_repo_1 = __webpack_require__(33);
 	var middleware_base_1 = __webpack_require__(22);
 	var Actions = __webpack_require__(26);
 	var LoginMiddleware = (function (_super) {
@@ -1303,7 +1224,7 @@
 
 
 /***/ },
-/* 35 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1323,28 +1244,194 @@
 
 
 /***/ },
-/* 36 */
+/* 34 */
+/***/ function(module, exports) {
+
+	/// <reference path="../typings/index.d.ts" />
+	"use strict";
+	exports.SAVE_PRODUCT = "save-product";
+	exports.PRODUCT_LOAD_REQUEST = "load-product";
+	exports.SAVE_ERROR = "save-error";
+	exports.SAVE_SUCCESS = "save-success";
+	exports.PRODUCT_LOADED = "product-details-loaded";
+
+
+/***/ },
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
-	///<reference path="./typings/index.d.ts"/>
+	///<reference path="../../typings/index.d.ts" />
 	"use strict";
-	var React = __webpack_require__(3);
-	var react_router_1 = __webpack_require__(37);
-	var login_part_1 = __webpack_require__(38);
-	var product_list_part_1 = __webpack_require__(41);
-	var product_details_part_1 = __webpack_require__(44);
+	var Actions = __webpack_require__(34);
+	var save_product_1 = __webpack_require__(36);
+	var product_details_loaded_1 = __webpack_require__(37);
+	var load_product_details_request_1 = __webpack_require__(38);
+	var productInitialState = {
+	    product: {
+	        id: '',
+	        title: '',
+	        scrapingUrls: {}
+	    },
+	    shops: []
+	};
+	var actionMap = (_a = {},
+	    _a[Actions.SAVE_PRODUCT] = save_product_1.default,
+	    _a[Actions.PRODUCT_LOADED] = product_details_loaded_1.default,
+	    _a[Actions.PRODUCT_LOAD_REQUEST] = load_product_details_request_1.default,
+	    _a
+	);
+	function reduce(state, action) {
+	    if (state === void 0) { state = productInitialState; }
+	    var reducer = actionMap[action.type];
+	    if (!reducer)
+	        return state;
+	    return reducer(state, action);
+	}
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = (React.createElement(react_router_1.Router, {history: react_router_1.browserHistory, onUpdate: function () { console.log("changed"); }}, React.createElement(react_router_1.Route, {component: login_part_1.default}, React.createElement(react_router_1.Route, {path: "/", component: product_list_part_1.default}), React.createElement(react_router_1.Route, {path: "/product/:productId", component: product_details_part_1.default}))));
+	exports.default = reduce;
+	var _a;
+
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	///<reference path="../../typings/index.d.ts" />
+	"use strict";
+	function saveProduct(state, action) {
+	    return Object.assign({}, state, {
+	        product: state.product
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = saveProduct;
 
 
 /***/ },
 /* 37 */
 /***/ function(module, exports) {
 
-	module.exports = ReactRouter;
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function productDetailsLoaded(state, action) {
+	    return Object.assign({}, state, {
+	        product: action.product,
+	        shops: action.shops
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = productDetailsLoaded;
+
 
 /***/ },
 /* 38 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function selectProduct(state, action) {
+	    return Object.assign({}, state, {
+	        product: state.product
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = selectProduct;
+
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	///<reference path="../../typings/index.d.ts"/>
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var product_repo_1 = __webpack_require__(23);
+	var shop_repo_1 = __webpack_require__(25);
+	var middleware_base_1 = __webpack_require__(22);
+	var Actions = __webpack_require__(34);
+	var ProductDetailsMiddleware = (function (_super) {
+	    __extends(ProductDetailsMiddleware, _super);
+	    function ProductDetailsMiddleware() {
+	        _super.apply(this, arguments);
+	        this.productRepository = new product_repo_1.default();
+	        this.shopRepository = new shop_repo_1.default();
+	    }
+	    ProductDetailsMiddleware.prototype[Actions.SAVE_PRODUCT] = function (state, action, dispatch) {
+	        this.productRepository
+	            .saveProduct(action.product)
+	            .then(function (result) {
+	            if (result.ok) {
+	                var action_1 = {
+	                    type: Actions.SAVE_SUCCESS
+	                };
+	                dispatch(action_1);
+	            }
+	            else {
+	                var action_2 = {
+	                    type: Actions.SAVE_ERROR,
+	                    error: result
+	                };
+	                dispatch(action_2);
+	            }
+	        });
+	    };
+	    ProductDetailsMiddleware.prototype[Actions.PRODUCT_LOAD_REQUEST] = function (state, action, dispatch) {
+	        Promise.all([
+	            this.productRepository.getProductById(action.productId),
+	            this.shopRepository.getAllShops()
+	        ]).then(function (_a) {
+	            var product = _a[0], shops = _a[1];
+	            var action = {
+	                type: Actions.PRODUCT_LOADED,
+	                product: product,
+	                shops: shops
+	            };
+	            dispatch(action);
+	        }).catch(function (err) {
+	            var action = {
+	                type: Actions.PRODUCT_LOADED,
+	                product: null,
+	                shops: []
+	            };
+	            dispatch(action);
+	        });
+	    };
+	    return ProductDetailsMiddleware;
+	}(middleware_base_1.default));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ProductDetailsMiddleware;
+
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	///<reference path="./typings/index.d.ts"/>
+	"use strict";
+	var React = __webpack_require__(3);
+	var react_router_1 = __webpack_require__(41);
+	var login_part_1 = __webpack_require__(42);
+	var product_list_part_1 = __webpack_require__(45);
+	var product_details_part_1 = __webpack_require__(48);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = function (loadProducts, loadProduct) { return (React.createElement(react_router_1.Router, {history: react_router_1.browserHistory}, React.createElement(react_router_1.Route, {component: login_part_1.default}, React.createElement(react_router_1.Route, {path: "/", component: product_list_part_1.default, onEnter: function () { return loadProducts(); }}), React.createElement(react_router_1.Route, {path: "/product/:productId", component: product_details_part_1.default, onEnter: function (_a) {
+	    var params = _a.params;
+	    return loadProduct(params["productId"]);
+	}})))); };
+
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	module.exports = ReactRouter;
+
+/***/ },
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -1360,7 +1447,7 @@
 	var React = __webpack_require__(3);
 	var react_redux_1 = __webpack_require__(6);
 	var Actions = __webpack_require__(26);
-	var header_1 = __webpack_require__(39);
+	var header_1 = __webpack_require__(43);
 	function loginPart(props) {
 	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props)), props.children));
 	}
@@ -1380,13 +1467,13 @@
 
 
 /***/ },
-/* 39 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	///<reference path="../../typings/index.d.ts" />
 	"use strict";
 	var React = __webpack_require__(3);
-	var login_form_1 = __webpack_require__(40);
+	var login_form_1 = __webpack_require__(44);
 	function Header(props) {
 	    return (React.createElement("nav", {className: "navbar navbar-default navbar-fixed-top"}, React.createElement("div", {className: "container"}, React.createElement("div", {className: "navbar-left"}, React.createElement("h3", null, "Gameology")), React.createElement("div", {className: "navbar-right"}, props.isLoggedIn
 	        ? (React.createElement("div", {className: "navbar-text"}, "You are logged in"))
@@ -1396,7 +1483,7 @@
 
 
 /***/ },
-/* 40 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	///<reference path="../../typings/index.d.ts" />
@@ -1436,15 +1523,15 @@
 
 
 /***/ },
-/* 41 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var React = __webpack_require__(3);
 	var react_redux_1 = __webpack_require__(6);
-	var search_box_1 = __webpack_require__(42);
-	var product_grid_1 = __webpack_require__(43);
+	var search_box_1 = __webpack_require__(46);
+	var product_grid_1 = __webpack_require__(47);
 	var Actions = __webpack_require__(16);
 	function ProductListPageComponent(props) {
 	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading})));
@@ -1464,7 +1551,7 @@
 
 
 /***/ },
-/* 42 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1498,7 +1585,7 @@
 
 
 /***/ },
-/* 43 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -1509,7 +1596,7 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(3);
-	var react_router_1 = __webpack_require__(37);
+	var react_router_1 = __webpack_require__(41);
 	var ProductsGrid = (function (_super) {
 	    __extends(ProductsGrid, _super);
 	    function ProductsGrid() {
@@ -1561,22 +1648,22 @@
 
 
 /***/ },
-/* 44 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var React = __webpack_require__(3);
 	var react_redux_1 = __webpack_require__(6);
-	var Actions = __webpack_require__(28);
-	var product_form_1 = __webpack_require__(45);
+	var Actions = __webpack_require__(34);
+	var product_form_1 = __webpack_require__(49);
 	function ProductDetailsPageComponent(props) {
 	    return (React.createElement(product_form_1.ProductForm, {product: props.product, shops: props.shops, onSaveProduct: function (product) { return props.onSaveProduct(product); }}));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(function (state) { return ({
-	    shops: state.products.shops,
-	    product: state.products[1]
+	    product: state.currentProduct.product,
+	    shops: state.currentProduct.shops
 	}); }, function (dispatch) { return ({
 	    onSaveProduct: function (product) {
 	        var action = {
@@ -1589,7 +1676,7 @@
 
 
 /***/ },
-/* 45 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1603,8 +1690,14 @@
 	var ProductForm = (function (_super) {
 	    __extends(ProductForm, _super);
 	    function ProductForm() {
-	        _super.apply(this, arguments);
+	        _super.call(this);
+	        this.state = {
+	            title: ''
+	        };
 	    }
+	    ProductForm.prototype.handleTitleChange = function (e) {
+	        this.setState({ title: e.target.value });
+	    };
 	    ProductForm.prototype.onFormSubmit = function (e) {
 	        e.preventDefault();
 	        var product = {
@@ -1618,7 +1711,7 @@
 	    };
 	    ProductForm.prototype.render = function () {
 	        var _this = this;
-	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement("div", {className: "form-group"}, React.createElement("label", {for: "title", className: "col-md-2 control-label"}, "Product"), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.props.product.title, placeholder: "Product"}))), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "form-group", key: shop.id}, React.createElement("label", {for: shop.id, className: "col-md-2 control-label"}, "Url for ", shop.title), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: shop.id, name: shop.id, placeholder: "Product url"})))); }), React.createElement("input", {type: "hidden", name: "id", value: this.props.product.id}), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement("button", {type: "submit", class: "btn btn-default"}, "Save")))));
+	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement("div", {className: "form-group"}, React.createElement("label", {for: "title", className: "col-md-2 control-label"}, "Product"), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.props.product.title, placeholder: "Product", onChange: this.handleTitleChange}))), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "form-group", key: shop.id}, React.createElement("label", {for: shop.id, className: "col-md-2 control-label"}, "Url for ", shop.title), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", value: _this.props.product.scrapingUrls[shop.id], id: shop.id, name: shop.id, onChange: _this.handleTitleChange})))); }), React.createElement("input", {type: "hidden", name: "id", value: this.props.product.id}), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement("button", {type: "submit", class: "btn btn-default"}, "Save")))));
 	    };
 	    return ProductForm;
 	}(React.Component));

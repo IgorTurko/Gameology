@@ -5,17 +5,21 @@ import * as redux from "redux";
 import * as Actions from "../actions";
 import saveProduct from "./save-product";
 import productDetailsLoaded from "./product-details-loaded";
-import selectProduct from "./select-product";
+import loadProduct from "./load-product-details-request";
 
 const productInitialState: AppState.CurrentProduct = {
-    product: null,
+    product: {
+        id: '',
+        title: '',
+        scrapingUrls: {}
+    },
     shops: []
 };
 
 const actionMap = {
     [Actions.SAVE_PRODUCT]: saveProduct,
     [Actions.PRODUCT_LOADED]: productDetailsLoaded,
-    [Actions.SELECT_PRODUCT]: selectProduct
+    [Actions.PRODUCT_LOAD_REQUEST]: loadProduct
 };
 
 export default function reduce(state: AppState.CurrentProduct = productInitialState, action: redux.IAction): AppState.CurrentProduct {

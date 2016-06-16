@@ -24,6 +24,10 @@ declare namespace AppState {
         shops: Api.WebShop[]
     }
 
+    interface Shops {
+        shops: Api.WebShop[]
+    }
+
     interface Products {
         isLoading: boolean;
         products: Api.Product[];
@@ -36,5 +40,7 @@ declare namespace AppState {
     interface App {
         login: Login;
         products: Products;
+        shops: Shops;
+        currentProduct: CurrentProduct
     }
 }

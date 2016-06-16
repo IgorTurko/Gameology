@@ -15,12 +15,12 @@ function ProductDetailsPageComponent(props: ProductFormProps & ProductFormHandle
 }
 
 export default connect(
-    (state: AppState.App): ProductFormProps => ({
-        shops: state.products.shops,
-        product: state.products[1]
-    }),
+    (state: AppState.App) => ({
+        product: state.currentProduct.product,
+        shops: state.currentProduct.shops
+    } as ProductFormProps),
 
-    (dispatch: redux.IDispatch): ProductFormHandlers => ({
+    (dispatch: redux.IDispatch) => ({
         onSaveProduct(product: Api.Product) {
             const action: Actions.SaveProductAction = {
                 type: Actions.SAVE_PRODUCT,
@@ -29,6 +29,6 @@ export default connect(
 
             dispatch(action);
         }
-    })
+    } as ProductFormHandlers)
 
 )(ProductDetailsPageComponent);

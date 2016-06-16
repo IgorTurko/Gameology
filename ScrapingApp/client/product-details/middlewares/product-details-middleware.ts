@@ -32,9 +32,9 @@ export default class ProductDetailsMiddleware extends MiddlewareBase<AppState.Ap
             })
     }
 
-    [Actions.SELECT_PRODUCT](state, action, dispatch: redux.IDispatch) {
+    [Actions.PRODUCT_LOAD_REQUEST](state, action, dispatch: redux.IDispatch) {
         Promise.all([
-            this.productRepository.getProductById(11),
+            this.productRepository.getProductById(action.productId),
             this.shopRepository.getAllShops()
         ]).then(([product, shops]) => {
 
