@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-
+import {Link} from "react-router";
 
 export interface ProductFormProps {
     product: Api.Product;
@@ -73,7 +73,7 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                 }
                 <div className="form-group">
                     <div className="col-sm-offset-2 col-sm-10">
-                        <button type="button" className="btn btn-default" onClick={e => this.onFormSubmit(e)}>&lt; Back</button>&nbsp;
+                        <Link to="/" className="btn btn-default">&lt; Back</Link>&nbsp;
                         <button type="submit" className="btn btn-default">Save</button>
                     </div>
                 </div>

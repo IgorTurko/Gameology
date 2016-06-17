@@ -47,11 +47,11 @@ eventBus.addListener(Events.AuthorizationError, () => {
     store.dispatch(action);
 });
 
-const loadProducts = () => store.dispatch({type: ProductListActions.PRODUCT_LOAD_REQUEST} as ProductListActions.LoadProductListRequestAction);
+const loadProductsList = () => store.dispatch({type: ProductListActions.PRODUCT_LOAD_REQUEST} as ProductListActions.LoadProductListRequestAction);
 const loadProductDetails = (productId) => store.dispatch({ type: ProductDetailsActions.PRODUCT_LOAD_REQUEST, productId } as ProductDetailsActions.LoadProductDetailsRequestAction);
 
 ReactDOM.render(
     <Provider store={ store }>
-        {router(loadProducts, (productId) => loadProductDetails(productId))}
+        {router(loadProductsList, (productId) => loadProductDetails(productId))}
     </Provider>,
     document.getElementsByClassName("container")[0]);

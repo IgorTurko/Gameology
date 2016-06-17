@@ -107,9 +107,9 @@
 	    };
 	    store.dispatch(action);
 	});
-	var loadProducts = function () { return store.dispatch({ type: ProductListActions.PRODUCT_LOAD_REQUEST }); };
+	var loadProductsList = function () { return store.dispatch({ type: ProductListActions.PRODUCT_LOAD_REQUEST }); };
 	var loadProductDetails = function (productId) { return store.dispatch({ type: ProductDetailsActions.PRODUCT_LOAD_REQUEST, productId: productId }); };
-	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, router_1.default(loadProducts, function (productId) { return loadProductDetails(productId); })), document.getElementsByClassName("container")[0]);
+	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, router_1.default(loadProductsList, function (productId) { return loadProductDetails(productId); })), document.getElementsByClassName("container")[0]);
 
 
 /***/ },
@@ -1686,6 +1686,7 @@
 	};
 	/// <reference path="../../typings/index.d.ts" />
 	var React = __webpack_require__(3);
+	var react_router_1 = __webpack_require__(41);
 	var ProductForm = (function (_super) {
 	    __extends(ProductForm, _super);
 	    function ProductForm(props) {
@@ -1721,7 +1722,8 @@
 	    };
 	    ProductForm.prototype.render = function () {
 	        var _this = this;
-	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement("div", {className: "form-group"}, React.createElement("label", {for: "title", className: "col-md-2 control-label"}, "Product"), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }}))), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "form-group", key: shop.id}, React.createElement("label", {for: shop.id, className: "col-md-2 control-label"}, "Url for ", shop.title), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id], id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }})))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement("button", {type: "button", className: "btn btn-default"}, "< Back"), React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save")))));
+	        console.log(this.props);
+	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement("div", {className: "form-group"}, React.createElement("label", {for: "title", className: "col-md-2 control-label"}, "Product"), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }}))), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "form-group", key: shop.id}, React.createElement("label", {for: shop.id, className: "col-md-2 control-label"}, "Url for ", shop.title), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id], id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }})))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement(react_router_1.Link, {to: "/", className: "btn btn-default"}, "< Back"), " ", React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save")))));
 	    };
 	    return ProductForm;
 	}(React.Component));
