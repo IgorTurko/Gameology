@@ -22,6 +22,9 @@ declare namespace AppState {
     interface CurrentProduct {
         product: Api.Product,
         shops: Api.WebShop[];
+        errors: {
+            [path: string]: string[];
+        }
     }
 
     interface Products {

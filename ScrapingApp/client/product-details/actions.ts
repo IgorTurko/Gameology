@@ -14,7 +14,9 @@ export interface LoadProductDetailsRequestAction extends redux.IAction {
 
 export const SAVE_ERROR = "save-error";
 export interface SaveProductErrorAction extends redux.IAction {
-    error: Api.IFailResponse;
+    errors: {
+        [path: string]: string[];
+    }
 }
 
 export const SAVE_SUCCESS = "save-success";

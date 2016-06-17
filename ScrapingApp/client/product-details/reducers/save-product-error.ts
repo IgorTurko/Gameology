@@ -4,8 +4,8 @@ import * as redux from "redux";
 
 import * as Actions from "../actions";
 
-export default function saveProduct(state: AppState.CurrentProduct, action: Actions.SaveProductAction): AppState.CurrentProduct {
+export default function saveProductError(state: AppState.CurrentProduct, action: Actions.SaveProductErrorAction): AppState.CurrentProduct {
     return Object.assign({}, state, {
-        product: action.product
+        errors: action.errors
     });
 }

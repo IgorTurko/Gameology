@@ -10,14 +10,19 @@ import { ProductForm, ProductFormProps, ProductFormHandlers } from "../component
 
 function ProductDetailsPageComponent(props: ProductFormProps & ProductFormHandlers) {
     return (
-        <ProductForm product={props.product} shops={props.shops} onSaveProduct={product => props.onSaveProduct(product)} />
+        <ProductForm
+            product={props.product}
+            shops={props.shops}
+            errors={props.errors}
+            onSaveProduct={product => props.onSaveProduct(product) } />
     );
 }
 
 export default connect(
     (state: AppState.App) => ({
         product: state.currentProduct.product,
-        shops: state.currentProduct.shops
+        shops: state.currentProduct.shops,
+        errors: state.currentProduct.errors
     } as ProductFormProps),
 
     (dispatch: redux.IDispatch) => ({

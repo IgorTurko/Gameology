@@ -2,10 +2,14 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Link} from "react-router";
+import {ProductInputField} from "./product-input-field";
 
 export interface ProductFormProps {
     product: Api.Product;
     shops: Api.WebShop[];
+    errors: {
+        [path: string]: string[];
+    }
 }
 
 export interface ProductFormHandlers {
@@ -56,20 +60,14 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
     render() {
         return (
             <form onSubmit={e => this.onFormSubmit(e) } className="form-horizontal product-form">
-                <div className="form-group">
-                    <label for="title" className="col-md-2 control-label">Product</label>
-                    <div className="col-md-10">
-                        <input type="text" className="form-control" id="title" name="title" value={this.state.title} placeholder="Product" onChange={e => this.handleTitleChange(e)} />
-                    </div>
-                </div>
+                <ProductInputField label="Product" id="title" errors={this.props.errors["title"]}>
+                    <input type="text" className="form-control" id="title" name="title" value={this.state.title} placeholder="Product" onChange={e => this.handleTitleChange(e) } />
+                </ProductInputField>
                 {
                     this.props.shops.map(shop => (
-                        <div className="form-group" key={shop.id}>
-                            <label for={shop.id} className="col-md-2 control-label">Url for {shop.title}</label>
-                            <div className="col-md-10">
-                                <input type="text" className="form-control" value={this.state.scrapingUrls[shop.id] || ''} id={shop.id} name={shop.id} onChange={e => this.handleUrlChange(e)} />
-                            </div>
-                        </div>
+                        <ProductInputField key={shop.id} label={`Url for ${shop.title}`} id={shop.id} errors={this.props.errors[`scrapingUrls.${shop.id}`]}>
+                            <input type="text" className="form-control" value={this.state.scrapingUrls[shop.id] || ''} id={shop.id} name={shop.id} onChange={e => this.handleUrlChange(e) } />
+                        </ProductInputField>
                     ))
                 }
                 <div className="form-group">

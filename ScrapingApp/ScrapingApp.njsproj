@@ -43,6 +43,7 @@
     <Content Include="client\login\components\header.tsx" />
     <Content Include="client\login\components\login-form.tsx" />
     <Content Include="client\login\containers\login-part.tsx" />
+    <Content Include="client\product-details\components\product-input-field.tsx" />
     <Content Include="client\product-list\components\product-grid.tsx" />
     <Content Include="client\product-list\components\new-product.tsx" />
     <Content Include="client\product-list\components\search-box.tsx" />
@@ -179,6 +180,8 @@
     <TypeScriptCompile Include="client\product-details\middlewares\product-details-middleware.ts" />
     <TypeScriptCompile Include="client\product-details\reducers\index.ts" />
     <TypeScriptCompile Include="client\product-details\reducers\product-details-loaded.ts" />
+    <TypeScriptCompile Include="client\product-details\reducers\save-product-success.ts" />
+    <TypeScriptCompile Include="client\product-details\reducers\save-product-error.ts" />
     <TypeScriptCompile Include="client\product-details\reducers\save-product.ts" />
     <TypeScriptCompile Include="client\product-list\actions.ts" />
     <TypeScriptCompile Include="client\product-list\middlewares\product-list-middleware.ts" />

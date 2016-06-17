@@ -6,6 +6,8 @@ import * as Actions from "../actions";
 import saveProduct from "./save-product";
 import productDetailsLoaded from "./product-details-loaded";
 import loadProductDetails from "./load-product-details-request";
+import saveProductError from "./save-product-error"
+import saveProductSuccess from "./save-product-success"
 
 const productInitialState: AppState.CurrentProduct = {
     product: {
@@ -13,13 +15,19 @@ const productInitialState: AppState.CurrentProduct = {
         title: '',
         scrapingUrls: {}
     },
-    shops: []
+    shops: [],
+    errors: {
+        title: [],
+        scrapingUrls: []
+    }
 };
 
 const actionMap = {
     [Actions.SAVE_PRODUCT]: saveProduct,
     [Actions.PRODUCT_LOADED]: productDetailsLoaded,
-    [Actions.PRODUCT_LOAD_REQUEST]: loadProductDetails
+    [Actions.PRODUCT_LOAD_REQUEST]: loadProductDetails,
+    [Actions.SAVE_ERROR]: saveProductError,
+    [Actions.SAVE_SUCCESS]: saveProductSuccess,
 };
 
 export default function reduce(state: AppState.CurrentProduct = productInitialState, action: redux.IAction): AppState.CurrentProduct {

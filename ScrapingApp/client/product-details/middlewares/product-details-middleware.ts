@@ -16,18 +16,14 @@ export default class ProductDetailsMiddleware extends MiddlewareBase<AppState.Ap
             .saveProduct(action.product)
             .then(result => {
                 if (result.ok) {
-                    const action: Actions.SaveProductSuccessAction = {
+                    dispatch({
                         type: Actions.SAVE_SUCCESS
-                    }
-
-                    dispatch(action);
+                    } as Actions.SaveProductSuccessAction);
                 } else {
-                    const action: Actions.SaveProductErrorAction = {
+                    dispatch({
                         type: Actions.SAVE_ERROR,
-                        error: <Api.IFailResponse>result
-                    };
-
-                    dispatch(action)
+                        errors: (<Api.IFailResponse>result).errors
+                    } as Actions.SaveProductErrorAction)
                 }
             })
     }
@@ -37,23 +33,17 @@ export default class ProductDetailsMiddleware extends MiddlewareBase<AppState.Ap
             action.productId == 'new' ? Promise.resolve({title: '', id: '', scrapingUrls: {} } as Api.Product) : this.productRepository.getProductById(action.productId),
             state.currentProduct.shops.length > 0 ? Promise.resolve(state.currentProduct.shops) : this.shopRepository.getAllShops()
         ]).then(([product, shops]) => {
-
-            const action: Actions.ProductDetailsLoadedAction = {
+            dispatch({
                 type: Actions.PRODUCT_LOADED,
                 product: product,
                 shops: shops
-            };
-
-            dispatch(action);
+            } as Actions.ProductDetailsLoadedAction);
         }).catch(err => {
-
-            const action: Actions.ProductDetailsLoadedAction = {
+            dispatch({
                 type: Actions.PRODUCT_LOADED,
                 product: null,
                 shops: []
-            };
-
-            dispatch(action);
+            } as Actions.ProductDetailsLoadedAction);
         });
     }
 }
