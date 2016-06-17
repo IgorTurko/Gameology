@@ -15,3 +15,4 @@
 /// <reference path="modules/moment/index.d.ts" />
 /// <reference path="modules/mongodb/index.d.ts" />
 /// <reference path="modules/node-uuid/index.d.ts" />
+/// <reference path="../validator/validator.d.ts" />

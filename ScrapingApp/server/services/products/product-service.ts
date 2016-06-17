@@ -27,10 +27,14 @@ export default class ProductService {
             product.id = uuid.v1();
 
         return new Promise(resolve => {
+
             const validationResult = this.validator.validate(product);
+
             if (!validationResult.ok)
                 resolve(validationResult);
             else {
+                product = validationResult.entity;
+
                 this.storage
                     .save(product)
                     .then(() => this.one(product.id))
@@ -66,23 +70,23 @@ export default class ProductService {
                     product.values = {};
 
                 const values = product.values[webshopId] ||
-                {
-                    title: null,
-                    price: null,
-                    image: null
-                };
+                    {
+                        title: null,
+                        price: null,
+                        image: null
+                    };
                 product.values[webshopId] = values;
 
                 if (!product.log)
                     product.log = {};
 
                 const log = product.log[webshopId] ||
-                {
-                    url: null,
-                    scrapedAt: null,
-                    error: data.error,
-                    values: {}
-                };
+                    {
+                        url: null,
+                        scrapedAt: null,
+                        error: data.error,
+                        values: {}
+                    };
                 product.log[webshopId] = log;
 
                 log.url = product.scrapingUrls[webshopId];

@@ -25,14 +25,15 @@ export default class WebShopService {
         if (!webShop)
             throw new Error("webShop is undefined");
 
-        webShop = this.normalize(webShop);
-
         return new Promise(resolve => {
             const validationResult = this.validator.validate(webShop);
 
             if (!validationResult.ok)
                 resolve(validationResult);
-            else
+            else {
+
+                webShop = validationResult.entity;
+
                 this.storage
                     .save(webShop)
                     .then(() => this.one(webShop.id))
@@ -47,6 +48,7 @@ export default class WebShopService {
 
                         resolve(errorResult);
                     });
+            }
         });
     }
 
@@ -54,33 +56,22 @@ export default class WebShopService {
         if (!webShop)
             throw new Error("webShop is undefined");
 
-        webShop = this.normalize(webShop);
-
         return new Promise(resolve => {
 
-            const validationResult = this.validator.validate(webShop);
-
-            if (!validationResult.ok)
-                resolve(validationResult);
-            else
-                this.storage
-                    .put(webShop)
-                    .then(() => this.one(webShop.id))
-                    .then(entity => resolve(entity))
-                    .catch(err => {
-                        const errorResult: Api.ValidationResult = {
-                            ok: false,
-                            errors: {
-                                message: err
-                            }
-                        };
-                        resolve(errorResult);
-                    });
+            this.storage
+                .put(webShop)
+                .then(() => this.one(webShop.id))
+                .then(entity => resolve(entity))
+                .catch(err => {
+                    const errorResult: Api.ValidationResult = {
+                        ok: false,
+                        errors: {
+                            message: err
+                        }
+                    };
+                    resolve(errorResult);
+                });
 
         });
-    }
-
-    private normalize(webShop: Api.WebShop): Api.WebShop {
-        return webShop;
     }
 }

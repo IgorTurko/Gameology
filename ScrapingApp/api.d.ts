@@ -134,7 +134,11 @@
         ok: boolean;
         errors: {
             [path: string]: string[];
-        }
+        };
+    }
+
+    interface EntityValidationResult<TEntity> extends ValidationResult {
+        entity: TEntity;
     }
 
     interface ValidationError {
