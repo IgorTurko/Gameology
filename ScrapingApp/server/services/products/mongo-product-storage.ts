@@ -26,6 +26,17 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(c => c.next());
     }
 
+    findByTitle(title: string): Promise<Api.Product> {
+        if (!title)
+            return Promise.reject("Title is empty");
+
+        return this.db
+            .collection(Database.Collections.products)
+            .then(c => c.find({ title }, { _id: 0 }))
+            .then(c => c.limit(1))
+            .then(c => c.next());
+    }
+
     save(product: Api.Product): Promise<Api.Product> {
         if (!product)
             throw new Error("product is undefined");
@@ -35,16 +46,16 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(c => c.updateOne({
                 id: product.id
             },
-            {
-                $set: {
-                    id: product.id,
-                    title: product.title,
-                    scrapingUrls: product.scrapingUrls
-                }
-            },
-            {
-                upsert: true
-            }))
+                {
+                    $set: {
+                        id: product.id,
+                        title: product.title,
+                        scrapingUrls: product.scrapingUrls
+                    }
+                },
+                {
+                    upsert: true
+                }))
             .then(() => product);
     }
 
@@ -59,18 +70,18 @@ export default class MongoProductStorage implements Products.IProductStorage {
         return this.db
             .collection(Database.Collections.products)
             .then(c => c.updateOne(
-            {
-                id: productId
-            },
-            {
-                $set: {
-                    [`values.${webShopId}`]: values,
-                    [`log.${webShopId}`]: log
-                }
-            },
-            {
-                upsert: true
-            }))
+                {
+                    id: productId
+                },
+                {
+                    $set: {
+                        [`values.${webShopId}`]: values,
+                        [`log.${webShopId}`]: log
+                    }
+                },
+                {
+                    upsert: true
+                }))
             .then(r => this.one(productId));
     }
 }
