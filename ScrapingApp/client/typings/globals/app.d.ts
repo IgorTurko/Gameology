@@ -21,11 +21,7 @@ declare namespace AppState {
 
     interface CurrentProduct {
         product: Api.Product,
-        shops: Api.WebShop[]
-    }
-
-    interface Shops {
-        shops: Api.WebShop[]
+        shops: Api.WebShop[];
     }
 
     interface Products {
@@ -34,13 +30,11 @@ declare namespace AppState {
         shops: Api.WebShop[];
         search: string;
         filteredProducts: Api.Product[];
-        currentProduct: Api.Product;
     }
 
     interface App {
         login: Login;
         products: Products;
-        shops: Shops;
-        currentProduct: CurrentProduct
+        currentProduct: CurrentProduct;
     }
 }

@@ -5,7 +5,7 @@ import * as redux from "redux";
 import * as Actions from "../actions";
 import saveProduct from "./save-product";
 import productDetailsLoaded from "./product-details-loaded";
-import loadProduct from "./load-product-details-request";
+import loadProductDetails from "./load-product-details-request";
 
 const productInitialState: AppState.CurrentProduct = {
     product: {
@@ -19,7 +19,7 @@ const productInitialState: AppState.CurrentProduct = {
 const actionMap = {
     [Actions.SAVE_PRODUCT]: saveProduct,
     [Actions.PRODUCT_LOADED]: productDetailsLoaded,
-    [Actions.PRODUCT_LOAD_REQUEST]: loadProduct
+    [Actions.PRODUCT_LOAD_REQUEST]: loadProductDetails
 };
 
 export default function reduce(state: AppState.CurrentProduct = productInitialState, action: redux.IAction): AppState.CurrentProduct {

@@ -1,42 +1,54 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import Product = Api.Product;
-import Shop = Api.WebShop;
+
 
 export interface ProductFormProps {
-    product: Product;
-    shops: Shop[];
+    product: Api.Product;
+    shops: Api.WebShop[];
 }
 
 export interface ProductFormHandlers {
-    onSaveProduct: (Product) => void;
+    onSaveProduct: (product: Api.Product) => void;
 }
 
-export class ProductForm extends React.Component<ProductFormProps & ProductFormHandlers, {}> {
+export class ProductForm extends React.Component<ProductFormProps & ProductFormHandlers, Api.Product> {
 
-    constructor() {
-        super();
+    constructor(props: ProductFormProps & ProductFormHandlers) {
+        super(props);
+
         this.state = {
-            title: ''
+            id: '',
+            title: '',
+            scrapingUrls: {}
         };
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState(nextProps.product);
+    }
+
     handleTitleChange(e) {
-        this.setState({ title: e.target.value });
+        this.setState(s => {
+            s.title = e.target.value
+            return s;
+        });
+    }
+
+    handleUrlChange(e) {
+        let scrapingUrls = this.state.scrapingUrls;
+        scrapingUrls[e.target.name] = e.target.value;
+        this.setState(s => {
+            s.scrapingUrls = scrapingUrls;
+            return s;
+        });
     }
 
     onFormSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        const product: Product = {
-            title: e.target["title"].value as string,
-            id: e.target["id"].value as string,
-            scrapingUrls: this.props.shops.toHash((shop) => shop.id, (shop) => e.target[shop.id].value)
-        }
-
         if (this.props.onSaveProduct) {
-            this.props.onSaveProduct(product);
+            this.props.onSaveProduct(this.state);
         }
     }
 
@@ -46,7 +58,7 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                 <div className="form-group">
                     <label for="title" className="col-md-2 control-label">Product</label>
                     <div className="col-md-10">
-                        <input type="text" className="form-control" id="title" name="title" value={this.props.product.title} placeholder="Product" onChange={this.handleTitleChange} />
+                        <input type="text" className="form-control" id="title" name="title" value={this.state.title} placeholder="Product" onChange={e => this.handleTitleChange(e)} />
                     </div>
                 </div>
                 {
@@ -54,15 +66,15 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                         <div className="form-group" key={shop.id}>
                             <label for={shop.id} className="col-md-2 control-label">Url for {shop.title}</label>
                             <div className="col-md-10">
-                                <input type="text" className="form-control" value={this.props.product.scrapingUrls[shop.id]} id={shop.id} name={shop.id} onChange={this.handleTitleChange} />
+                                <input type="text" className="form-control" value={this.state.scrapingUrls[shop.id]} id={shop.id} name={shop.id} onChange={e => this.handleUrlChange(e)} />
                             </div>
                         </div>
                     ))
                 }
-                <input type="hidden" name="id" value={this.props.product.id} />
                 <div className="form-group">
                     <div className="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-default">Save</button>
+                        <button type="button" className="btn btn-default" onClick={e => this.onFormSubmit(e)}>&lt; Back</button>&nbsp;
+                        <button type="submit" className="btn btn-default">Save</button>
                     </div>
                 </div>
             </form>);

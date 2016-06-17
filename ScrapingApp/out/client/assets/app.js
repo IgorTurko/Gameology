@@ -814,8 +814,7 @@
 	    products: [],
 	    shops: [],
 	    filteredProducts: [],
-	    search: "",
-	    currentProduct: null
+	    search: ""
 	};
 	var actionMap = (_a = {},
 	    _a[Actions.PRODUCT_SEARCH] = search_product_list_1.default,
@@ -1689,29 +1688,40 @@
 	var React = __webpack_require__(3);
 	var ProductForm = (function (_super) {
 	    __extends(ProductForm, _super);
-	    function ProductForm() {
-	        _super.call(this);
+	    function ProductForm(props) {
+	        _super.call(this, props);
 	        this.state = {
-	            title: ''
+	            id: '',
+	            title: '',
+	            scrapingUrls: {}
 	        };
 	    }
+	    ProductForm.prototype.componentWillReceiveProps = function (nextProps) {
+	        this.setState(nextProps.product);
+	    };
 	    ProductForm.prototype.handleTitleChange = function (e) {
-	        this.setState({ title: e.target.value });
+	        this.setState(function (s) {
+	            s.title = e.target.value;
+	            return s;
+	        });
+	    };
+	    ProductForm.prototype.handleUrlChange = function (e) {
+	        var scrapingUrls = this.state.scrapingUrls;
+	        scrapingUrls[e.target.name] = e.target.value;
+	        this.setState(function (s) {
+	            s.scrapingUrls = scrapingUrls;
+	            return s;
+	        });
 	    };
 	    ProductForm.prototype.onFormSubmit = function (e) {
 	        e.preventDefault();
-	        var product = {
-	            title: e.target["title"].value,
-	            id: e.target["id"].value,
-	            scrapingUrls: this.props.shops.toHash(function (shop) { return shop.id; }, function (shop) { return e.target[shop.id].value; })
-	        };
 	        if (this.props.onSaveProduct) {
-	            this.props.onSaveProduct(product);
+	            this.props.onSaveProduct(this.state);
 	        }
 	    };
 	    ProductForm.prototype.render = function () {
 	        var _this = this;
-	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement("div", {className: "form-group"}, React.createElement("label", {for: "title", className: "col-md-2 control-label"}, "Product"), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.props.product.title, placeholder: "Product", onChange: this.handleTitleChange}))), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "form-group", key: shop.id}, React.createElement("label", {for: shop.id, className: "col-md-2 control-label"}, "Url for ", shop.title), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", value: _this.props.product.scrapingUrls[shop.id], id: shop.id, name: shop.id, onChange: _this.handleTitleChange})))); }), React.createElement("input", {type: "hidden", name: "id", value: this.props.product.id}), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement("button", {type: "submit", class: "btn btn-default"}, "Save")))));
+	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement("div", {className: "form-group"}, React.createElement("label", {for: "title", className: "col-md-2 control-label"}, "Product"), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }}))), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "form-group", key: shop.id}, React.createElement("label", {for: shop.id, className: "col-md-2 control-label"}, "Url for ", shop.title), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id], id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }})))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement("button", {type: "button", className: "btn btn-default"}, "< Back"), React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save")))));
 	    };
 	    return ProductForm;
 	}(React.Component));

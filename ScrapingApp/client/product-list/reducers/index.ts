@@ -10,11 +10,10 @@ import * as Actions from "../actions";
 
 const productInitialState: AppState.Products = {
     isLoading: false,
-    products:[],
-    shops: [],
+    products: [],
+    shops:[],
     filteredProducts: [],
-    search: "",
-    currentProduct: null
+    search: ""
 };
 
 const actionMap = {
