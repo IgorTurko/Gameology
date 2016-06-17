@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 
 import SearchBox from "../components/search-box";
 import ProductGrid from "../components/product-grid";
+import NewProduct from "../components/new-product";
 
 import * as Actions from "../actions";
 
@@ -23,6 +24,7 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
     return (
         <div className="container">
             <SearchBox placeholder="Search products.." onFiltering={ filter => props.onFilter(filter) } />
+            <NewProduct />
             <ProductGrid products={ props.products } shops={ props.shops } isLoading={ props.isLoading } />
         </div>
     );

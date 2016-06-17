@@ -29,8 +29,9 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
     }
 
     handleTitleChange(e) {
+        let value = e.target.value;
         this.setState(s => {
-            s.title = e.target.value
+            s.title = value;
             return s;
         });
     }
@@ -66,7 +67,7 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                         <div className="form-group" key={shop.id}>
                             <label for={shop.id} className="col-md-2 control-label">Url for {shop.title}</label>
                             <div className="col-md-10">
-                                <input type="text" className="form-control" value={this.state.scrapingUrls[shop.id]} id={shop.id} name={shop.id} onChange={e => this.handleUrlChange(e)} />
+                                <input type="text" className="form-control" value={this.state.scrapingUrls[shop.id] || ''} id={shop.id} name={shop.id} onChange={e => this.handleUrlChange(e)} />
                             </div>
                         </div>
                     ))

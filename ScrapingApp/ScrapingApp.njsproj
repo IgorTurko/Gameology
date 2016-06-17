@@ -44,6 +44,7 @@
     <Content Include="client\login\components\login-form.tsx" />
     <Content Include="client\login\containers\login-part.tsx" />
     <Content Include="client\product-list\components\product-grid.tsx" />
+    <Content Include="client\product-list\components\new-product.tsx" />
     <Content Include="client\product-list\components\search-box.tsx" />
     <Content Include="client\product-list\containers\product-list-part.tsx" />
     <Content Include="client\product-details\components\product-form.tsx" />

@@ -388,6 +388,9 @@
 	var queueIndex = -1;
 	
 	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
@@ -1377,8 +1380,8 @@
 	    };
 	    ProductDetailsMiddleware.prototype[Actions.PRODUCT_LOAD_REQUEST] = function (state, action, dispatch) {
 	        Promise.all([
-	            this.productRepository.getProductById(action.productId),
-	            this.shopRepository.getAllShops()
+	            action.productId == 'new' ? Promise.resolve({ title: '', id: '', scrapingUrls: {} }) : this.productRepository.getProductById(action.productId),
+	            state.currentProduct.shops.length > 0 ? Promise.resolve(state.currentProduct.shops) : this.shopRepository.getAllShops()
 	        ]).then(function (_a) {
 	            var product = _a[0], shops = _a[1];
 	            var action = {
@@ -1412,7 +1415,7 @@
 	var react_router_1 = __webpack_require__(41);
 	var login_part_1 = __webpack_require__(42);
 	var product_list_part_1 = __webpack_require__(45);
-	var product_details_part_1 = __webpack_require__(48);
+	var product_details_part_1 = __webpack_require__(49);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = function (loadProducts, loadProduct) { return (React.createElement(react_router_1.Router, {history: react_router_1.browserHistory}, React.createElement(react_router_1.Route, {component: login_part_1.default}, React.createElement(react_router_1.Route, {path: "/", component: product_list_part_1.default, onEnter: function () { return loadProducts(); }}), React.createElement(react_router_1.Route, {path: "/product/:productId", component: product_details_part_1.default, onEnter: function (_a) {
 	    var params = _a.params;
@@ -1528,9 +1531,10 @@
 	var react_redux_1 = __webpack_require__(6);
 	var search_box_1 = __webpack_require__(46);
 	var product_grid_1 = __webpack_require__(47);
+	var new_product_1 = __webpack_require__(48);
 	var Actions = __webpack_require__(16);
 	function ProductListPageComponent(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading})));
+	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading})));
 	}
 	var ProductListPart = react_redux_1.connect(function (state) { return ({
 	    products: state.products.filteredProducts,
@@ -1647,12 +1651,39 @@
 /* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	/// <reference path="./../../typings/index.d.ts" />
+	var React = __webpack_require__(3);
+	var react_router_1 = __webpack_require__(41);
+	var NewProduct = (function (_super) {
+	    __extends(NewProduct, _super);
+	    function NewProduct() {
+	        _super.apply(this, arguments);
+	    }
+	    NewProduct.prototype.render = function () {
+	        return (React.createElement("div", {className: "container"}, React.createElement(react_router_1.Link, {to: "/product/new", className: "btn btn-default"}, "New Product >")));
+	    };
+	    return NewProduct;
+	}(React.Component));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = NewProduct;
+
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var React = __webpack_require__(3);
 	var react_redux_1 = __webpack_require__(6);
 	var Actions = __webpack_require__(34);
-	var product_form_1 = __webpack_require__(49);
+	var product_form_1 = __webpack_require__(50);
 	function ProductDetailsPageComponent(props) {
 	    return (React.createElement(product_form_1.ProductForm, {product: props.product, shops: props.shops, onSaveProduct: function (product) { return props.onSaveProduct(product); }}));
 	}
@@ -1672,7 +1703,7 @@
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1698,8 +1729,9 @@
 	        this.setState(nextProps.product);
 	    };
 	    ProductForm.prototype.handleTitleChange = function (e) {
+	        var value = e.target.value;
 	        this.setState(function (s) {
-	            s.title = e.target.value;
+	            s.title = value;
 	            return s;
 	        });
 	    };
@@ -1719,8 +1751,7 @@
 	    };
 	    ProductForm.prototype.render = function () {
 	        var _this = this;
-	        console.log(this.props);
-	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement("div", {className: "form-group"}, React.createElement("label", {for: "title", className: "col-md-2 control-label"}, "Product"), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }}))), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "form-group", key: shop.id}, React.createElement("label", {for: shop.id, className: "col-md-2 control-label"}, "Url for ", shop.title), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id], id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }})))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement(react_router_1.Link, {to: "/", className: "btn btn-default"}, "< Back"), " ", React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save")))));
+	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement("div", {className: "form-group"}, React.createElement("label", {for: "title", className: "col-md-2 control-label"}, "Product"), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }}))), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "form-group", key: shop.id}, React.createElement("label", {for: shop.id, className: "col-md-2 control-label"}, "Url for ", shop.title), React.createElement("div", {className: "col-md-10"}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id] || '', id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }})))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement(react_router_1.Link, {to: "/", className: "btn btn-default"}, "< Back"), " ", React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save")))));
 	    };
 	    return ProductForm;
 	}(React.Component));
