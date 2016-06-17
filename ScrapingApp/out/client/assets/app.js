@@ -1286,7 +1286,8 @@
 	    errors: {
 	        title: [],
 	        scrapingUrls: []
-	    }
+	    },
+	    saved: false
 	};
 	var actionMap = (_a = {},
 	    _a[Actions.SAVE_PRODUCT] = save_product_1.default,
@@ -1347,7 +1348,8 @@
 	"use strict";
 	function selectProduct(state, action) {
 	    return Object.assign({}, state, {
-	        product: state.product
+	        product: state.product,
+	        saved: false
 	    });
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1377,7 +1379,8 @@
 	"use strict";
 	function saveProductSuccess(state, action) {
 	    return Object.assign({}, state, {
-	        errors: {}
+	        errors: {},
+	        saved: true
 	    });
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1748,13 +1751,14 @@
 	var Actions = __webpack_require__(34);
 	var product_form_1 = __webpack_require__(52);
 	function ProductDetailsPageComponent(props) {
-	    return (React.createElement(product_form_1.ProductForm, {product: props.product, shops: props.shops, errors: props.errors, onSaveProduct: function (product) { return props.onSaveProduct(product); }}));
+	    return (React.createElement(product_form_1.ProductForm, {product: props.product, shops: props.shops, errors: props.errors, saved: props.saved, onSaveProduct: function (product) { return props.onSaveProduct(product); }}));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(function (state) { return ({
 	    product: state.currentProduct.product,
 	    shops: state.currentProduct.shops,
-	    errors: state.currentProduct.errors
+	    errors: state.currentProduct.errors,
+	    saved: state.currentProduct.saved
 	}); }, function (dispatch) { return ({
 	    onSaveProduct: function (product) {
 	        var action = {
@@ -1816,7 +1820,18 @@
 	    };
 	    ProductForm.prototype.render = function () {
 	        var _this = this;
-	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, React.createElement(product_input_field_1.ProductInputField, {label: "Product", id: "title", errors: this.props.errors["title"]}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }})), this.props.shops.map(function (shop) { return (React.createElement(product_input_field_1.ProductInputField, {key: shop.id, label: "Url for " + shop.title, id: shop.id, errors: _this.props.errors[("scrapingUrls." + shop.id)]}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id] || '', id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }}))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement(react_router_1.Link, {to: "/", className: "btn btn-default"}, "< Back"), " ", React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save")))));
+	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, (function () {
+	            if (_this.props.saved) {
+	                return (React.createElement("div", {className: "alert alert-success", role: "alert"}, "Product saved"));
+	            }
+	        })(), (function () {
+	            var commonErrors = _this.props.errors[""] || [];
+	            var scrappingUrlsErrors = _this.props.errors["scrapingUrls"] || [];
+	            var errors = commonErrors.concat(scrappingUrlsErrors);
+	            if (errors.length > 0) {
+	                return (errors.map(function (error, index) { return (React.createElement("div", {key: "{index}", className: "alert alert-danger", role: "alert"}, error)); }));
+	            }
+	        })(), React.createElement(product_input_field_1.ProductInputField, {label: "Product", id: "title", errors: this.props.errors["title"]}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }})), this.props.shops.map(function (shop) { return (React.createElement(product_input_field_1.ProductInputField, {key: shop.id, label: "Url for " + shop.title, id: shop.id, errors: _this.props.errors[("scrapingUrls." + shop.id)]}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id] || '', id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }}))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement(react_router_1.Link, {to: "/", className: "btn btn-default"}, "< Back"), " ", React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save")))));
 	    };
 	    return ProductForm;
 	}(React.Component));

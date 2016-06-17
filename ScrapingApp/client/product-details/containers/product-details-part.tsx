@@ -14,6 +14,7 @@ function ProductDetailsPageComponent(props: ProductFormProps & ProductFormHandle
             product={props.product}
             shops={props.shops}
             errors={props.errors}
+            saved={props.saved}
             onSaveProduct={product => props.onSaveProduct(product) } />
     );
 }
@@ -22,7 +23,8 @@ export default connect(
     (state: AppState.App) => ({
         product: state.currentProduct.product,
         shops: state.currentProduct.shops,
-        errors: state.currentProduct.errors
+        errors: state.currentProduct.errors,
+        saved: state.currentProduct.saved
     } as ProductFormProps),
 
     (dispatch: redux.IDispatch) => ({

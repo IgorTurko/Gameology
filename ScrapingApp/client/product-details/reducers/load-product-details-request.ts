@@ -6,6 +6,7 @@ import * as Actions from "../actions";
 
 export default function selectProduct(state: AppState.CurrentProduct, action: Actions.LoadProductDetailsRequestAction): AppState.CurrentProduct {
     return Object.assign({}, state, {
-        product: state.product
+        product: state.product,
+        saved: false
     });
 }

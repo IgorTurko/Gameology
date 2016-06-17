@@ -9,7 +9,8 @@ export interface ProductFormProps {
     shops: Api.WebShop[];
     errors: {
         [path: string]: string[];
-    }
+    },
+    saved: boolean
 }
 
 export interface ProductFormHandlers {
@@ -60,6 +61,24 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
     render() {
         return (
             <form onSubmit={e => this.onFormSubmit(e) } className="form-horizontal product-form">
+                {(() => {
+                    if (this.props.saved) {
+                        return (<div className="alert alert-success" role="alert">Product saved</div>);
+                    }
+                })()}
+
+                {(() => {
+                    const commonErrors = this.props.errors[""] || [];
+                    const scrappingUrlsErrors = this.props.errors["scrapingUrls"] || [];
+                    const errors = commonErrors.concat(scrappingUrlsErrors);
+
+                    if (errors.length > 0) {
+                        return (errors.map((error, index) => (
+                            <div key="{index}" className="alert alert-danger" role= "alert">{error}</div>)
+                        ));
+                    }
+                }) ()}
+
                 <ProductInputField label="Product" id="title" errors={this.props.errors["title"]}>
                     <input type="text" className="form-control" id="title" name="title" value={this.state.title} placeholder="Product" onChange={e => this.handleTitleChange(e) } />
                 </ProductInputField>

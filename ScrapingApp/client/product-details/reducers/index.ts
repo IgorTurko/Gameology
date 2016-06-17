@@ -19,7 +19,8 @@ const productInitialState: AppState.CurrentProduct = {
     errors: {
         title: [],
         scrapingUrls: []
-    }
+    },
+    saved: false
 };
 
 const actionMap = {

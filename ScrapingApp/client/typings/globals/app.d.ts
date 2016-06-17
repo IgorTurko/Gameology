@@ -24,7 +24,8 @@ declare namespace AppState {
         shops: Api.WebShop[];
         errors: {
             [path: string]: string[];
-        }
+        },
+        saved: boolean
     }
 
     interface Products {
