@@ -16,3 +16,8 @@ export interface ProductListLoadedAction extends redux.IAction {
 export const PRODUCT_LOAD_REQUEST = "load-product-list-request";
 export interface LoadProductListRequestAction extends redux.IAction {        
 }
+
+export const SHOP_SAVE = "shop-save";
+export interface ShopSaveAction extends redux.IAction {
+    
+}

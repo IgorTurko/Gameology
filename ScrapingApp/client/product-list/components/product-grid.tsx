@@ -10,7 +10,11 @@ interface GridProps extends React.Props<any> {
     shops: Api.WebShop[];
 }
 
-export default class ProductsGrid extends React.Component<GridProps, {}> {
+export interface GridHandlers {
+    onShopSave: (shop: Api.WebShop) => void;
+}
+
+export default class ProductsGrid extends React.Component<GridProps & GridHandlers, {}> {
     renderHeader() {
         return (
             <div className="row">
@@ -18,6 +22,34 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
                 {
                     this.props.shops.map(shop => (
                         <div key={shop.id} className="col-md-2 product-cell header">{ shop.title }</div>
+                    ))
+                }
+            </div>);
+    }
+
+    onDeliveryPriceChanged(e) {
+        let shop: Api.WebShop = {
+            id: e.target.name,
+            deliveryPrice: e.target.value,
+            isBase: true,
+            title: '',
+            scrapingSettings: null
+        }
+
+        if (this.props.onShopSave) {
+            this.props.onShopSave(shop);
+        }
+    }
+
+    renderDeliveryPrice() {
+        return (
+            <div className="row">
+                <div className="col-md-2 product-cell">Delivery price</div>
+                {
+                    this.props.shops.map(shop => (
+                        <div className="col-md-2 product-cell" key={ `$dp::${shop.id}` }>
+                            <input type="text" name={shop.id} className="form-control" value={shop.deliveryPrice} onChange={e => this.onDeliveryPriceChanged(e) } />
+                        </div>
                     ))
                 }
             </div>);
@@ -105,6 +137,7 @@ export default class ProductsGrid extends React.Component<GridProps, {}> {
         return (
             <div className="product-grid">
                 { this.renderHeader() }
+                { this.renderDeliveryPrice() }
                 { this.renderData() }
             </div>
         );

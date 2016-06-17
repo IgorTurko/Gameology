@@ -797,6 +797,7 @@
 	exports.PRODUCT_SEARCH = "product-list-search";
 	exports.PRODUCTS_LOADED = "product-list-loaded";
 	exports.PRODUCT_LOAD_REQUEST = "load-product-list-request";
+	exports.SHOP_SAVE = "shop-save";
 
 
 /***/ },
@@ -934,6 +935,9 @@
 	        };
 	        store.dispatch(reloadProductList);
 	    };
+	    ProductListMiddleware.prototype[Actions.SHOP_SAVE] = function (state, action, dispatch) {
+	        this.shopRepo.saveShop(action.shop);
+	    };
 	    return ProductListMiddleware;
 	}(middleware_base_1.default));
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1052,6 +1056,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	/// <reference path="../typings/index.d.ts"/>
 	var http_client_1 = __webpack_require__(24);
 	var ShopRepository = (function () {
 	    function ShopRepository() {
@@ -1059,6 +1064,10 @@
 	    }
 	    ShopRepository.prototype.getAllShops = function () {
 	        return this.httpClient.get('/api/shops');
+	    };
+	    ;
+	    ShopRepository.prototype.saveShop = function (shop) {
+	        return this.httpClient.post('/api/shops', shop);
 	    };
 	    ;
 	    return ShopRepository;
@@ -1534,7 +1543,7 @@
 	var new_product_1 = __webpack_require__(48);
 	var Actions = __webpack_require__(16);
 	function ProductListPageComponent(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading})));
+	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, onShopSave: function (shop) { return props.onShopSave(shop); }})));
 	}
 	var ProductListPart = react_redux_1.connect(function (state) { return ({
 	    products: state.products.filteredProducts,
@@ -1544,6 +1553,10 @@
 	    onFilter: function (filter) { return dispatch({
 	        type: Actions.PRODUCT_SEARCH,
 	        filter: filter
+	    }); },
+	    onShopSave: function (shop) { return dispatch({
+	        type: Actions.SHOP_SAVE,
+	        shop: shop
 	    }); }
 	}); })(ProductListPageComponent);
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1605,6 +1618,22 @@
 	    ProductsGrid.prototype.renderHeader = function () {
 	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell header"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement("div", {key: shop.id, className: "col-md-2 product-cell header"}, shop.title)); })));
 	    };
+	    ProductsGrid.prototype.onDeliveryPriceChanged = function (e) {
+	        var shop = {
+	            id: e.target.name,
+	            deliveryPrice: e.target.value,
+	            isBase: true,
+	            title: '',
+	            scrapingSettings: null
+	        };
+	        if (this.props.onShopSave) {
+	            this.props.onShopSave(shop);
+	        }
+	    };
+	    ProductsGrid.prototype.renderDeliveryPrice = function () {
+	        var _this = this;
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "col-md-2 product-cell", key: "$dp::" + shop.id}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: shop.deliveryPrice, onChange: function (e) { return _this.onDeliveryPriceChanged(e); }}))); })));
+	    };
 	    ProductsGrid.prototype.renderEmptyRow = function () {
 	        return React.createElement("div", {className: "col-md-12"}, "No products");
 	    };
@@ -1634,7 +1663,7 @@
 	        if (this.props.products == null || this.props.products.length == 0) {
 	            return (React.createElement("div", {className: "product-grid"}, this.props.shops != null && this.props.shops.length ? this.renderHeader() : null, this.renderEmptyRow()));
 	        }
-	        return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderData()));
+	        return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderDeliveryPrice(), this.renderData()));
 	    };
 	    ProductsGrid.prototype.formatPrice = function (price) {
 	        if (price == null || price === undefined || isNaN(price))
@@ -1666,7 +1695,7 @@
 	        _super.apply(this, arguments);
 	    }
 	    NewProduct.prototype.render = function () {
-	        return (React.createElement("div", {className: "container"}, React.createElement(react_router_1.Link, {to: "/product/new", className: "btn btn-default"}, "New Product >")));
+	        return (React.createElement("div", {className: "row add-product"}, React.createElement(react_router_1.Link, {to: "/product/new", className: "btn btn-default"}, "New Product >")));
 	    };
 	    return NewProduct;
 	}(React.Component));

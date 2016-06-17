@@ -45,4 +45,8 @@ export default class ProductListMiddleware extends MiddlewareBase<AppState.App> 
 
         store.dispatch(reloadProductList);
     }
+
+    [Actions.SHOP_SAVE](state, action, dispatch: redux.IDispatch) {
+        this.shopRepo.saveShop(action.shop);
+    }
 }

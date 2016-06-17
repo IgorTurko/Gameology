@@ -18,6 +18,7 @@ interface ProductListPageProps {
 
 interface ProductListPageHandlers {
     onFilter: (filter: string) => void;
+    onShopSave: (shop: Api.WebShop) => void;
 }
 
 function ProductListPageComponent(props: ProductListPageProps & ProductListPageHandlers) {
@@ -25,7 +26,7 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
         <div className="container">
             <SearchBox placeholder="Search products.." onFiltering={ filter => props.onFilter(filter) } />
             <NewProduct />
-            <ProductGrid products={ props.products } shops={ props.shops } isLoading={ props.isLoading } />
+            <ProductGrid products={ props.products } shops={ props.shops } isLoading={ props.isLoading } onShopSave={shop => props.onShopSave(shop)} />
         </div>
     );
 }
@@ -42,9 +43,12 @@ const ProductListPart = connect(
         onFilter: filter => dispatch({
             type: Actions.PRODUCT_SEARCH,
             filter: filter
-        } as Actions.ProductListSearchAction)
-    } as ProductListPageHandlers)
+        } as Actions.ProductListSearchAction),
 
-)(ProductListPageComponent);
+        onShopSave: shop => dispatch({
+                type: Actions.SHOP_SAVE,
+                shop: shop
+        } as Actions.ShopSaveAction)
+    }))(ProductListPageComponent);
 
 export default ProductListPart;
