@@ -2,6 +2,7 @@
 
 import * as http  from "http";
 import * as express  from "express";
+import * as io from "socket.io";
 
 import * as bodyparser from "body-parser";
 import * as cookieparser from "cookie-parser";

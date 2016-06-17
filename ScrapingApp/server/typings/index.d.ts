@@ -11,6 +11,7 @@
 /// <reference path="globals/node-validator/index.d.ts" />
 /// <reference path="globals/node/index.d.ts" />
 /// <reference path="globals/serve-static/index.d.ts" />
+/// <reference path="globals/socket.io/index.d.ts" />
 /// <reference path="modules/mime/index.d.ts" />
 /// <reference path="modules/moment/index.d.ts" />
 /// <reference path="modules/mongodb/index.d.ts" />

@@ -16,7 +16,7 @@ export default class ScrapeService implements Scraping.IScrapeService {
     private webShops: Promise<WebShopHash>;
 
     constructor(private productService: ProductService,
-                private webShopService: WebShopService) {
+        private webShopService: WebShopService) {
         if (!productService)
             throw new Error("productService is undefined");
         if (!webShopService)
