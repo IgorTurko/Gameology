@@ -1,24 +1,21 @@
-/// <reference path="../validator.d.ts" />
-
+import { ValidateAndTransformFunc, ReportErrorFunction } from "../definitions";
 import { ChainableRuleRunner } from "./rules-base";
 
-class StringRules extends ChainableRuleRunner<string> {
+export class StringRules extends ChainableRuleRunner<string> {
 
     notEmpty(errorMessage: string = "Value can not be empty"): this {
         return this.withRule(StringRules.notEmtpyRule(errorMessage));
     }
 
-    must(predicate: (value: string, entity?: any, rootEntity?: any) => boolean, errorMessage: string = "Value is invalid"): this {
-        return this.withRule(ChainableRuleRunner.mustRule(predicate, errorMessage));
-    }
-
     static isStringRule(errorMessage: string, convert: boolean): ValidateAndTransformFunc<any, string> {
         return (value: any, reportError: ReportErrorFunction) => {
-            if (value === null || value === undefined)
+            if (value === null || value === undefined) {
                 return value;
+            }
 
-            if (typeof value !== "string" && !convert)
+            if (typeof value !== "string" && !convert) {
                 reportError(errorMessage);
+            }
 
             return value.toString();
         };
@@ -26,31 +23,29 @@ class StringRules extends ChainableRuleRunner<string> {
 
     static notEmtpyRule(errorMessage: string): ValidateAndTransformFunc<string, string> {
         return (value: string, reportError: ReportErrorFunction) => {
-            if (!value || !value.trim())
+            if (!value || !value.trim()) {
                 reportError(errorMessage);
+            }
 
             return value;
-        }
+        };
     }
 }
 
-class NumberRules extends ChainableRuleRunner<number> {
-
-    must(predicate: (value: number, entity?: any, rootEntity?: any) => boolean, errorMessage: string = "Value is invalid"): this {
-        return this.withRule(ChainableRuleRunner.mustRule(predicate, errorMessage));
-    }
-
+export class NumberRules extends ChainableRuleRunner<number> {
 
     static isNumberRule(errorMessage: string): ValidateAndTransformFunc<any, number> {
         return (value: any, reportError: ReportErrorFunction) => {
-            if (value === null || value === undefined)
+            if (value === null || value === undefined) {
                 return value;
+            }
 
             if (typeof value !== "number") {
                 const result = parseFloat("" + value);
 
-                if (isNaN(result))
+                if (isNaN(result)) {
                     reportError(errorMessage);
+                }
 
                 return result;
             }
@@ -60,10 +55,18 @@ class NumberRules extends ChainableRuleRunner<number> {
     }
 }
 
+export class AnyRules<T> extends ChainableRuleRunner<T> {
+}
+
 export function str(errorMessage: string = "Value is not a string.", convert: boolean = true): StringRules {
     return new StringRules().withRule(StringRules.isStringRule(errorMessage, convert));
 }
 
 export function num(errorMessage: string = "Value is not a valid number"): NumberRules {
     return new NumberRules().withRule(NumberRules.isNumberRule(errorMessage));
+}
+
+export function any<T>(predicate?: (value: T, entity?: any, rootEntity?: any) => boolean, errorMessage: string = "Value is invalid"): AnyRules<T> {
+    predicate = predicate || (v => true);
+    return new AnyRules<T>().must(predicate, errorMessage);
 }

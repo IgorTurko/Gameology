@@ -36,7 +36,22 @@ export default class ProductService {
                 product = validationResult.entity;
 
                 this.storage
-                    .save(product)
+                    .findByTitle(product.title)
+                    .then(p => {
+                        if (p && p.id !== product.id) {
+                            const failedResult: Api.EntityValidationResult<Api.Product> = {
+                                entity: null,
+                                errors: {
+                                    "title": ["Product with such title already exists"]
+                                },
+                                ok: false
+                            };
+
+                            resolve(failedResult);
+                            throw failedResult;
+                        }
+                    })
+                    .then(() => this.storage.save(product))
                     .then(() => this.one(product.id))
                     .then(p => {
                         eventBus.emit(EventNames.ProductUpdated, p.id);
@@ -53,6 +68,10 @@ export default class ProductService {
             throw new Error("productId is undefined");
 
         return this.storage.one(productId);
+    }
+
+    findByTitle(title: string): Promise<Api.Product> {
+        return this.storage.findByTitle(title);
     }
 
     updateScrapedData(productId: string, webshopId: string, data: Scraping.WebShopScrapingResult): Promise<Api.Product> {
