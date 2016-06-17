@@ -25,6 +25,9 @@ server.use("/api/shops", webShopRoute);
 server.use("/", express.static("./out/client", {
     index: "index.html"
 }));
+server.use("/product", express.static("./out/client", {
+    index: "index.html"
+}));
 
 const port = process.env.PORT || config.fallbackPort;
 
