@@ -12,25 +12,26 @@ import authenticationRouter from "./web/routes/authentication-route";
 import productRoute from "./web/routes/product-route";
 import webShopRoute from "./web/routes/web-shop-route";
 
-let server = express();
+let app = express();
 
-server.use(cookieparser());
-server.use("/api", bodyparser.json());
+app.use(cookieparser());
+app.use("/api", bodyparser.json());
 
-server.use("/api", authenticationRouter);
-server.use("/api/products", productRoute);
-server.use("/api/shops", webShopRoute);
+app.use("/api", authenticationRouter);
+app.use("/api/products", productRoute);
+app.use("/api/shops", webShopRoute);
 
 
-server.use("/", express.static("./out/client"));
+app.use("/", express.static("./out/client"));
 
-server.use("/", function (req, res) {
+app.use("/", function (req, res) {
     res.sendfile("./out/client" + '/index.html');
 });
 
 const port = process.env.PORT || config.fallbackPort;
 
 export function run() {
+    const server = http.createServer(app);
 
     server.listen(port, () => {
         console.info(`Web server started at http://localhost:${port}/`);
