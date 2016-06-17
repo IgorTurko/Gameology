@@ -1,9 +1,9 @@
-/// <reference path="./validator.d.ts" />
+import { ValidationErrors } from "./definitions";
 
 export default class ErrorAccumulator {
     private errorHash: ValidationErrors = {};
 
-    report(path: string, errorMessage: string) {
+    report(path: string, errorMessage: string): void {
         if (!errorMessage) {
             return;
         }

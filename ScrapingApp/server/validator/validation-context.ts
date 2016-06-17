@@ -1,4 +1,4 @@
-/// <reference path="./validator.d.ts" />
+import { IValidationContext } from "./definitions";
 
 import ErrorAccumulator from "./error-accumulator";
 
@@ -10,8 +10,9 @@ export default class ValidationContext implements IValidationContext {
     }
 
     reportError(message: string): void {
-        if (this.errorCallback && !this.errorCallback(message))
+        if (this.errorCallback && !this.errorCallback(message)) {
             return;
+        }
 
         this.errorAccumulator
             .report(this.path, message);

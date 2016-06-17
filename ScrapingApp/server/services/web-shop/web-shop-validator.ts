@@ -4,11 +4,10 @@ import * as v from "../../validator";
 
 export default class WebShopValidator {
     /** Only updateable fields is validated */
-    public validator: IValidationRule<Api.WebShop, Api.WebShop> = v.expandableObject<Api.WebShop, Api.WebShop>({
+    public validator: v.IValidationRule<Api.WebShop, Api.WebShop> = v.expandableObject<Api.WebShop, Api.WebShop>({
         deliveryPrice: v.num()
             .must(price => price > 0, "Delivery price must be greater than zero")
     });
-
 
     validate(webShop: Api.WebShop): Api.EntityValidationResult<Api.WebShop> {
         if (!webShop)
