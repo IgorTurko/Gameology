@@ -164,11 +164,14 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
         }
 
         return (
-            <div className="product-grid">
-                { this.renderHeader() }
-                { this.renderHeader("fixed") }
-                { this.renderDeliveryPrice() }
-                { this.renderData() }
+            <div className="product-grid row">
+                <div className="product-grid-header">
+                    { this.renderHeader() }
+                    { this.renderDeliveryPrice() }
+                </div>
+                <div className="product-grid-rows">
+                    { this.renderData() }
+                </div>
             </div>
         );
     }

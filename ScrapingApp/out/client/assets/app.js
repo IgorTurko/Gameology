@@ -1964,7 +1964,7 @@
 	        if (this.props.products == null || this.props.products.length == 0) {
 	            return (React.createElement("div", {className: "product-grid"}, this.props.shops != null && this.props.shops.length ? this.renderHeader() : null, this.renderEmptyRow()));
 	        }
-	        return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderHeader("fixed"), this.renderDeliveryPrice(), this.renderData()));
+	        return (React.createElement("div", {className: "product-grid row"}, React.createElement("div", {className: "product-grid-header"}, this.renderHeader(), this.renderDeliveryPrice()), React.createElement("div", {className: "product-grid-rows"}, this.renderData())));
 	    };
 	    ProductsGrid.prototype.formatPrice = function (price) {
 	        if (price == null || price === undefined || isNaN(price))
