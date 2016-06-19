@@ -9648,11 +9648,18 @@
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	function productRefreshedFromServer(state, action) {
-	    var refreshProduct = function (p) { return p.id === action.product.id ? action.product : p; };
+	    var updateProducts = function (products) {
+	        if (!products.some(function (p) { return p.id === action.product.id; })) {
+	            return [action.product].concat(products);
+	        }
+	        else {
+	            return products.map(function (p) { return p.id === action.product.id ? action.product : p; });
+	        }
+	    };
 	    var newState = Object.assign({}, state, {
 	        updatedProductId: action.product.id,
-	        products: state.products.map(refreshProduct),
-	        filteredProducts: state.filteredProducts.map(refreshProduct)
+	        products: updateProducts(state.products),
+	        filteredProducts: updateProducts(state.filteredProducts)
 	    });
 	    return newState;
 	}
