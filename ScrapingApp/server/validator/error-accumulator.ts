@@ -1,7 +1,8 @@
-import { ValidationErrors } from "./definitions";
+import { ValidationErrorHash } from "./definitions";
 
 export default class ErrorAccumulator {
-    private errorHash: ValidationErrors = {};
+    private errorHash: ValidationErrorHash = {};
+    private isValid = true;
 
     report(path: string, errorMessage: string): void {
         if (!errorMessage) {
@@ -9,11 +10,16 @@ export default class ErrorAccumulator {
         }
 
         const messages = this.errorHash[path] = (this.errorHash[path] || []);
-
         messages.push(errorMessage);
+        
+        this.isValid = false;
     }
 
-    errors(): ValidationErrors {
+    errors(): ValidationErrorHash {
         return this.errorHash;
+    }
+
+    valid() {
+        return this.isValid;
     }
 }

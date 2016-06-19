@@ -28,38 +28,42 @@ export default class ProductService {
 
         return new Promise(resolve => {
 
-            const validationResult = this.validator.validate(product);
+            this.validator
+                .validate(product)
+                .then(product => {
+                    this.storage
+                        .findByTitle(product.title)
+                        .then(p => {
+                            if (p && p.id !== product.id) {
+                                const failedResult: Api.EntityValidationResult<Api.Product> = {
+                                    entity: null,
+                                    errors: {
+                                        "title": ["Product with such title already exists"]
+                                    },
+                                    ok: false
+                                };
 
-            if (!validationResult.ok)
-                resolve(validationResult);
-            else {
-                product = validationResult.entity;
+                                resolve(failedResult);
+                                throw failedResult;
+                            }
+                        })
+                        .then(() => this.storage.save(product))
+                        .then(() => this.one(product.id))
+                        .then(p => {
+                            eventBus.emit(EventNames.ProductUpdated, p.id);
 
-                this.storage
-                    .findByTitle(product.title)
-                    .then(p => {
-                        if (p && p.id !== product.id) {
-                            const failedResult: Api.EntityValidationResult<Api.Product> = {
-                                entity: null,
-                                errors: {
-                                    "title": ["Product with such title already exists"]
-                                },
-                                ok: false
-                            };
+                            return p;
+                        })
+                        .then(entity => resolve(entity));
+                })
+                .catch(err => {
+                    const validationResult: Api.ValidationResult = {
+                        ok: false,
+                        errors: err
+                    };
 
-                            resolve(failedResult);
-                            throw failedResult;
-                        }
-                    })
-                    .then(() => this.storage.save(product))
-                    .then(() => this.one(product.id))
-                    .then(p => {
-                        eventBus.emit(EventNames.ProductUpdated, p.id);
-
-                        return p;
-                    })
-                    .then(entity => resolve(entity));
-            }
+                    resolve(validationResult);
+                });
         });
     }
 

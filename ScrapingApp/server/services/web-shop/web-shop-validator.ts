@@ -1,23 +1,18 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
 
-import * as v from "../../validator";
+import { validateWithPromise as validate, ValidationRule, rules } from "../../validator";
 
 export default class WebShopValidator {
     /** Only updateable fields is validated */
-    public validator: v.IValidationRule<Api.WebShop, Api.WebShop> = v.expandableObject<Api.WebShop, Api.WebShop>({
-        deliveryPrice: v.num()
-            .must(price => price > 0, "Delivery price must be greater than zero")
-    });
+    public validator: ValidationRule<Api.WebShop> = rules.obj<Api.WebShop>({
+        deliveryPrice: rules.num()
+            .must(price => price > 0, { errorMessage: "Delivery price must be greater than zero" })
+    }).expandable();
 
-    validate(webShop: Api.WebShop): Api.EntityValidationResult<Api.WebShop> {
+    validate(webShop: Api.WebShop): Promise<Api.WebShop> {
         if (!webShop)
             throw new Error("webShop is undefined");
 
-        const result = v.validate(webShop, this.validator);
-        return {
-            ok: result.valid,
-            entity: result.value,
-            errors: result.errors
-        };
+        return validate(webShop, this.validator);
     }
 }

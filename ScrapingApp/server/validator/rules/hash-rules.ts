@@ -1,105 +1,148 @@
-import { IValidationRule } from "../definitions";
-
-import ValidationContext from "../validation-context";
+import { ValidationRule, IValidationContext } from "../definitions";
+import { EnclosingValidationRuleBase } from "./rules-base";
 
 export interface IHash<TElement> {
     [key: string]: TElement;
 }
 
-export class HashValidationRule<TInElement, TOutElement> implements IValidationRule<IHash<TInElement>, IHash<TOutElement>> {
-    private keyFilteringFunction: (key: any) => boolean;
-    private skipInvalid = false;
-
-    private mustPredicate: (value: IHash<TInElement>, entity?: any, rootEntity?: any) => boolean;
-    private mustErrorMessage: string;
+class HashValidationRuleCore<TElement> implements ValidationRule<IHash<TElement>> {
 
     constructor(
-        private elementValidationRule: IValidationRule<TInElement, TOutElement>,
-        private passNullObject: boolean,
-        private nullObjectErrorMessage?: string) {
+        private elementValidationRule: ValidationRule<TElement>,
+        private skipInvalidElements: boolean,
+        private filterHashFn: (key: string, value?: TElement, rawValue?: any) => boolean,
+        public stopOnFailure) {
 
         if (!elementValidationRule) {
             throw new Error("Element validation rule required");
         }
-        if (!passNullObject && !nullObjectErrorMessage) {
-            throw new Error("Validation message for null object required");
-        }
     }
 
-    run(value: IHash<TInElement>, validationContext: ValidationContext, entity: any, root: any): IHash<TOutElement> {
-        if (value === null || value === undefined) {
-            if (!this.passNullObject) {
-                validationContext.reportError(this.nullObjectErrorMessage);
-            }
-
-            return <IHash<TOutElement>><any>value;
+    runParse(hash: any, validatingObject?: any, rootObject?: any): IHash<TElement> {
+        if (hash === null || hash === undefined) {
+            return hash;
         }
 
-        if (this.mustPredicate && !this.mustPredicate(value, entity, root)) {
-            validationContext.reportError(this.mustErrorMessage);
+        const result: IHash<TElement> = {};
 
-            return <IHash<TOutElement>><any>value;
-        }
-
-        const result: IHash<TOutElement> = {};
-
-        for (let key in value) {
-            if (this.keyFilteringFunction && !this.keyFilteringFunction(key)) {
-                continue;
-            }
-
-            let valid = true;
-            const nestedValidationContext = validationContext.property(key, () => {
-                valid = false;
-                return !this.skipInvalid;
-            });
-
-            const convertedValue = this.elementValidationRule.run(value[key], nestedValidationContext, value, root);
-            if (valid || !this.skipInvalid) {
-                result[key] = convertedValue;
+        for (let key in hash) {
+            const inputValue = hash[key];
+            const parsedValue = this.elementValidationRule.runParse(inputValue, hash, rootObject);
+            if (!this.filterHashFn || this.filterHashFn(key, parsedValue, inputValue)) {
+                result[key] = parsedValue;
             }
         }
 
-        return <IHash<TOutElement>><any>result;
+        return result;
     }
 
-    must(predicate: (value: IHash<TInElement>, entity?: any, rootEntity?: any) => boolean, errorMessage: string = "Value is invalid"): this {
+    runValidate(
+        context: IValidationContext,
+        doneCallback: (success: boolean) => void,
+        hash: any,
+        validatingObject?: any,
+        rootObject?: any): void {
+
+        const hashKeys: string[] = [];
+        for (let key in hash) {
+            hashKeys.push(key);
+        }
+
+        let valid = true;
+        const run = () => {
+            if (hashKeys.length) {
+                const key = hashKeys.shift();
+                const inputValue = hash[key];
+
+                const keyContext = context.property(`${key}`).bufferErrors();
+
+                this.elementValidationRule.runValidate(
+                    keyContext,
+                    success => {
+                        if (this.skipInvalidElements) {
+                            if (!success) {
+                                delete hash[key];
+                            }
+                        }
+                        else {
+                            valid = valid && success;
+                            keyContext.flushErrors();
+                        }
+
+                        run();
+                    },
+                    inputValue,
+                    hash,
+                    rootObject);
+            }
+            else {
+                doneCallback(valid);
+            }
+        };
+
+        run();
+    }
+}
+
+export class HashValidationRule<TElement> extends EnclosingValidationRuleBase<IHash<TElement>> {
+
+    constructor(
+        private elementValidationRule: ValidationRule<TElement>,
+        private skipInvalidElementsProp: boolean,
+        private filterHashFn: (key: string, value?: TElement) => boolean,
+        private stopOnMainRuleFailure) {
+
+        super(new HashValidationRuleCore<TElement>(elementValidationRule, skipInvalidElementsProp, filterHashFn, stopOnMainRuleFailure));
+    }
+
+    protected clone(): this {
+        return <this>new HashValidationRule<TElement>(
+            this.elementValidationRule,
+            this.skipInvalidElementsProp,
+            this.filterHashFn,
+            this.stopOnMainRuleFailure);
+    }
+
+    /**
+     * Don't fail on invalid element. Instead don't include invalid elements in result hash.
+     * Note new rule never fails instead return empty hash.
+     */
+    skipInvalidElements(skipInvalidElements = true): this {
+        this.skipInvalidElementsProp = skipInvalidElements;
+
+        return this.makeCopy();
+    }
+
+    /** Filter result hash by applying predicate to each hash item and include only items passed the test. */
+    filter(predicate: (key: string, value?: TElement) => boolean): this {
         if (!predicate) {
-            throw new Error("predicate is required");
-        }
-        if (!errorMessage) {
-            throw new Error("Error message is required");
+            throw new Error("Predicate is required.");
         }
 
-        this.mustPredicate = predicate;
-        this.mustErrorMessage = errorMessage;
+        this.filterHashFn = predicate;
 
-        return this;
+        return this.makeCopy();
     }
 
-    filterKeys(predicate: (key: any) => boolean): this {
-        this.keyFilteringFunction = predicate;
-
-        return this;
-    }
-
-    keepOnlyValid(onlyValid: boolean = true): this {
-        this.skipInvalid = onlyValid;
-        return this;
+    private makeCopy(): this {
+        return this.withMainRule(
+            new HashValidationRule<TElement>(
+                this.elementValidationRule,
+                this.skipInvalidElementsProp,
+                this.filterHashFn,
+                this.stopOnMainRuleFailure));
     }
 }
 
 
 /**
- * Validates object hash (an object each property of which has the same structure).
+ * Validates a map of objects with the same structure.
  */
-export function hash<TInElement, TOutElement>(elementValidationRule: IValidationRule<TInElement, TOutElement>, nullValueErrorMessage: string = "Object is required."): HashValidationRule<TInElement, TOutElement> {
-    return new HashValidationRule<TInElement, TOutElement>(elementValidationRule, false, nullValueErrorMessage);
+export function hash<TElement>(elementValidationRule: ValidationRule<TElement>, stopOnFailure = true): HashValidationRule<TElement> {
+    if (!elementValidationRule) {
+        throw new Error("Element validation rule is required.");
+    }
+
+    return new HashValidationRule<TElement>(elementValidationRule, false, null, stopOnFailure);
 }
 
-/**
- * Validates object hash (an object each property of which has the same structure).
- */
-export function hashOptional<TInElement, TOutElement>(elementValidationRule: IValidationRule<TInElement, TOutElement>): HashValidationRule<TInElement, TOutElement> {
-    return new HashValidationRule<TInElement, TOutElement>(elementValidationRule, true);
-}

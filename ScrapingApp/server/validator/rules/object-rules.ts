@@ -1,167 +1,129 @@
-import { IValidationRule } from "../definitions";
-import ValidationContext from "../validation-context";
+import { ValidationRule, IValidationContext } from "../definitions";
+import { EnclosingValidationRuleBase  } from "./rules-base";
 
 export interface IPropertyValidationHash {
-    [property: string]: IValidationRule<any, any>;
+    [property: string]: ValidationRule<any>;
 }
 
 export interface IObject {
     [property: string]: any;
 }
 
-export abstract class ObjectValidationRuleBase<TIn, TOut> implements IValidationRule<TIn, TOut> {
-    private mustPredicate: (value: TIn, entity: any, root: any) => boolean;
-    private mustError = "";
+class ObjectValidationRuleCore<T extends IObject> implements ValidationRule<T> {
 
     constructor(
-        protected struct: IPropertyValidationHash,
-        protected passNullObject: boolean,
-        protected nullObjectErrorMessage?: string) {
-        if (!struct) {
-            throw new Error("object structure descriptor is required");
-        }
-        if (!passNullObject && !nullObjectErrorMessage) {
-            throw new Error("Validation message for null object required");
+        private properties: IPropertyValidationHash,
+        private expandable: boolean,
+        public stopOnFailure: boolean) {
+
+        if (!properties) {
+            throw new Error("Properties is required.");
         }
     }
 
-    run(value: TIn, validationContext: ValidationContext, entity: any, root: any): TOut {
-        if (value === null || value === undefined) {
-            if (!this.passNullObject) {
-                validationContext.reportError(this.nullObjectErrorMessage);
-            }
-
-            return <TOut><any>value;
+    runParse(obj: any, validatingObject?: any, rootObject?: any): T {
+        if (obj === null || obj === undefined) {
+            return obj;
         }
 
-        if (this.mustPredicate && !this.mustPredicate(value, entity, root)) {
-            validationContext.reportError(this.mustError);
+        const result = <T>{};
+
+        for (let property in this.properties) {
+
+            const validator = this.properties[property];
+            const sourceValue = obj[property];
+
+            const parsedValue = validator.runParse(sourceValue, obj, rootObject);
+            result[property] = parsedValue;
         }
 
-        return this.runCore(value, validationContext, entity, root);
-    }
-
-    must(predicate: (value: TIn, entity?: any, root?: any) => boolean, errorMessage: string = "Object data is not valid."): this {
-        if (!predicate) {
-            throw new Error("Predicate is requried");
-        }
-        if (!errorMessage) {
-            throw new Error("Error message is required");
-        }
-
-        this.mustPredicate = predicate;
-        this.mustError = errorMessage;
-
-        return this;
-    }
-
-    abstract runCore(value: TIn, validationContext: ValidationContext, entity: any, root: any): TOut;
-}
-
-export class ObjectValidationRule<TIn extends IObject, TOut> extends ObjectValidationRuleBase<TIn, TOut> {
-
-    constructor(
-        struct: IPropertyValidationHash,
-        passNullObject: boolean,
-        nullObjectErrorMessage?: string) {
-
-        super(struct, passNullObject, nullObjectErrorMessage);
-    }
-
-    runCore(value: TIn, validationContext: ValidationContext, entity: any, root: any): TOut {
-        const result: IObject = {};
-
-        for (let property in this.struct) {
-            if (this.struct.hasOwnProperty(property)) {
-                const rule = this.struct[property];
-                const inputValue = value[property];
-
-                const nestedContext = validationContext.property(property);
-
-                result[property] = rule.run(inputValue, nestedContext, value, root);
-            }
-        }
-
-        return <TOut>result;
-    }
-}
-
-export class ExpandableObjectValidationRule<TIn extends IObject, TOut> extends ObjectValidationRuleBase<TIn, TOut> {
-
-    constructor(
-        struct: IPropertyValidationHash,
-        passNullObject: boolean,
-        nullObjectErrorMessage?: string) {
-
-        super(struct, passNullObject, nullObjectErrorMessage);
-    }
-
-    runCore(value: TIn, validationContext: ValidationContext, entity: any, root: any): TOut {
-        const result: IObject = {};
-
-        for (let property in value) {
-            if (value.hasOwnProperty(property)) {
-
-                const rule = this.struct[property];
-
-                if (rule) {
-                    const inputValue = value[property];
-                    const nestedContext = validationContext.property(property);
-                    result[property] = rule.run(inputValue, nestedContext, value, root);
-                }
-                else {
-                    result[property] = value[property];
+        if (this.expandable) {
+            for (let property in obj) {
+                if (!this.properties[property]) {
+                    result[property] = obj[property];
                 }
             }
         }
 
-        return <TOut>result;
+        return result;
+    }
+
+    runValidate(
+        context: IValidationContext,
+        doneCallback: (success: boolean) => void,
+        obj: any,
+        validatingObject?: any,
+        rootObject?: any): void {
+
+        if (obj === null || obj === undefined) {
+            doneCallback(true);
+            return;
+        }
+
+        const propertyRules: Array<{ property: string; validator: ValidationRule<any>; }> = [];
+        for (let property in this.properties) {
+            const validator = this.properties[property];
+            propertyRules.push({
+                property,
+                validator
+            });
+        }
+
+        let allValid = true;
+        const run = () => {
+            const rule = propertyRules.shift();
+            if (rule) {
+                const propertyContext = context.property(rule.property);
+                const propertyValue = obj[rule.property];
+                rule.validator.runValidate(
+                    propertyContext,
+                    (success) => {
+                        allValid = allValid && success;
+
+                        run();
+                    },
+                    propertyValue,
+                    obj,
+                    rootObject
+                );
+            }
+            else {
+                doneCallback(allValid);
+            }
+        };
+
+        run();
     }
 }
 
-/**
- * Creates a rule which validates given object according to structure.
- * Any extra properties would be omitted from the result.
- */
-export function obj<TIn, TOut>(struct: IPropertyValidationHash, nullObjectErrorMessage: string = "Object required"): ObjectValidationRule<TIn, TOut> {
-    if (!struct) {
-        throw new Error("Object structure descriptor is required");
+export class ObjectValidationRule<T extends IObject> extends EnclosingValidationRuleBase<T> {
+
+    constructor(
+        private properties: IPropertyValidationHash,
+        private isExpandable: boolean,
+        private stopsOnMainRuleFailure: boolean) {
+        super(new ObjectValidationRuleCore<T>(properties, isExpandable, stopsOnMainRuleFailure));
     }
-    return new ObjectValidationRule<TIn, TOut>(struct, false, nullObjectErrorMessage);
+
+    protected clone(): this {
+        return <this>new ObjectValidationRule<T>(this.properties, this.isExpandable, this.stopsOnMainRuleFailure);
+    }
+
+    expandable(): this {
+        this.isExpandable = true;
+
+        return this.makeCopy();
+    }
+
+    private makeCopy(): this {
+        return this.withMainRule(
+            new ObjectValidationRule<T>(
+                this.properties,
+                this.isExpandable,
+                this.stopsOnMainRuleFailure));
+    }
 }
 
-/**
- * Creates a rule which validates given object according to structure.
- * Any extra properties would be omitted from the result.
- * This validator doesn't fail on null value.
- */
-export function objOptional<TIn, TOut>(struct: IPropertyValidationHash): ObjectValidationRule<TIn, TOut> {
-    if (!struct) {
-        throw new Error("Object structure descriptor is required");
-    }
-    return new ObjectValidationRule<TIn, TOut>(struct, true);
-}
-
-/**
- * Creates a rule which validates given object according to structure.
- * Any extra properties would be preserved as is in result.
- */
-export function expandableObject<TIn, TOut>(struct: IPropertyValidationHash, nullObjectErrorMessage: string = "Object required"): ExpandableObjectValidationRule<TIn, TOut> {
-    if (!struct) {
-        throw new Error("Object structure descriptor is required");
-    }
-    return new ExpandableObjectValidationRule<TIn, TOut>(struct, false, nullObjectErrorMessage);
-}
-
-/**
- * Creates a rule which validates given object according to structure.
- * Any extra properties would be preserved as is in result.
- * This validator doesn't fail on null value.
- */
-export function optionalExpandableObject<TIn, TOut>(struct: IPropertyValidationHash): ExpandableObjectValidationRule<TIn, TOut> {
-    if (!struct) {
-        throw new Error("Object structure descriptor is required");
-    }
-
-    return new ExpandableObjectValidationRule<TIn, TOut>(struct, true);
+export function obj<T>(properties: IPropertyValidationHash, stopOnFailure = true): ObjectValidationRule<T> {
+    return new ObjectValidationRule<T>(properties, false, stopOnFailure);
 }
