@@ -4,7 +4,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Link} from "react-router"
 
-import { classNames } from "../../utils";
+import { classNames, getScrollbarWidth } from "../../utils";
 
 interface GridProps extends React.Props<any> {
     isLoading: boolean;
@@ -31,7 +31,7 @@ function Row(props: PropsWithClassName): JSX.Element {
 
 function Cell(props: PropsWithClassName): JSX.Element {
     return (
-        <div className={ classNames("col-md-2 grid-cell", props.className) }>
+        <div className={ classNames("col-xs-2 grid-cell", props.className) }>
             { props.children }
         </div>
 
@@ -39,6 +39,13 @@ function Cell(props: PropsWithClassName): JSX.Element {
 }
 
 export default class ProductsGrid extends React.Component<GridProps & GridHandlers, {}> {
+    private windowResizeHandler: () => void;
+
+    constructor() {
+        super();
+
+        this.windowResizeHandler = () => this.onWindowResize();
+    }
 
     onDeliveryPriceChanged(shopId: string, deliveryPrice: any) {
         if (this.props.onShopDeliveryPriceUpdated) {
@@ -165,15 +172,31 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
 
         return (
             <div className="product-grid row">
-                <div className="product-grid-header">
+                <div ref="header" className="product-grid-header">
                     { this.renderHeader() }
                     { this.renderDeliveryPrice() }
                 </div>
-                <div className="product-grid-rows">
+                <div ref="rows" className="product-grid-rows">
                     { this.renderData() }
                 </div>
             </div>
         );
+    }
+
+    componentDidMount() {
+        window.removeEventListener("resize", this.windowResizeHandler);
+        window.addEventListener("resize", this.windowResizeHandler);
+        this.onWindowResize();
+
+        this.alignHeaderWithRows();
+    }
+
+    componentDidUpdate() {
+        this.alignHeaderWithRows();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.windowResizeHandler);
     }
 
     private formatPrice(price: number): string {
@@ -183,4 +206,24 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
 
         return `$${price.toFixed(2)}`;
     }
-}
+
+    private alignHeaderWithRows() {
+        if (this.refs["header"]) {
+            const scrollbarWidth = getScrollbarWidth();
+            const headerElement = ReactDOM.findDOMNode(this.refs["header"]) as HTMLElement;
+            if (headerElement) {
+                headerElement.style.marginRight = `${scrollbarWidth}px`;
+            }
+        }
+    }
+
+    private onWindowResize() {
+        const element = ReactDOM.findDOMNode(this) as HTMLElement;
+        if (element) {
+            const top = element.offsetTop;
+            const maxHeight = window.innerHeight - top - 10;
+
+            element.style.maxHeight = `${maxHeight}px`;
+        }
+    }
+} 

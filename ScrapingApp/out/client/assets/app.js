@@ -1708,6 +1708,25 @@
 	    }).join(" ");
 	}
 	exports.classNames = classNames;
+	function getScrollbarWidth() {
+	    var outer = document.createElement("div");
+	    outer.style.visibility = "hidden";
+	    outer.style.width = "100px";
+	    outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+	    document.body.appendChild(outer);
+	    var widthNoScroll = outer.offsetWidth;
+	    // force scrollbars
+	    outer.style.overflow = "scroll";
+	    // add innerdiv
+	    var inner = document.createElement("div");
+	    inner.style.width = "100%";
+	    outer.appendChild(inner);
+	    var widthWithScroll = inner.offsetWidth;
+	    // remove divs
+	    outer.parentNode.removeChild(outer);
+	    return widthNoScroll - widthWithScroll;
+	}
+	exports.getScrollbarWidth = getScrollbarWidth;
 
 
 /***/ },
@@ -1910,18 +1929,21 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(3);
+	var ReactDOM = __webpack_require__(4);
 	var react_router_1 = __webpack_require__(51);
 	var utils_1 = __webpack_require__(49);
 	function Row(props) {
 	    return (React.createElement("div", {className: utils_1.classNames("grid-row", props.className)}, props.children));
 	}
 	function Cell(props) {
-	    return (React.createElement("div", {className: utils_1.classNames("col-md-2 grid-cell", props.className)}, props.children));
+	    return (React.createElement("div", {className: utils_1.classNames("col-xs-2 grid-cell", props.className)}, props.children));
 	}
 	var ProductsGrid = (function (_super) {
 	    __extends(ProductsGrid, _super);
 	    function ProductsGrid() {
-	        _super.apply(this, arguments);
+	        var _this = this;
+	        _super.call(this);
+	        this.windowResizeHandler = function () { return _this.onWindowResize(); };
 	    }
 	    ProductsGrid.prototype.onDeliveryPriceChanged = function (shopId, deliveryPrice) {
 	        if (this.props.onShopDeliveryPriceUpdated) {
@@ -1964,12 +1986,41 @@
 	        if (this.props.products == null || this.props.products.length == 0) {
 	            return (React.createElement("div", {className: "product-grid"}, this.props.shops != null && this.props.shops.length ? this.renderHeader() : null, this.renderEmptyRow()));
 	        }
-	        return (React.createElement("div", {className: "product-grid row"}, React.createElement("div", {className: "product-grid-header"}, this.renderHeader(), this.renderDeliveryPrice()), React.createElement("div", {className: "product-grid-rows"}, this.renderData())));
+	        return (React.createElement("div", {className: "product-grid row"}, React.createElement("div", {ref: "header", className: "product-grid-header"}, this.renderHeader(), this.renderDeliveryPrice()), React.createElement("div", {ref: "rows", className: "product-grid-rows"}, this.renderData())));
+	    };
+	    ProductsGrid.prototype.componentDidMount = function () {
+	        window.removeEventListener("resize", this.windowResizeHandler);
+	        window.addEventListener("resize", this.windowResizeHandler);
+	        this.onWindowResize();
+	        this.alignHeaderWithRows();
+	    };
+	    ProductsGrid.prototype.componentDidUpdate = function () {
+	        this.alignHeaderWithRows();
+	    };
+	    ProductsGrid.prototype.componentWillUnmount = function () {
+	        window.removeEventListener("resize", this.windowResizeHandler);
 	    };
 	    ProductsGrid.prototype.formatPrice = function (price) {
 	        if (price == null || price === undefined || isNaN(price))
 	            return "";
 	        return "$" + price.toFixed(2);
+	    };
+	    ProductsGrid.prototype.alignHeaderWithRows = function () {
+	        if (this.refs["header"]) {
+	            var scrollbarWidth = utils_1.getScrollbarWidth();
+	            var headerElement = ReactDOM.findDOMNode(this.refs["header"]);
+	            if (headerElement) {
+	                headerElement.style.marginRight = scrollbarWidth + "px";
+	            }
+	        }
+	    };
+	    ProductsGrid.prototype.onWindowResize = function () {
+	        var element = ReactDOM.findDOMNode(this);
+	        if (element) {
+	            var top_1 = element.offsetTop;
+	            var maxHeight = window.innerHeight - top_1 - 10;
+	            element.style.maxHeight = maxHeight + "px";
+	        }
 	    };
 	    return ProductsGrid;
 	}(React.Component));

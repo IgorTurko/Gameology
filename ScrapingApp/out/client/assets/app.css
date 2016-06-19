@@ -39,11 +39,15 @@
 .product-grid-header {
     flex-grow: 0;
     flex-shrink: 0;
+
+    border-bottom: 1px solid black;
 }
 .product-grid-rows {
     flex-grow: 1;
     flex-shrink: 1;
     overflow-y: scroll;
+
+    border-bottom: 1px solid black;
 }
 
 .grid-row {
@@ -91,10 +95,6 @@
 .product-grid-rows .grid-row:first-child, 
 .product-grid-rows .grid-row:first-child .grid-cell {
     border-top: 0 none;
-}
-
-.grid-row:last-child {
-    border-bottom: 1px solid black;
 }
 
 .search-box {
