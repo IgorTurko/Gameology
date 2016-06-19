@@ -21,7 +21,7 @@ export default function run(server: http.Server, productService: ProductService)
                         .forEach(k => {
                             const socket = connectedClients[k];
                             if (socket && socket.connected) {
-                                console.log("Socket event emitted");
+                                
                                 socket.emit(
                                     PRODUCT_DATA_RECEIVED_FROM_SERVER,
                                     {

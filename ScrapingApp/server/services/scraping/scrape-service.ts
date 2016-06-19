@@ -37,8 +37,6 @@ export default class ScrapeService implements Scraping.IScrapeService {
                     .then(results => results.toHash(e => e.webShopId, e => e.scrapingResult)))
                 .then(r => {
                     eventBus.emit(EventNames.ProductScraped, productId);
-                    console.log("Product scraped emit")
-
                     return r;
                 });
         });
