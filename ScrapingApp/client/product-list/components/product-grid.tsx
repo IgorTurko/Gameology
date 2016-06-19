@@ -43,13 +43,14 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
                 <div className="col-md-2 product-cell price">Delivery price</div>
                 {
                     this.props.shops.map(shop => (
-                        <div className="col-md-2 product-cell price" key={ `$dp::${shop.id}` }>
+                        <div key={ `$dp::${shop.id}` }
+                            className= { classNames("col-md-2 product-cell price", { "has-error": this.props.shopEditing[shop.id].errorMessage }) }>
                             <input type="text"
                                 name={shop.id}
                                 className="form-control"
                                 value={ this.props.shopEditing[shop.id].deliveryPrice || "" }
                                 onChange={ e => this.onDeliveryPriceChanged(shop.id, e.target["value"]) } />
-                            <p className={ classNames("help-block", { "hidden": this.props.shopEditing[shop.id].errorMessage }) }>
+                            <p className={ classNames("help-block", { "hidden": !this.props.shopEditing[shop.id].errorMessage }) }>
                                 { this.props.shopEditing[shop.id].errorMessage }
                             </p>
                         </div>

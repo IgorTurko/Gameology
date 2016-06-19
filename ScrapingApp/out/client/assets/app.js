@@ -1497,10 +1497,9 @@
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	function shopSaveError(state, action) {
+	    var shopState = Object.assign({}, state[action.shopId], { errorMessage: action.error });
 	    return Object.assign({}, state, (_a = {},
-	        _a[action.shopId] = Object.assign({}, state[action.shopId], {
-	            errorMessage: action.error
-	        }),
+	        _a[action.shopId] = shopState,
 	        _a
 	    ));
 	    var _a;
@@ -1849,7 +1848,7 @@
 	    };
 	    ProductsGrid.prototype.renderDeliveryPrice = function () {
 	        var _this = this;
-	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell price"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "col-md-2 product-cell price", key: "$dp::" + shop.id}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.props.shopEditing[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: utils_1.classNames("help-block", { "hidden": _this.props.shopEditing[shop.id].errorMessage })}, _this.props.shopEditing[shop.id].errorMessage))); })));
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell price"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement("div", {key: "$dp::" + shop.id, className: utils_1.classNames("col-md-2 product-cell price", { "has-error": _this.props.shopEditing[shop.id].errorMessage })}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.props.shopEditing[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: utils_1.classNames("help-block", { "hidden": !_this.props.shopEditing[shop.id].errorMessage })}, _this.props.shopEditing[shop.id].errorMessage))); })));
 	    };
 	    ProductsGrid.prototype.renderEmptyRow = function () {
 	        return React.createElement("div", {className: "col-md-12"}, "No products");
