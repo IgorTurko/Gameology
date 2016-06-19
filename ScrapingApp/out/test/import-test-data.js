@@ -320,9 +320,9 @@
 	    function WebShopValidator() {
 	        /** Only updateable fields is validated */
 	        this.validator = validator_1.rules.obj({
-	            deliveryPrice: validator_1.rules.num()
+	            deliveryPrice: validator_1.rules.num(false)
 	                .parseNumber({ errorMessage: "Price is not recognized as number" })
-	                .must(function (price) { return price > 0; }, { errorMessage: "Delivery price must be greater than zero" })
+	                .must(function (price) { return !price || price > 0; }, { errorMessage: "Delivery price must be greater than zero" })
 	        }).expandable();
 	    }
 	    WebShopValidator.prototype.validate = function (webShop) {
@@ -624,7 +624,7 @@
 	            stopOnFailure: true
 	        });
 	        return this.checkAndConvert(function (done, value) {
-	            if (value === null || value === undefined) {
+	            if (value === null || value === undefined || value === "") {
 	                done();
 	                return;
 	            }
@@ -652,7 +652,7 @@
 	                done();
 	            }
 	        }, function (inputValue, validatingObject, rootObject) {
-	            if (inputValue === null || inputValue === undefined) {
+	            if (inputValue === null || inputValue === undefined || inputValue === "") {
 	                return inputValue;
 	            }
 	            var converted = parseFloat(inputValue);
