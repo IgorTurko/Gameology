@@ -6,6 +6,7 @@ export default class WebShopValidator {
     /** Only updateable fields is validated */
     public validator: ValidationRule<Api.WebShop> = rules.obj<Api.WebShop>({
         deliveryPrice: rules.num()
+            .parseNumber({ errorMessage: "Price is not recognized as number" })
             .must(price => price > 0, { errorMessage: "Delivery price must be greater than zero" })
     }).expandable();
 

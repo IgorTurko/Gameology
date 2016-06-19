@@ -38,6 +38,8 @@ router.post("/", (request, response) => {
 
     productService.save(product)
         .then(product => {
+            console.log("Product saved successfuly");
+
             const responseData: Api.IPostResponse<Api.Product> = {
                 ok: true,
                 entity: product
@@ -46,6 +48,8 @@ router.post("/", (request, response) => {
             response.json(responseData).end();
         })
         .catch(err => {
+            console.log("Product saving failed");
+
             const responseData: Api.IFailResponse = {
                 ok: false,
                 errors: err

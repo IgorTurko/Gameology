@@ -44,49 +44,7 @@ export default class ProductService {
                         eventBus.emit(EventNames.ProductUpdated, product.id);
                         return product;
                     });
-            });
-
-
-
-        // return new Promise(resolve => {
-
-        //     this.validator
-        //         .validate(product)
-        //         .then(product => {
-        //             this.storage
-        //                 .findByTitle(product.title)
-        //                 .then(p => {
-        //                     if (p && p.id !== product.id) {
-        //                         const failedResult: Api.EntityValidationResult<Api.Product> = {
-        //                             entity: null,
-        //                             errors: {
-        //                                 "title": ["Product with such title already exists"]
-        //                             },
-        //                             ok: false
-        //                         };
-
-        //                         resolve(failedResult);
-        //                         throw failedResult;
-        //                     }
-        //                 })
-        //                 .then(() => this.storage.save(product))
-        //                 .then(() => this.one(product.id))
-        //                 .then(p => {
-        //                     eventBus.emit(EventNames.ProductUpdated, p.id);
-
-        //                     return p;
-        //                 })
-        //                 .then(entity => resolve(entity));
-        //         })
-        //         .catch(err => {
-        //             const validationResult: Api.ValidationResult = {
-        //                 ok: false,
-        //                 errors: err
-        //             };
-
-        //             resolve(validationResult);
-        //         });
-        // });
+            });        
     }
 
     one(productId: string): Promise<Api.Product> {

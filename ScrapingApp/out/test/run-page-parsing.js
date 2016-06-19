@@ -226,47 +226,23 @@
 	        var _this = this;
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
-	        return new Promise(function (resolve) {
-	            _this.validator.validate(webShop)
-	                .then(function (webShop) {
-	                _this.storage
-	                    .save(webShop)
-	                    .then(function () { return _this.one(webShop.id); })
-	                    .then(function (entity) { return resolve(entity); })
-	                    .catch(function (err) {
-	                    var errorResult = {
-	                        ok: false,
-	                        errors: {
-	                            message: err
-	                        }
-	                    };
-	                    resolve(errorResult);
-	                });
-	            })
-	                .catch(function (errors) { return resolve({
-	                ok: false,
-	                errors: errors
-	            }); });
-	        });
+	        return this.validator
+	            .validate(webShop)
+	            .then(function (webShop) { return _this.storage
+	            .save(webShop)
+	            .then(function () { return _this.one(webShop.id); }); });
 	    };
 	    WebShopService.prototype.put = function (webShop) {
 	        var _this = this;
 	        if (!webShop)
 	            throw new Error("webShop is undefined");
-	        return new Promise(function (resolve) {
-	            _this.storage
-	                .put(webShop)
-	                .then(function () { return _this.one(webShop.id); })
-	                .then(function (entity) { return resolve(entity); })
-	                .catch(function (err) {
-	                var errorResult = {
-	                    ok: false,
-	                    errors: {
-	                        message: err
-	                    }
-	                };
-	                resolve(errorResult);
-	            });
+	        return this.storage
+	            .put(webShop)
+	            .then(function () { return _this.one(webShop.id); })
+	            .catch(function (err) {
+	            throw {
+	                "": "" + err
+	            };
 	        });
 	    };
 	    return WebShopService;
@@ -287,6 +263,7 @@
 	        /** Only updateable fields is validated */
 	        this.validator = validator_1.rules.obj({
 	            deliveryPrice: validator_1.rules.num()
+	                .parseNumber({ errorMessage: "Price is not recognized as number" })
 	                .must(function (price) { return price > 0; }, { errorMessage: "Delivery price must be greater than zero" })
 	        }).expandable();
 	    }
@@ -1470,41 +1447,6 @@
 	                return product;
 	            });
 	        });
-	        // return new Promise(resolve => {
-	        //     this.validator
-	        //         .validate(product)
-	        //         .then(product => {
-	        //             this.storage
-	        //                 .findByTitle(product.title)
-	        //                 .then(p => {
-	        //                     if (p && p.id !== product.id) {
-	        //                         const failedResult: Api.EntityValidationResult<Api.Product> = {
-	        //                             entity: null,
-	        //                             errors: {
-	        //                                 "title": ["Product with such title already exists"]
-	        //                             },
-	        //                             ok: false
-	        //                         };
-	        //                         resolve(failedResult);
-	        //                         throw failedResult;
-	        //                     }
-	        //                 })
-	        //                 .then(() => this.storage.save(product))
-	        //                 .then(() => this.one(product.id))
-	        //                 .then(p => {
-	        //                     eventBus.emit(EventNames.ProductUpdated, p.id);
-	        //                     return p;
-	        //                 })
-	        //                 .then(entity => resolve(entity));
-	        //         })
-	        //         .catch(err => {
-	        //             const validationResult: Api.ValidationResult = {
-	        //                 ok: false,
-	        //                 errors: err
-	        //             };
-	        //             resolve(validationResult);
-	        //         });
-	        // });
 	    };
 	    ProductService.prototype.one = function (productId) {
 	        if (!productId)

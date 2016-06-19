@@ -25,53 +25,24 @@ export default class WebShopService {
         if (!webShop)
             throw new Error("webShop is undefined");
 
-
-        return new Promise(resolve => {
-
-            this.validator.validate(webShop)
-                .then(webShop => {
-                    this.storage
-                        .save(webShop)
-                        .then(() => this.one(webShop.id))
-                        .then(entity => resolve(entity))
-                        .catch(err => {
-                            const errorResult: Api.ValidationResult = {
-                                ok: false,
-                                errors: {
-                                    message: err
-                                }
-                            };
-
-                            resolve(errorResult);
-                        });
-                })
-                .catch(errors => resolve((<Api.ValidationResult>{
-                    ok: false,
-                    errors: errors
-                })));
-        });
+        return this.validator
+            .validate(webShop)
+            .then(webShop => this.storage
+                .save(webShop)
+                .then(() => this.one(webShop.id)));
     }
 
-    put(webShop: Api.WebShop): Promise<Api.WebShop | Api.ValidationResult> {
+    put(webShop: Api.WebShop): Promise<Api.WebShop> {
         if (!webShop)
             throw new Error("webShop is undefined");
 
-        return new Promise(resolve => {
-
-            this.storage
-                .put(webShop)
-                .then(() => this.one(webShop.id))
-                .then(entity => resolve(entity))
-                .catch(err => {
-                    const errorResult: Api.ValidationResult = {
-                        ok: false,
-                        errors: {
-                            message: err
-                        }
-                    };
-                    resolve(errorResult);
-                });
-
-        });
+        return <Promise<Api.WebShop>><any>this.storage
+            .put(webShop)
+            .then(() => this.one(webShop.id))
+            .catch(err => {
+                throw {
+                    "": `${err}`
+                };
+            });
     }
 }
