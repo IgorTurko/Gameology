@@ -56,6 +56,19 @@
     z-index: 5;
 }
 
+@keyframes highlight-row {
+    from {
+        background: #ceface;
+    }
+    to {
+        background: #fff;
+    }
+}
+
+.grid-row.highlight {
+    animation: highlight-row 3s;
+}
+
 .grid-row.header-row.fixed {
     position: absolute;
     left: 0;

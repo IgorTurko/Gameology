@@ -31,10 +31,13 @@ app.use("/", function (req, res) {
 
 const port = process.env.PORT || config.fallbackPort;
 
-export function run() {
+export function run(): http.Server {
+    
     const server = http.createServer(app);
 
     server.listen(port, () => {
         console.info(`Web server started at http://localhost:${port}/`);
     });
+
+    return server;
 }
