@@ -67,6 +67,8 @@ ReactDOM.render(
 
 const socket = io.connect(location.origin);
 
-socket.on("Timeout", data => {
-    console.log("Timeout", data);
-});
+socket.on(
+    ProductListActions.PRODUCT_DATA_RECEIVED_FROM_SERVER,
+    (action: ProductListActions.ProductDataReceivedFromServerAction) => {
+        console.dir(action);
+    });

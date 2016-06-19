@@ -1678,6 +1678,7 @@
 	                .then(function (results) { return results.toHash(function (e) { return e.webShopId; }, function (e) { return e.scrapingResult; }); }); })
 	                .then(function (r) {
 	                event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductScraped, productId);
+	                console.log("Product scraped emit");
 	                return r;
 	            });
 	        });

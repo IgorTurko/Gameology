@@ -116,8 +116,8 @@
 	var loadProductDetails = function (productId) { return store.dispatch({ type: ProductDetailsActions.PRODUCT_LOAD_REQUEST, productId: productId }); };
 	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, router_1.default(loadProductsList, function (productId) { return loadProductDetails(productId); })), document.getElementsByClassName("container")[0]);
 	var socket = io.connect(location.origin);
-	socket.on("Timeout", function (data) {
-	    console.log("Timeout", data);
+	socket.on(ProductListActions.PRODUCT_DATA_RECEIVED_FROM_SERVER, function (action) {
+	    console.dir(action);
 	});
 
 
@@ -812,6 +812,17 @@
 	    };
 	}
 	exports.reloadProductList = reloadProductList;
+	exports.PRODUCT_DATA_RECEIVED_FROM_SERVER = "product-data-received-from-server";
+	function productDataReceivedFromServer(product) {
+	    if (!product) {
+	        throw new Error("Product data required");
+	    }
+	    return {
+	        type: exports.PRODUCT_DATA_RECEIVED_FROM_SERVER,
+	        product: product
+	    };
+	}
+	exports.productDataReceivedFromServer = productDataReceivedFromServer;
 
 
 /***/ },

@@ -22,3 +22,19 @@ export function reloadProductList(): LoadProductListRequestAction {
         type: PRODUCT_LOAD_REQUEST
     };
 }
+
+export const PRODUCT_DATA_RECEIVED_FROM_SERVER = "product-data-received-from-server";
+export interface ProductDataReceivedFromServerAction extends redux.IAction {
+    product: Api.Product;
+}
+
+export function productDataReceivedFromServer(product: Api.Product): ProductDataReceivedFromServerAction {
+    if (!product) {
+        throw new Error("Product data required");
+    }
+
+    return {
+        type: PRODUCT_DATA_RECEIVED_FROM_SERVER,
+        product: product
+    };
+}
