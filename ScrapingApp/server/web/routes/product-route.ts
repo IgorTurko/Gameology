@@ -8,7 +8,7 @@ import ProductService from "../../services/products/product-service";
 
 const db = new Db();
 
-const productService = new ProductService(new MongoProductStorage(db)); 
+const productService = new ProductService(new MongoProductStorage(db));
 
 const router = express.Router();
 
@@ -30,28 +30,29 @@ router.get("/:id", (req, res) => {
 router.get("/", (req, res) => {
     productService.all()
         .then(products => res.json(products))
-        .catch(err => res.send(500, err).end()); 
+        .catch(err => res.send(500, err).end());
 });
 
 router.post("/", (request, response) => {
     const product = request.body;
 
     productService.save(product)
-        .then(result => {
-            if (result["ok"] === false) {
-                response.json(result).end();
-            }
-            else {
-                const updatedProduct = <Api.Product>result;
-                const okResponse: Api.ISuccessResponse<Api.Product> = {
-                    ok: true,
-                    entity: updatedProduct
-                };
+        .then(product => {
+            const responseData: Api.IPostResponse<Api.Product> = {
+                ok: true,
+                entity: product
+            };
 
-                response.json(okResponse).end();
-            }
+            response.json(responseData).end();
+        })
+        .catch(err => {
+            const responseData: Api.IFailResponse = {
+                ok: false,
+                errors: err
+            };
+
+            response.json(responseData).end();
         });
-
 });
 
 export default router;

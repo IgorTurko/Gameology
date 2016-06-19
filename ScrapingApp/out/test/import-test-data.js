@@ -1509,41 +1509,60 @@
 	            throw new Error("product is undefined");
 	        if (!product.id)
 	            product.id = uuid.v1();
-	        return new Promise(function (resolve) {
-	            _this.validator
-	                .validate(product)
-	                .then(function (product) {
-	                _this.storage
-	                    .findByTitle(product.title)
-	                    .then(function (p) {
-	                    if (p && p.id !== product.id) {
-	                        var failedResult = {
-	                            entity: null,
-	                            errors: {
-	                                "title": ["Product with such title already exists"]
-	                            },
-	                            ok: false
-	                        };
-	                        resolve(failedResult);
-	                        throw failedResult;
-	                    }
-	                })
-	                    .then(function () { return _this.storage.save(product); })
-	                    .then(function () { return _this.one(product.id); })
-	                    .then(function (p) {
-	                    event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, p.id);
-	                    return p;
-	                })
-	                    .then(function (entity) { return resolve(entity); });
+	        return this.validator
+	            .validate(product)
+	            .then(function (product) {
+	            return _this.storage
+	                .findByTitle(product.title)
+	                .then(function (found) {
+	                if (found && found.id !== product.id) {
+	                    throw {
+	                        "title": ["Product with such title already exists"]
+	                    };
+	                }
 	            })
-	                .catch(function (err) {
-	                var validationResult = {
-	                    ok: false,
-	                    errors: err
-	                };
-	                resolve(validationResult);
+	                .then(function () { return _this.storage.save(product); })
+	                .then(function () { return _this.findByTitle(product.id); })
+	                .then(function (product) {
+	                event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, product.id);
+	                return product;
 	            });
 	        });
+	        // return new Promise(resolve => {
+	        //     this.validator
+	        //         .validate(product)
+	        //         .then(product => {
+	        //             this.storage
+	        //                 .findByTitle(product.title)
+	        //                 .then(p => {
+	        //                     if (p && p.id !== product.id) {
+	        //                         const failedResult: Api.EntityValidationResult<Api.Product> = {
+	        //                             entity: null,
+	        //                             errors: {
+	        //                                 "title": ["Product with such title already exists"]
+	        //                             },
+	        //                             ok: false
+	        //                         };
+	        //                         resolve(failedResult);
+	        //                         throw failedResult;
+	        //                     }
+	        //                 })
+	        //                 .then(() => this.storage.save(product))
+	        //                 .then(() => this.one(product.id))
+	        //                 .then(p => {
+	        //                     eventBus.emit(EventNames.ProductUpdated, p.id);
+	        //                     return p;
+	        //                 })
+	        //                 .then(entity => resolve(entity));
+	        //         })
+	        //         .catch(err => {
+	        //             const validationResult: Api.ValidationResult = {
+	        //                 ok: false,
+	        //                 errors: err
+	        //             };
+	        //             resolve(validationResult);
+	        //         });
+	        // });
 	    };
 	    ProductService.prototype.one = function (productId) {
 	        if (!productId)
