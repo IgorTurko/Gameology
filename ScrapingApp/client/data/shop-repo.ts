@@ -8,7 +8,7 @@ export default class ShopRepository {
         return this.httpClient.get('/api/shops');
     };
 
-    saveShop(shop: Api.WebShop): Promise<Api.WebShop> {
+    saveShop(shop: Api.WebShop): Promise<Api.IPostResponse<Api.WebShop>> {
         return this.httpClient.post('/api/shops', shop);
     };
 }

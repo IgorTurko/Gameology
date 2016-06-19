@@ -34,6 +34,9 @@ declare namespace AppState {
         shops: Api.WebShop[];
         search: string;
         filteredProducts: Api.Product[];
+        shopSavingErrors: {
+            [shopId: string]: string;
+        };
     }
 
     interface App {

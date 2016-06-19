@@ -797,7 +797,46 @@
 	exports.PRODUCT_SEARCH = "product-list-search";
 	exports.PRODUCTS_LOADED = "product-list-loaded";
 	exports.PRODUCT_LOAD_REQUEST = "load-product-list-request";
+	function reloadProductList() {
+	    return {
+	        type: exports.PRODUCT_LOAD_REQUEST
+	    };
+	}
+	exports.reloadProductList = reloadProductList;
 	exports.SHOP_SAVE = "shop-save";
+	function shopSave(shop) {
+	    if (!shop) {
+	        throw new Error("shop is required");
+	    }
+	    return {
+	        type: exports.SHOP_SAVE,
+	        shop: shop
+	    };
+	}
+	exports.shopSave = shopSave;
+	exports.SHOP_SAVE_SUCCESS = "shop-save-success";
+	function shopSaveSuccess(shopId) {
+	    if (!shopId) {
+	        throw new Error("ShopId is required.");
+	    }
+	    return {
+	        type: exports.SHOP_SAVE_SUCCESS,
+	        shopId: shopId
+	    };
+	}
+	exports.shopSaveSuccess = shopSaveSuccess;
+	exports.SHOP_SAVE_ERROR = "shop-save-error";
+	function shopSaveError(shopId, error) {
+	    if (!shopId) {
+	        throw new Error("ShopId is required.");
+	    }
+	    return {
+	        type: exports.SHOP_SAVE_ERROR,
+	        shopId: shopId,
+	        error: error
+	    };
+	}
+	exports.shopSaveError = shopSaveError;
 
 
 /***/ },
@@ -809,18 +848,23 @@
 	var product_list_loaded_1 = __webpack_require__(18);
 	var search_product_list_1 = __webpack_require__(19);
 	var load_product_list_request_1 = __webpack_require__(20);
+	var shop_save_error_1 = __webpack_require__(55);
+	var shop_save_success_1 = __webpack_require__(56);
 	var Actions = __webpack_require__(16);
 	var productInitialState = {
 	    isLoading: false,
 	    products: [],
 	    shops: [],
 	    filteredProducts: [],
-	    search: ""
+	    search: "",
+	    shopSavingErrors: {}
 	};
 	var actionMap = (_a = {},
 	    _a[Actions.PRODUCT_SEARCH] = search_product_list_1.default,
 	    _a[Actions.PRODUCTS_LOADED] = product_list_loaded_1.default,
 	    _a[Actions.PRODUCT_LOAD_REQUEST] = load_product_list_request_1.default,
+	    _a[Actions.SHOP_SAVE_ERROR] = shop_save_error_1.default,
+	    _a[Actions.SHOP_SAVE_SUCCESS] = shop_save_success_1.default,
 	    _a
 	);
 	function reduce(state, action) {
@@ -938,11 +982,17 @@
 	    ProductListMiddleware.prototype[Actions.SHOP_SAVE] = function (state, action, dispatch, store) {
 	        this.shopRepo
 	            .saveShop(action.shop)
-	            .then(function () {
-	            var reloadProductList = {
-	                type: Actions.PRODUCT_LOAD_REQUEST
-	            };
-	            store.dispatch(reloadProductList);
+	            .then(function (res) {
+	            if (res.ok) {
+	                var response = res;
+	                store.dispatch(Actions.reloadProductList());
+	                store.dispatch(Actions.shopSaveSuccess(action.shop.id));
+	            }
+	            else {
+	                var response = res;
+	                var errorMessage = (response.errors["deliveryPrice"] || [])[0];
+	                store.dispatch(Actions.shopSaveError(action.shop.id, errorMessage));
+	            }
 	        });
 	    };
 	    return ProductListMiddleware;
@@ -1589,7 +1639,7 @@
 	var new_product_1 = __webpack_require__(50);
 	var Actions = __webpack_require__(16);
 	function ProductListPageComponent(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave({
+	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, shopSavingErrors: props.shopSavingErrors, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave({
 	        id: shopId,
 	        deliveryPrice: deliveryPrice,
 	        isBase: null,
@@ -1600,16 +1650,14 @@
 	var ProductListPart = react_redux_1.connect(function (state) { return ({
 	    products: state.products.filteredProducts,
 	    shops: state.products.shops,
-	    isLoading: state.products.isLoading
+	    isLoading: state.products.isLoading,
+	    shopSavingErrors: state.products.shopSavingErrors
 	}); }, function (dispatch) { return ({
 	    onFilter: function (filter) { return dispatch({
 	        type: Actions.PRODUCT_SEARCH,
 	        filter: filter
 	    }); },
-	    onShopSave: function (shop) { return dispatch({
-	        type: Actions.SHOP_SAVE,
-	        shop: shop
-	    }); }
+	    onShopSave: function (shop) { return dispatch(Actions.shopSave(shop)); }
 	}); })(ProductListPageComponent);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ProductListPart;
@@ -1699,7 +1747,7 @@
 	    };
 	    ProductsGrid.prototype.renderDeliveryPrice = function () {
 	        var _this = this;
-	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "col-md-2 product-cell", key: "$dp::" + shop.id}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.state.shopState[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}))); })));
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "col-md-2 product-cell", key: "$dp::" + shop.id}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.state.shopState[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: _this.props.shopSavingErrors[shop.id] ? "" : "hidden"}, _this.props.shopSavingErrors[shop.id]))); })));
 	    };
 	    ProductsGrid.prototype.renderEmptyRow = function () {
 	        return React.createElement("div", {className: "col-md-12"}, "No products");
@@ -1915,6 +1963,44 @@
 	    };
 	}
 	exports.debounce = debounce;
+
+
+/***/ },
+/* 55 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function shopSaveError(state, action) {
+	    return Object.assign({}, state, {
+	        shopSavingErrors: Object.assign({}, state.shopSavingErrors, (_a = {},
+	            _a[action.shopId] = action.error,
+	            _a
+	        ))
+	    });
+	    var _a;
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = shopSaveError;
+
+
+/***/ },
+/* 56 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function shopSaveSuccess(state, action) {
+	    return Object.assign({}, state, {
+	        shopSavingErrors: Object.assign({}, state.shopSavingErrors, (_a = {},
+	            _a[action.shopId] = null,
+	            _a
+	        ))
+	    });
+	    var _a;
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = shopSaveSuccess;
 
 
 /***/ }

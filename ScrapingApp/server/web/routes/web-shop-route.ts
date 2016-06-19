@@ -20,7 +20,7 @@ router.get("/", (request, response) => {
                 id: s.id,
                 isBase: s.isBase,
                 title: s.title,
-                deliveryPrice: s.deliveryPrice 
+                deliveryPrice: s.deliveryPrice
             }));
             response.json(model).end();
         })
@@ -35,22 +35,23 @@ router.post("/", (request, response) => {
     }
     else {
         webShopService.save(webShop)
-            .then(result => {
-                if (result["ok"] === false) {
-                    response.json(result).end();
-                }
-                else {
-                    const updatedWebShop = <Api.WebShop>result;
-                    const okResponse: Api.ISuccessResponse<Api.WebShop> = {
-                        ok: true,
-                        entity: updatedWebShop
-                    };
+            .then(webShop => {
 
-                    response.json(okResponse).end();
-                }
+                const responseData: Api.ISuccessResponse<Api.WebShop> = {
+                    ok: true,
+                    entity: webShop
+                };
+
+                response.json(responseData).end();
+
             })
             .catch(err => {
-                response.send(500, err).end();
+                const responseData: Api.IFailResponse = {
+                    ok: false,
+                    errors: err
+                };
+
+                response.json(responseData).end();
             });
     }
 });

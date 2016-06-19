@@ -14,6 +14,9 @@ interface ProductListPageProps {
     products: Api.Product[];
     shops: Api.WebShop[];
     isLoading: boolean;
+    shopSavingErrors: {
+        [shopId: string]: string;
+    };
 }
 
 interface ProductListPageHandlers {
@@ -29,6 +32,7 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
             <ProductGrid products={ props.products }
                 shops={ props.shops }
                 isLoading={ props.isLoading }
+                shopSavingErrors={ props.shopSavingErrors }
                 onShopDeliveryPriceUpdated={(shopId, deliveryPrice) => props.onShopSave({
                     id: shopId,
                     deliveryPrice: deliveryPrice,
@@ -45,7 +49,8 @@ const ProductListPart = connect(
     (state: AppState.App) => ({
         products: state.products.filteredProducts,
         shops: state.products.shops,
-        isLoading: state.products.isLoading
+        isLoading: state.products.isLoading,
+        shopSavingErrors: state.products.shopSavingErrors
     } as ProductListPageProps),
 
     (dispatch) => ({
@@ -54,10 +59,7 @@ const ProductListPart = connect(
             filter: filter
         } as Actions.ProductListSearchAction),
 
-        onShopSave: shop => dispatch({
-            type: Actions.SHOP_SAVE,
-            shop: shop
-        } as Actions.ShopSaveAction)
+        onShopSave: shop => dispatch(Actions.shopSave(shop))
     }))(ProductListPageComponent);
 
 export default ProductListPart;

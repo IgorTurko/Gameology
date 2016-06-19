@@ -10,6 +10,9 @@ interface GridProps extends React.Props<any> {
     isLoading: boolean;
     products: Api.Product[];
     shops: Api.WebShop[];
+    shopSavingErrors: {
+        [shopId: string]: string;
+    }
 }
 
 export interface GridHandlers {
@@ -86,6 +89,9 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
                                 className="form-control"
                                 value={ this.state.shopState[shop.id].deliveryPrice || "" }
                                 onChange={ e => this.onDeliveryPriceChanged(shop.id, e.target["value"]) } />
+                            <p className={ this.props.shopSavingErrors[shop.id] ? "" : "hidden" }>
+                                { this.props.shopSavingErrors[shop.id]}
+                            </p>
                         </div>
                     ))
                 }

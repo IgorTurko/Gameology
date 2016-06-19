@@ -21,7 +21,7 @@ export default class WebShopService {
         return this.storage.one(webShopId);
     }
 
-    save(webShop: Api.WebShop): Promise<Api.WebShop | Api.ValidationResult> {
+    save(webShop: Api.WebShop): Promise<Api.WebShop> {
         if (!webShop)
             throw new Error("webShop is undefined");
 
