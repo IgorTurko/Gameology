@@ -39,7 +39,7 @@ export default class ProductService {
                         }
                     })
                     .then(() => this.storage.save(product))
-                    .then(() => this.findByTitle(product.id))
+                    .then(() => this.one(product.id))
                     .then(product => {
                         eventBus.emit(EventNames.ProductUpdated, product.id);
                         return product;

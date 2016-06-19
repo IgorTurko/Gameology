@@ -1499,7 +1499,7 @@
 	                }
 	            })
 	                .then(function () { return _this.storage.save(product); })
-	                .then(function () { return _this.findByTitle(product.id); })
+	                .then(function () { return _this.one(product.id); })
 	                .then(function (product) {
 	                event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, product.id);
 	                return product;
