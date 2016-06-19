@@ -935,8 +935,15 @@
 	        };
 	        store.dispatch(reloadProductList);
 	    };
-	    ProductListMiddleware.prototype[Actions.SHOP_SAVE] = function (state, action, dispatch) {
-	        this.shopRepo.saveShop(action.shop);
+	    ProductListMiddleware.prototype[Actions.SHOP_SAVE] = function (state, action, dispatch, store) {
+	        this.shopRepo
+	            .saveShop(action.shop)
+	            .then(function () {
+	            var reloadProductList = {
+	                type: Actions.PRODUCT_LOAD_REQUEST
+	            };
+	            store.dispatch(reloadProductList);
+	        });
 	    };
 	    return ProductListMiddleware;
 	}(middleware_base_1.default));
@@ -1370,6 +1377,7 @@
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = saveProductError;
+	;
 
 
 /***/ },

@@ -9,4 +9,4 @@ export default function saveProductError(state: AppState.CurrentProduct, action:
         errors: action.errors,
         saved: false
     });
-}
+};
