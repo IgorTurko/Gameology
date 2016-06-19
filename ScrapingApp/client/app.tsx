@@ -1,5 +1,7 @@
 /// <reference path="./typings/index.d.ts" />
 
+import * as io from "socket.io-client";
+
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { createStore, applyMiddleware, combineReducers } from "redux";
@@ -62,3 +64,9 @@ ReactDOM.render(
         {router(loadProductsList, (productId) => loadProductDetails(productId)) }
     </Provider>,
     document.getElementsByClassName("container")[0]);
+
+const socket = io.connect(location.origin);
+
+socket.on("Timeout", data => {
+    console.log("Timeout", data);
+});
