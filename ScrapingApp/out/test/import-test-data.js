@@ -320,7 +320,7 @@
 	    function WebShopValidator() {
 	        /** Only updateable fields is validated */
 	        this.validator = validator_1.rules.obj({
-	            deliveryPrice: validator_1.rules.num(false)
+	            deliveryPrice: validator_1.rules.num(false, { errorMessage: "Invalid price" })
 	                .parseNumber({ errorMessage: "Price is not recognized as number" })
 	                .must(function (price) { return !price || price > 0; }, { errorMessage: "Delivery price must be greater than zero" })
 	        }).expandable();

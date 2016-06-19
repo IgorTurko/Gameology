@@ -5,7 +5,7 @@ import { validateWithPromise as validate, ValidationRule, rules } from "../../va
 export default class WebShopValidator {
     /** Only updateable fields is validated */
     public validator: ValidationRule<Api.WebShop> = rules.obj<Api.WebShop>({
-        deliveryPrice: rules.num(false)
+        deliveryPrice: rules.num(false, { errorMessage: "Invalid price" })
             .parseNumber({ errorMessage: "Price is not recognized as number" })
             .must(price => !price || price > 0, { errorMessage: "Delivery price must be greater than zero" })
     }).expandable();
