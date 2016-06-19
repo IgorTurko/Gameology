@@ -1364,7 +1364,8 @@
 	"use strict";
 	function saveProductError(state, action) {
 	    return Object.assign({}, state, {
-	        errors: action.errors
+	        errors: action.errors,
+	        saved: false
 	    });
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
