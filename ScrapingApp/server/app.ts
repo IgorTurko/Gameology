@@ -6,4 +6,4 @@ import socketServer from "./socket-server";
 
 scrapeServer.run();
 const httpServer = webServer.run();
-socketServer(httpServer);
+socketServer(httpServer, scrapeServer.productService);

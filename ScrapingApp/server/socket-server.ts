@@ -5,7 +5,8 @@ import * as io from "socket.io";
 
 import ProductService from "./services/products/product-service";
 import { eventBus, EventNames } from "./services/event-bus";
-import * as ProductActions from "../client/product-list/actions";
+
+const PRODUCT_DATA_RECEIVED_FROM_SERVER = "product-data-received-from-server";
 
 export default function run(server: http.Server, productService: ProductService) {
     const ioServer = io(server);
@@ -22,8 +23,11 @@ export default function run(server: http.Server, productService: ProductService)
                             if (socket && socket.connected) {
                                 console.log("Socket event emitted");
                                 socket.emit(
-                                    ProductActions.PRODUCT_DATA_RECEIVED_FROM_SERVER,
-                                    ProductActions.productDataReceivedFromServer(product));
+                                    PRODUCT_DATA_RECEIVED_FROM_SERVER,
+                                    {
+                                        type: PRODUCT_DATA_RECEIVED_FROM_SERVER,
+                                        product: product
+                                    });
                             }
                         });
                 }

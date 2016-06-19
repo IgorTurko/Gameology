@@ -19,7 +19,7 @@ import { eventBus, EventNames } from "./services/event-bus";
 const db = new Database();
 
 
-const productService = new ProductService(new MongoProductStorage(db));
+export const productService = new ProductService(new MongoProductStorage(db));
 const webShopService = new WebShopService(new MongoWebShopService(db));
 
 const scrapeService = new ScrapeService(productService, webShopService);
