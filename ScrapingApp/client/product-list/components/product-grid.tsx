@@ -23,7 +23,7 @@ interface PropsWithClassName extends React.Props<any> {
 
 function Row(props: PropsWithClassName): JSX.Element {
     return (
-        <div className={ classNames("row", props.className) }>
+        <div className={ classNames("grid-row", props.className) }>
             { props.children }
         </div>
     );
@@ -31,7 +31,7 @@ function Row(props: PropsWithClassName): JSX.Element {
 
 function Cell(props: PropsWithClassName): JSX.Element {
     return (
-        <div className={ classNames("col-md-2 product-cell", props.className) }>
+        <div className={ classNames("col-md-2 grid-cell", props.className) }>
             { props.children }
         </div>
 
@@ -46,10 +46,10 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
         }
     }
 
-    renderHeader() {
+    renderHeader(className?: string) {
         return (
-            <Row>
-                <Cell className="header">Product</Cell>
+            <Row className={ classNames("header-row", className) }>
+                <Cell className="header-cell">Product</Cell>
                 {
                     this.props.shops.map(shop => (
                         <Cell key={shop.id} className="header">
@@ -62,14 +62,14 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
 
     renderDeliveryPrice() {
         return (
-            <Row>
-                <Cell className="price">
+            <Row className="delivery-price-row">
+                <Cell className="delivery-price-cell">
                     Delivery price
                 </Cell>
                 {
                     this.props.shops.map(shop => (
                         <Cell key={ `$dp::${shop.id}` }
-                            className= { classNames("price", { "has-error": this.props.shopEditing[shop.id].errorMessage }) }>
+                            className= { classNames("delivery-price-cell", { "has-error": this.props.shopEditing[shop.id].errorMessage }) }>
                             <input type="text"
                                 name={shop.id}
                                 className="form-control"
@@ -89,25 +89,27 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
     }
 
     renderData() {
-        return this.props.products.map(product => {
-            return (
-                <Row key={product.id}>
-                    <Cell>
-                        <Link to={`/product/${product.id}`}>{product.title}</Link>
-                    </Cell>
-                    {
-                        this.props.shops.map((shop, index) => {
-                            let values = (product.values || {})[shop.id];
-                            return (
-                                <Cell key={ `${product.id}::${index}` }>
-                                    {
-                                        values ? this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null
-                                    }
-                                </Cell>)
-                        })
-                    }
-                </Row>);
-        });
+
+        return (
+            this.props.products.map(product => {
+                return (
+                    <Row className="product-row" key={product.id}>
+                        <Cell className="product-cell product-title">
+                            <Link to={`/product/${product.id}`}>{product.title}</Link>
+                        </Cell>
+                        {
+                            this.props.shops.map((shop, index) => {
+                                let values = (product.values || {})[shop.id];
+                                return (
+                                    <Cell className="product-cell" key={ `${product.id}::${index}` }>
+                                        {
+                                            values ? this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null
+                                        }
+                                    </Cell>)
+                            })
+                        }
+                    </Row>);
+            }));
     }
 
     renderLoadingIndicator() {
@@ -164,6 +166,7 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
         return (
             <div className="product-grid">
                 { this.renderHeader() }
+                { this.renderHeader("fixed") }
                 { this.renderDeliveryPrice() }
                 { this.renderData() }
             </div>

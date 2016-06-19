@@ -1913,10 +1913,10 @@
 	var react_router_1 = __webpack_require__(51);
 	var utils_1 = __webpack_require__(49);
 	function Row(props) {
-	    return (React.createElement("div", {className: utils_1.classNames("row", props.className)}, props.children));
+	    return (React.createElement("div", {className: utils_1.classNames("grid-row", props.className)}, props.children));
 	}
 	function Cell(props) {
-	    return (React.createElement("div", {className: utils_1.classNames("col-md-2 product-cell", props.className)}, props.children));
+	    return (React.createElement("div", {className: utils_1.classNames("col-md-2 grid-cell", props.className)}, props.children));
 	}
 	var ProductsGrid = (function (_super) {
 	    __extends(ProductsGrid, _super);
@@ -1928,24 +1928,24 @@
 	            this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice);
 	        }
 	    };
-	    ProductsGrid.prototype.renderHeader = function () {
-	        return (React.createElement(Row, null, React.createElement(Cell, {className: "header"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: shop.id, className: "header"}, shop.title)); })));
+	    ProductsGrid.prototype.renderHeader = function (className) {
+	        return (React.createElement(Row, {className: utils_1.classNames("header-row", className)}, React.createElement(Cell, {className: "header-cell"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: shop.id, className: "header"}, shop.title)); })));
 	    };
 	    ProductsGrid.prototype.renderDeliveryPrice = function () {
 	        var _this = this;
-	        return (React.createElement(Row, null, React.createElement(Cell, {className: "price"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: "$dp::" + shop.id, className: utils_1.classNames("price", { "has-error": _this.props.shopEditing[shop.id].errorMessage })}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.props.shopEditing[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: utils_1.classNames("help-block", { "hidden": !_this.props.shopEditing[shop.id].errorMessage })}, _this.props.shopEditing[shop.id].errorMessage))); })));
+	        return (React.createElement(Row, {className: "delivery-price-row"}, React.createElement(Cell, {className: "delivery-price-cell"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: "$dp::" + shop.id, className: utils_1.classNames("delivery-price-cell", { "has-error": _this.props.shopEditing[shop.id].errorMessage })}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.props.shopEditing[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: utils_1.classNames("help-block", { "hidden": !_this.props.shopEditing[shop.id].errorMessage })}, _this.props.shopEditing[shop.id].errorMessage))); })));
 	    };
 	    ProductsGrid.prototype.renderEmptyRow = function () {
 	        return React.createElement("div", {className: "col-md-12"}, "No products");
 	    };
 	    ProductsGrid.prototype.renderData = function () {
 	        var _this = this;
-	        return this.props.products.map(function (product) {
-	            return (React.createElement(Row, {key: product.id}, React.createElement(Cell, null, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
+	        return (this.props.products.map(function (product) {
+	            return (React.createElement(Row, {className: "product-row", key: product.id}, React.createElement(Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
 	                var values = (product.values || {})[shop.id];
-	                return (React.createElement(Cell, {key: product.id + "::" + index}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null));
+	                return (React.createElement(Cell, {className: "product-cell", key: product.id + "::" + index}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null));
 	            })));
-	        });
+	        }));
 	    };
 	    ProductsGrid.prototype.renderLoadingIndicator = function () {
 	        return (React.createElement("div", {className: "row"}, "Loading..."));
@@ -1964,7 +1964,7 @@
 	        if (this.props.products == null || this.props.products.length == 0) {
 	            return (React.createElement("div", {className: "product-grid"}, this.props.shops != null && this.props.shops.length ? this.renderHeader() : null, this.renderEmptyRow()));
 	        }
-	        return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderDeliveryPrice(), this.renderData()));
+	        return (React.createElement("div", {className: "product-grid"}, this.renderHeader(), this.renderHeader("fixed"), this.renderDeliveryPrice(), this.renderData()));
 	    };
 	    ProductsGrid.prototype.formatPrice = function (price) {
 	        if (price == null || price === undefined || isNaN(price))
