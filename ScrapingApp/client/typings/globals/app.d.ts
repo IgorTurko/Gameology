@@ -34,8 +34,12 @@ declare namespace AppState {
         shops: Api.WebShop[];
         search: string;
         filteredProducts: Api.Product[];
-        shopSavingErrors: {
-            [shopId: string]: string;
+    }
+
+    interface ShopEditing {
+        [shopId: string]: {
+            deliveryPrice: any;
+            errorMessage: string;
         };
     }
 
@@ -43,5 +47,6 @@ declare namespace AppState {
         login: Login;
         products: Products;
         currentProduct: CurrentProduct;
+        shopEditing: ShopEditing;
     }
 }

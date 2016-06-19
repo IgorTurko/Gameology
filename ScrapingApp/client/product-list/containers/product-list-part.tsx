@@ -9,14 +9,13 @@ import ProductGrid from "../components/product-grid";
 import NewProduct from "../components/new-product";
 
 import * as Actions from "../actions";
+import * as ShopActions from "../../shop-editing/actions";
 
 interface ProductListPageProps {
     products: Api.Product[];
     shops: Api.WebShop[];
     isLoading: boolean;
-    shopSavingErrors: {
-        [shopId: string]: string;
-    };
+    shopEditing: AppState.ShopEditing;
 }
 
 interface ProductListPageHandlers {
@@ -32,7 +31,7 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
             <ProductGrid products={ props.products }
                 shops={ props.shops }
                 isLoading={ props.isLoading }
-                shopSavingErrors={ props.shopSavingErrors }
+                shopEditing={ props.shopEditing }
                 onShopDeliveryPriceUpdated={(shopId, deliveryPrice) => props.onShopSave({
                     id: shopId,
                     deliveryPrice: deliveryPrice,
@@ -50,7 +49,7 @@ const ProductListPart = connect(
         products: state.products.filteredProducts,
         shops: state.products.shops,
         isLoading: state.products.isLoading,
-        shopSavingErrors: state.products.shopSavingErrors
+        shopEditing: state.shopEditing
     } as ProductListPageProps),
 
     (dispatch) => ({
@@ -59,7 +58,7 @@ const ProductListPart = connect(
             filter: filter
         } as Actions.ProductListSearchAction),
 
-        onShopSave: shop => dispatch(Actions.shopSave(shop))
+        onShopSave: shop => dispatch(ShopActions.shopSave(shop))
     }))(ProductListPageComponent);
 
 export default ProductListPart;

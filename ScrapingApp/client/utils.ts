@@ -18,3 +18,25 @@ export function debounce(delayMilliseconds: number): (action: () => void) => voi
         }, delayMilliseconds);
     };
 }
+
+function classNamesFromHash(hash) {
+    if (!hash) {
+        return [];
+    }
+
+    return Object.keys(hash)
+        .filter(k => !!hash[k]);
+}
+
+
+export function classNames(...args) {
+    return args.map(a => {
+        if (Array.isArray(a))
+            return a.join(" ");
+
+        if (typeof a === typeof "")
+            return a;
+
+        return classNamesFromHash(a).join(" ");
+    }).join(" ");
+}

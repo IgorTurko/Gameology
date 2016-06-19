@@ -5,8 +5,6 @@ import * as redux from "redux";
 import productListLoaded from "./product-list-loaded";
 import searchProductList from "./search-product-list";
 import loadProductListRequest from "./load-product-list-request";
-import shopSaveError from "./shop-save-error";
-import shopSaveSuccess from "./shop-save-success";
 
 import * as Actions from "../actions";
 
@@ -15,16 +13,13 @@ const productInitialState: AppState.Products = {
     products: [],
     shops: [],
     filteredProducts: [],
-    search: "",
-    shopSavingErrors: {}
+    search: ""    
 };
 
 const actionMap = {
     [Actions.PRODUCT_SEARCH]: searchProductList,
     [Actions.PRODUCTS_LOADED]: productListLoaded,
-    [Actions.PRODUCT_LOAD_REQUEST]: loadProductListRequest,
-    [Actions.SHOP_SAVE_ERROR]: shopSaveError,
-    [Actions.SHOP_SAVE_SUCCESS]: shopSaveSuccess
+    [Actions.PRODUCT_LOAD_REQUEST]: loadProductListRequest
 };
 
 export default function reduce(state: AppState.Products = productInitialState, action: redux.IAction): AppState.Products {

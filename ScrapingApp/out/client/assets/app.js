@@ -85,21 +85,25 @@
 	var index_1 = __webpack_require__(17);
 	var product_list_middleware_1 = __webpack_require__(21);
 	var LoginActions = __webpack_require__(26);
-	var index_2 = __webpack_require__(27);
+	var reducers_1 = __webpack_require__(27);
 	var login_middleware_1 = __webpack_require__(32);
 	var ProductDetailsActions = __webpack_require__(34);
-	var index_3 = __webpack_require__(35);
+	var reducers_2 = __webpack_require__(35);
 	var product_details_middleware_1 = __webpack_require__(41);
-	var router_1 = __webpack_require__(42);
+	var reducers_3 = __webpack_require__(42);
+	var middlewares_1 = __webpack_require__(46);
+	var router_1 = __webpack_require__(47);
 	var loginMiddleware = new login_middleware_1.default();
 	var productListMiddleware = new product_list_middleware_1.default();
 	var productDetailsMiddleware = new product_details_middleware_1.default();
+	var shopMiddleware = new middlewares_1.default();
 	var reducers = redux_1.combineReducers({
 	    products: index_1.default,
-	    login: index_2.default,
-	    currentProduct: index_3.default
+	    login: reducers_1.default,
+	    currentProduct: reducers_2.default,
+	    shopEditing: reducers_3.default
 	});
-	var enhancer = redux_1.applyMiddleware(function (s) { return loginMiddleware.run(s); }, function (s) { return productListMiddleware.run(s); }, function (s) { return productDetailsMiddleware.run(s); });
+	var enhancer = redux_1.applyMiddleware(function (s) { return loginMiddleware.run(s); }, function (s) { return productListMiddleware.run(s); }, function (s) { return productDetailsMiddleware.run(s); }, function (s) { return shopMiddleware.run(s); });
 	var store = redux_1.createStore(reducers, undefined, enhancer);
 	event_bus_1.eventBus.addListener(event_bus_1.Events.AuthorizationError, function () {
 	    var action = {
@@ -803,40 +807,6 @@
 	    };
 	}
 	exports.reloadProductList = reloadProductList;
-	exports.SHOP_SAVE = "shop-save";
-	function shopSave(shop) {
-	    if (!shop) {
-	        throw new Error("shop is required");
-	    }
-	    return {
-	        type: exports.SHOP_SAVE,
-	        shop: shop
-	    };
-	}
-	exports.shopSave = shopSave;
-	exports.SHOP_SAVE_SUCCESS = "shop-save-success";
-	function shopSaveSuccess(shopId) {
-	    if (!shopId) {
-	        throw new Error("ShopId is required.");
-	    }
-	    return {
-	        type: exports.SHOP_SAVE_SUCCESS,
-	        shopId: shopId
-	    };
-	}
-	exports.shopSaveSuccess = shopSaveSuccess;
-	exports.SHOP_SAVE_ERROR = "shop-save-error";
-	function shopSaveError(shopId, error) {
-	    if (!shopId) {
-	        throw new Error("ShopId is required.");
-	    }
-	    return {
-	        type: exports.SHOP_SAVE_ERROR,
-	        shopId: shopId,
-	        error: error
-	    };
-	}
-	exports.shopSaveError = shopSaveError;
 
 
 /***/ },
@@ -848,23 +818,18 @@
 	var product_list_loaded_1 = __webpack_require__(18);
 	var search_product_list_1 = __webpack_require__(19);
 	var load_product_list_request_1 = __webpack_require__(20);
-	var shop_save_error_1 = __webpack_require__(55);
-	var shop_save_success_1 = __webpack_require__(56);
 	var Actions = __webpack_require__(16);
 	var productInitialState = {
 	    isLoading: false,
 	    products: [],
 	    shops: [],
 	    filteredProducts: [],
-	    search: "",
-	    shopSavingErrors: {}
+	    search: ""
 	};
 	var actionMap = (_a = {},
 	    _a[Actions.PRODUCT_SEARCH] = search_product_list_1.default,
 	    _a[Actions.PRODUCTS_LOADED] = product_list_loaded_1.default,
 	    _a[Actions.PRODUCT_LOAD_REQUEST] = load_product_list_request_1.default,
-	    _a[Actions.SHOP_SAVE_ERROR] = shop_save_error_1.default,
-	    _a[Actions.SHOP_SAVE_SUCCESS] = shop_save_success_1.default,
 	    _a
 	);
 	function reduce(state, action) {
@@ -978,22 +943,6 @@
 	            type: Actions.PRODUCT_LOAD_REQUEST
 	        };
 	        store.dispatch(reloadProductList);
-	    };
-	    ProductListMiddleware.prototype[Actions.SHOP_SAVE] = function (state, action, dispatch, store) {
-	        this.shopRepo
-	            .saveShop(action.shop)
-	            .then(function (res) {
-	            if (res.ok) {
-	                var response = res;
-	                store.dispatch(Actions.reloadProductList());
-	                store.dispatch(Actions.shopSaveSuccess(action.shop.id));
-	            }
-	            else {
-	                var response = res;
-	                var errorMessage = (response.errors["deliveryPrice"] || [])[0];
-	                store.dispatch(Actions.shopSaveError(action.shop.id, errorMessage));
-	            }
-	        });
 	    };
 	    return ProductListMiddleware;
 	}(middleware_base_1.default));
@@ -1514,13 +1463,186 @@
 /* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var shop_save_1 = __webpack_require__(61);
+	var shop_save_error_1 = __webpack_require__(43);
+	var shop_save_success_1 = __webpack_require__(44);
+	var shops_loaded_1 = __webpack_require__(60);
+	var Actions = __webpack_require__(45);
+	var shopEditingInitialState = {};
+	var actionMap = (_a = {},
+	    _a[Actions.SHOP_SAVE] = shop_save_1.default,
+	    _a[Actions.SHOP_SAVE_ERROR] = shop_save_error_1.default,
+	    _a[Actions.SHOP_SAVE_SUCCESS] = shop_save_success_1.default,
+	    _a[Actions.SHOPS_LOADED] = shops_loaded_1.default,
+	    _a
+	);
+	function reduce(state, action) {
+	    if (state === void 0) { state = shopEditingInitialState; }
+	    var reducer = actionMap[action.type];
+	    if (!reducer)
+	        return state;
+	    return reducer(state, action);
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = reduce;
+	var _a;
+
+
+/***/ },
+/* 43 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function shopSaveError(state, action) {
+	    return Object.assign({}, state, (_a = {},
+	        _a[action.shopId] = Object.assign({}, state[action.shopId], {
+	            errorMessage: action.error
+	        }),
+	        _a
+	    ));
+	    var _a;
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = shopSaveError;
+
+
+/***/ },
+/* 44 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function shopSaveSuccess(state, action) {
+	    return Object.assign({}, state, (_a = {},
+	        _a[action.shopId] = Object.assign({}, state[action.shopId], {
+	            errorMessage: null
+	        }),
+	        _a
+	    ));
+	    var _a;
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = shopSaveSuccess;
+
+
+/***/ },
+/* 45 */
+/***/ function(module, exports) {
+
+	/// <reference path="../typings/index.d.ts" />
+	"use strict";
+	exports.SHOPS_LOADED = "shop-loaded";
+	function shopsLoaded(shops) {
+	    if (!shops) {
+	        throw new Error("Shops is required.");
+	    }
+	    return {
+	        type: exports.SHOPS_LOADED,
+	        shops: shops
+	    };
+	}
+	exports.shopsLoaded = shopsLoaded;
+	exports.SHOP_SAVE = "shop-save";
+	function shopSave(shop) {
+	    if (!shop) {
+	        throw new Error("shop is required");
+	    }
+	    return {
+	        type: exports.SHOP_SAVE,
+	        shop: shop
+	    };
+	}
+	exports.shopSave = shopSave;
+	exports.SHOP_SAVE_SUCCESS = "shop-save-success";
+	function shopSaveSuccess(shopId) {
+	    if (!shopId) {
+	        throw new Error("ShopId is required.");
+	    }
+	    return {
+	        type: exports.SHOP_SAVE_SUCCESS,
+	        shopId: shopId
+	    };
+	}
+	exports.shopSaveSuccess = shopSaveSuccess;
+	exports.SHOP_SAVE_ERROR = "shop-save-error";
+	function shopSaveError(shopId, error) {
+	    if (!shopId) {
+	        throw new Error("ShopId is required.");
+	    }
+	    return {
+	        type: exports.SHOP_SAVE_ERROR,
+	        shopId: shopId,
+	        error: error
+	    };
+	}
+	exports.shopSaveError = shopSaveError;
+
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var utils_1 = __webpack_require__(55);
+	var middleware_base_1 = __webpack_require__(22);
+	var shop_repo_1 = __webpack_require__(25);
+	var Actions = __webpack_require__(45);
+	var ProductActions = __webpack_require__(16);
+	var ShopEditingMiddleware = (function (_super) {
+	    __extends(ShopEditingMiddleware, _super);
+	    function ShopEditingMiddleware() {
+	        _super.apply(this, arguments);
+	        this.shopRepo = new shop_repo_1.default();
+	        this.debouncer = utils_1.debounce(1000);
+	    }
+	    ShopEditingMiddleware.prototype[Actions.SHOP_SAVE] = function (state, action, dispatch, store) {
+	        var _this = this;
+	        this.debouncer(function () {
+	            _this.shopRepo
+	                .saveShop(action.shop)
+	                .then(function (res) {
+	                if (res.ok) {
+	                    var response = res;
+	                    store.dispatch(ProductActions.reloadProductList());
+	                    store.dispatch(Actions.shopSaveSuccess(action.shop.id));
+	                }
+	                else {
+	                    var response = res;
+	                    var errorMessage = (response.errors["deliveryPrice"] || [])[0];
+	                    store.dispatch(Actions.shopSaveError(action.shop.id, errorMessage));
+	                }
+	            });
+	        });
+	    };
+	    ShopEditingMiddleware.prototype[ProductActions.PRODUCTS_LOADED] = function (state, action, dispatch, store) {
+	        store.dispatch(Actions.shopsLoaded(action.shops));
+	    };
+	    return ShopEditingMiddleware;
+	}(middleware_base_1.default));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ShopEditingMiddleware;
+
+
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
 	///<reference path="./typings/index.d.ts"/>
 	"use strict";
 	var React = __webpack_require__(3);
-	var react_router_1 = __webpack_require__(43);
-	var login_part_1 = __webpack_require__(44);
-	var product_list_part_1 = __webpack_require__(47);
-	var product_details_part_1 = __webpack_require__(51);
+	var react_router_1 = __webpack_require__(48);
+	var login_part_1 = __webpack_require__(49);
+	var product_list_part_1 = __webpack_require__(52);
+	var product_details_part_1 = __webpack_require__(57);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = function (loadProducts, loadProduct) { return (React.createElement(react_router_1.Router, {history: react_router_1.browserHistory}, React.createElement(react_router_1.Route, {component: login_part_1.default}, React.createElement(react_router_1.Route, {path: "/", component: product_list_part_1.default, onEnter: function () { return loadProducts(); }}), React.createElement(react_router_1.Route, {path: "/product/:productId", component: product_details_part_1.default, onEnter: function (_a) {
 	    var params = _a.params;
@@ -1529,13 +1651,13 @@
 
 
 /***/ },
-/* 43 */
+/* 48 */
 /***/ function(module, exports) {
 
 	module.exports = ReactRouter;
 
 /***/ },
-/* 44 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -1551,7 +1673,7 @@
 	var React = __webpack_require__(3);
 	var react_redux_1 = __webpack_require__(6);
 	var Actions = __webpack_require__(26);
-	var header_1 = __webpack_require__(45);
+	var header_1 = __webpack_require__(50);
 	function loginPart(props) {
 	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props)), props.children));
 	}
@@ -1571,13 +1693,13 @@
 
 
 /***/ },
-/* 45 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	///<reference path="../../typings/index.d.ts" />
 	"use strict";
 	var React = __webpack_require__(3);
-	var login_form_1 = __webpack_require__(46);
+	var login_form_1 = __webpack_require__(51);
 	function Header(props) {
 	    return (React.createElement("nav", {className: "navbar navbar-default navbar-fixed-top"}, React.createElement("div", {className: "container"}, React.createElement("div", {className: "navbar-left"}, React.createElement("h3", null, "Gameology")), React.createElement("div", {className: "navbar-right"}, props.isLoggedIn
 	        ? (React.createElement("div", {className: "navbar-text"}, "You are logged in"))
@@ -1587,7 +1709,7 @@
 
 
 /***/ },
-/* 46 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	///<reference path="../../typings/index.d.ts" />
@@ -1627,19 +1749,20 @@
 
 
 /***/ },
-/* 47 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var React = __webpack_require__(3);
 	var react_redux_1 = __webpack_require__(6);
-	var search_box_1 = __webpack_require__(48);
-	var product_grid_1 = __webpack_require__(49);
-	var new_product_1 = __webpack_require__(50);
+	var search_box_1 = __webpack_require__(53);
+	var product_grid_1 = __webpack_require__(54);
+	var new_product_1 = __webpack_require__(56);
 	var Actions = __webpack_require__(16);
+	var ShopActions = __webpack_require__(45);
 	function ProductListPageComponent(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, shopSavingErrors: props.shopSavingErrors, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave({
+	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, shopEditing: props.shopEditing, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave({
 	        id: shopId,
 	        deliveryPrice: deliveryPrice,
 	        isBase: null,
@@ -1651,20 +1774,20 @@
 	    products: state.products.filteredProducts,
 	    shops: state.products.shops,
 	    isLoading: state.products.isLoading,
-	    shopSavingErrors: state.products.shopSavingErrors
+	    shopEditing: state.shopEditing
 	}); }, function (dispatch) { return ({
 	    onFilter: function (filter) { return dispatch({
 	        type: Actions.PRODUCT_SEARCH,
 	        filter: filter
 	    }); },
-	    onShopSave: function (shop) { return dispatch(Actions.shopSave(shop)); }
+	    onShopSave: function (shop) { return dispatch(ShopActions.shopSave(shop)); }
 	}); })(ProductListPageComponent);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ProductListPart;
 
 
 /***/ },
-/* 48 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1698,7 +1821,7 @@
 
 
 /***/ },
-/* 49 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -1709,45 +1832,24 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(3);
-	var react_router_1 = __webpack_require__(43);
-	var utils_1 = __webpack_require__(54);
+	var react_router_1 = __webpack_require__(48);
+	var utils_1 = __webpack_require__(55);
 	var ProductsGrid = (function (_super) {
 	    __extends(ProductsGrid, _super);
 	    function ProductsGrid() {
-	        _super.call(this);
-	        this.debouncer = utils_1.debounce(1000);
-	        this.state = {
-	            shopState: {}
-	        };
+	        _super.apply(this, arguments);
 	    }
-	    ProductsGrid.prototype.componentWillReceiveProps = function (newProps) {
-	        this.setState(function (state) {
-	            state.shopState = newProps.shops
-	                .toHash(function (shop) { return shop.id; }, function (shop) { return ({
-	                id: shop.id,
-	                deliveryPrice: shop.deliveryPrice,
-	                error: null
-	            }); });
-	            return state;
-	        });
-	    };
 	    ProductsGrid.prototype.renderHeader = function () {
 	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell header"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement("div", {key: shop.id, className: "col-md-2 product-cell header"}, shop.title)); })));
 	    };
 	    ProductsGrid.prototype.onDeliveryPriceChanged = function (shopId, deliveryPrice) {
-	        var _this = this;
-	        this.setState(function (state) {
-	            state.shopState[shopId].deliveryPrice = deliveryPrice;
-	            return state;
-	        });
 	        if (this.props.onShopDeliveryPriceUpdated) {
-	            this.debouncer(function () { return _this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice); });
+	            this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice);
 	        }
-	        ;
 	    };
 	    ProductsGrid.prototype.renderDeliveryPrice = function () {
 	        var _this = this;
-	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "col-md-2 product-cell", key: "$dp::" + shop.id}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.state.shopState[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: _this.props.shopSavingErrors[shop.id] ? "" : "hidden"}, _this.props.shopSavingErrors[shop.id]))); })));
+	        return (React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-2 product-cell price"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement("div", {className: "col-md-2 product-cell price", key: "$dp::" + shop.id}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.props.shopEditing[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: utils_1.classNames("help-block", { "hidden": _this.props.shopEditing[shop.id].errorMessage })}, _this.props.shopEditing[shop.id].errorMessage))); })));
 	    };
 	    ProductsGrid.prototype.renderEmptyRow = function () {
 	        return React.createElement("div", {className: "col-md-12"}, "No products");
@@ -1792,7 +1894,52 @@
 
 
 /***/ },
-/* 50 */
+/* 55 */
+/***/ function(module, exports) {
+
+	/// <reference path="./typings/index.d.ts" />
+	"use strict";
+	function debounce(delayMilliseconds) {
+	    if (delayMilliseconds < 0) {
+	        throw new Error("Delay must be positive");
+	    }
+	    var timeout = null;
+	    return function (action) {
+	        if (timeout) {
+	            clearTimeout(timeout);
+	        }
+	        timeout = setTimeout(function () {
+	            timeout = null;
+	            action();
+	        }, delayMilliseconds);
+	    };
+	}
+	exports.debounce = debounce;
+	function classNamesFromHash(hash) {
+	    if (!hash) {
+	        return [];
+	    }
+	    return Object.keys(hash)
+	        .filter(function (k) { return !!hash[k]; });
+	}
+	function classNames() {
+	    var args = [];
+	    for (var _i = 0; _i < arguments.length; _i++) {
+	        args[_i - 0] = arguments[_i];
+	    }
+	    return args.map(function (a) {
+	        if (Array.isArray(a))
+	            return a.join(" ");
+	        if (typeof a === typeof "")
+	            return a;
+	        return classNamesFromHash(a).join(" ");
+	    }).join(" ");
+	}
+	exports.classNames = classNames;
+
+
+/***/ },
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1803,7 +1950,7 @@
 	};
 	/// <reference path="./../../typings/index.d.ts" />
 	var React = __webpack_require__(3);
-	var react_router_1 = __webpack_require__(43);
+	var react_router_1 = __webpack_require__(48);
 	var NewProduct = (function (_super) {
 	    __extends(NewProduct, _super);
 	    function NewProduct() {
@@ -1819,7 +1966,7 @@
 
 
 /***/ },
-/* 51 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -1827,7 +1974,7 @@
 	var React = __webpack_require__(3);
 	var react_redux_1 = __webpack_require__(6);
 	var Actions = __webpack_require__(34);
-	var product_form_1 = __webpack_require__(52);
+	var product_form_1 = __webpack_require__(58);
 	function ProductDetailsPageComponent(props) {
 	    return (React.createElement(product_form_1.ProductForm, {product: props.product, shops: props.shops, errors: props.errors, saved: props.saved, onSaveProduct: function (product) { return props.onSaveProduct(product); }}));
 	}
@@ -1849,7 +1996,7 @@
 
 
 /***/ },
-/* 52 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1860,8 +2007,8 @@
 	};
 	/// <reference path="../../typings/index.d.ts" />
 	var React = __webpack_require__(3);
-	var react_router_1 = __webpack_require__(43);
-	var product_input_field_1 = __webpack_require__(53);
+	var react_router_1 = __webpack_require__(48);
+	var product_input_field_1 = __webpack_require__(59);
 	var ProductForm = (function (_super) {
 	    __extends(ProductForm, _super);
 	    function ProductForm(props) {
@@ -1917,7 +2064,7 @@
 
 
 /***/ },
-/* 53 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1942,65 +2089,37 @@
 
 
 /***/ },
-/* 54 */
-/***/ function(module, exports) {
-
-	/// <reference path="./typings/index.d.ts" />
-	"use strict";
-	function debounce(delayMilliseconds) {
-	    if (delayMilliseconds < 0) {
-	        throw new Error("Delay must be positive");
-	    }
-	    var timeout = null;
-	    return function (action) {
-	        if (timeout) {
-	            clearTimeout(timeout);
-	        }
-	        timeout = setTimeout(function () {
-	            timeout = null;
-	            action();
-	        }, delayMilliseconds);
-	    };
-	}
-	exports.debounce = debounce;
-
-
-/***/ },
-/* 55 */
+/* 60 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	function shopSaveError(state, action) {
-	    return Object.assign({}, state, {
-	        shopSavingErrors: Object.assign({}, state.shopSavingErrors, (_a = {},
-	            _a[action.shopId] = action.error,
-	            _a
-	        ))
-	    });
-	    var _a;
+	function shopsLoaded(state, action) {
+	    return action.shops.toHash(function (s) { return s.id; }, function (s) { return ({
+	        deliveryPrice: s.deliveryPrice,
+	        errorMessage: null
+	    }); });
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = shopSaveError;
+	exports.default = shopsLoaded;
 
 
 /***/ },
-/* 56 */
+/* 61 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	function shopSaveSuccess(state, action) {
-	    return Object.assign({}, state, {
-	        shopSavingErrors: Object.assign({}, state.shopSavingErrors, (_a = {},
-	            _a[action.shopId] = null,
-	            _a
-	        ))
-	    });
+	function shopSave(state, action) {
+	    var shopState = Object.assign({}, state[action.shop.id], { deliveryPrice: action.shop.deliveryPrice });
+	    return Object.assign({}, state, (_a = {},
+	        _a[action.shop.id] = shopState,
+	        _a
+	    ));
 	    var _a;
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = shopSaveSuccess;
+	exports.default = shopSave;
 
 
 /***/ }

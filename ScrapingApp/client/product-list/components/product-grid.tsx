@@ -4,55 +4,20 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Link} from "react-router"
 
-import { debounce } from "../../utils";
+import { classNames } from "../../utils";
 
 interface GridProps extends React.Props<any> {
     isLoading: boolean;
     products: Api.Product[];
     shops: Api.WebShop[];
-    shopSavingErrors: {
-        [shopId: string]: string;
-    }
+    shopEditing: AppState.ShopEditing;
 }
 
 export interface GridHandlers {
     onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: number) => void;
 }
 
-export interface ProductGridState {
-    shopState: {
-        [shopId: string]: {
-            id: string;
-            deliveryPrice: any;
-            error?: string;
-        }
-    }
-}
-
-export default class ProductsGrid extends React.Component<GridProps & GridHandlers, ProductGridState> {
-    private debouncer = debounce(1000);
-
-    constructor() {
-        super();
-
-        this.state = {
-            shopState: {}
-        };
-    }
-
-    componentWillReceiveProps(newProps: GridProps & GridHandlers) {
-        this.setState(state => {
-
-            state.shopState = newProps.shops
-                .toHash(shop => shop.id, shop => ({
-                    id: shop.id,
-                    deliveryPrice: shop.deliveryPrice,
-                    error: null
-                }));
-
-            return state;
-        });
-    }
+export default class ProductsGrid extends React.Component<GridProps & GridHandlers, {}> {
 
     renderHeader() {
         return (
@@ -67,30 +32,25 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
     }
 
     onDeliveryPriceChanged(shopId: string, deliveryPrice: any) {
-        this.setState(state => {
-            state.shopState[shopId].deliveryPrice = deliveryPrice;
-            return state;
-        });
-
         if (this.props.onShopDeliveryPriceUpdated) {
-            this.debouncer(() => this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice))
-        };
+            this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice);
+        }
     }
 
     renderDeliveryPrice() {
         return (
             <div className="row">
-                <div className="col-md-2 product-cell">Delivery price</div>
+                <div className="col-md-2 product-cell price">Delivery price</div>
                 {
                     this.props.shops.map(shop => (
-                        <div className="col-md-2 product-cell" key={ `$dp::${shop.id}` }>
+                        <div className="col-md-2 product-cell price" key={ `$dp::${shop.id}` }>
                             <input type="text"
                                 name={shop.id}
                                 className="form-control"
-                                value={ this.state.shopState[shop.id].deliveryPrice || "" }
+                                value={ this.props.shopEditing[shop.id].deliveryPrice || "" }
                                 onChange={ e => this.onDeliveryPriceChanged(shop.id, e.target["value"]) } />
-                            <p className={ this.props.shopSavingErrors[shop.id] ? "" : "hidden" }>
-                                { this.props.shopSavingErrors[shop.id]}
+                            <p className={ classNames("help-block", { "hidden": this.props.shopEditing[shop.id].errorMessage }) }>
+                                { this.props.shopEditing[shop.id].errorMessage }
                             </p>
                         </div>
                     ))

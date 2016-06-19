@@ -4,16 +4,16 @@ import * as redux from "redux";
 
 import * as Actions from "../actions";
 
-export default function shopSaveSuccess(state: AppState.Products, action: Actions.ShopSaveSuccessAction): AppState.Products {
+export default function shopSaveSuccess(state: AppState.ShopEditing, action: Actions.ShopSaveSuccessAction): AppState.ShopEditing {
     return Object.assign(
         {},
         state,
         {
-            shopSavingErrors: Object.assign(
+            [action.shopId]: Object.assign(
                 {},
-                state.shopSavingErrors,
+                state[action.shopId],
                 {
-                    [action.shopId]: null
+                    errorMessage: null
                 })
         });
 } 

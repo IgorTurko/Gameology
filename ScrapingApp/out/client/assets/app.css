@@ -43,8 +43,8 @@
     height: 50px;
 }
 
-.product-grid .row:nth-child(2) .product-cell {
-    height: 50px;
+.product-grid .product-cell.price {
+    height: 70px;
 }
 
 .product-grid .product-cell:last-child {
