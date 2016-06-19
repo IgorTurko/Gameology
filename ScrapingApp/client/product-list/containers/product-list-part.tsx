@@ -16,6 +16,7 @@ interface ProductListPageProps {
     shops: Api.WebShop[];
     isLoading: boolean;
     shopEditing: AppState.ShopEditing;
+    updatedProductId: string;
 }
 
 interface ProductListPageHandlers {
@@ -32,6 +33,7 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
                 shops={ props.shops }
                 isLoading={ props.isLoading }
                 shopEditing={ props.shopEditing }
+                updatedProductId = { props.updatedProductId }
                 onShopDeliveryPriceUpdated={(shopId, deliveryPrice) => props.onShopSave({
                     id: shopId,
                     deliveryPrice: deliveryPrice,
@@ -49,7 +51,8 @@ const ProductListPart = connect(
         products: state.products.filteredProducts,
         shops: state.products.shops,
         isLoading: state.products.isLoading,
-        shopEditing: state.shopEditing
+        shopEditing: state.shopEditing,
+        updatedProductId: state.products.updatedProductId
     } as ProductListPageProps),
 
     (dispatch) => ({

@@ -69,6 +69,6 @@ const socket = io.connect(location.origin);
 
 socket.on(
     ProductListActions.PRODUCT_DATA_RECEIVED_FROM_SERVER,
-    (action: ProductListActions.ProductDataReceivedFromServerAction) => {
-        console.dir(action);
+    (action: ProductListActions.ProductDataReceivedFromServerAction) => {        
+        store.dispatch(action);
     });

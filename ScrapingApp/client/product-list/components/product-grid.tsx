@@ -11,6 +11,7 @@ interface GridProps extends React.Props<any> {
     products: Api.Product[];
     shops: Api.WebShop[];
     shopEditing: AppState.ShopEditing;
+    updatedProductId: string;
 }
 
 export interface GridHandlers {
@@ -100,7 +101,7 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
         return (
             this.props.products.map(product => {
                 return (
-                    <Row className="product-row" key={product.id}>
+                    <Row className={ classNames("product-row", { "highlight": product.id == this.props.updatedProductId }) } key={product.id}>
                         <Cell className="product-cell product-title">
                             <Link to={`/product/${product.id}`}>{product.title}</Link>
                         </Cell>

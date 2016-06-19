@@ -117,7 +117,7 @@
 	ReactDOM.render(React.createElement(react_redux_1.Provider, {store: store}, router_1.default(loadProductsList, function (productId) { return loadProductDetails(productId); })), document.getElementsByClassName("container")[0]);
 	var socket = io.connect(location.origin);
 	socket.on(ProductListActions.PRODUCT_DATA_RECEIVED_FROM_SERVER, function (action) {
-	    console.dir(action);
+	    store.dispatch(action);
 	});
 
 
@@ -8277,18 +8277,21 @@
 	var product_list_loaded_1 = __webpack_require__(67);
 	var search_product_list_1 = __webpack_require__(68);
 	var load_product_list_request_1 = __webpack_require__(69);
+	var product_refreshed_from_server_1 = __webpack_require__(111);
 	var Actions = __webpack_require__(65);
 	var productInitialState = {
 	    isLoading: false,
 	    products: [],
 	    shops: [],
 	    filteredProducts: [],
-	    search: ""
+	    search: "",
+	    updatedProductId: null
 	};
 	var actionMap = (_a = {},
 	    _a[Actions.PRODUCT_SEARCH] = search_product_list_1.default,
 	    _a[Actions.PRODUCTS_LOADED] = product_list_loaded_1.default,
 	    _a[Actions.PRODUCT_LOAD_REQUEST] = load_product_list_request_1.default,
+	    _a[Actions.PRODUCT_DATA_RECEIVED_FROM_SERVER] = product_refreshed_from_server_1.default,
 	    _a
 	);
 	function reduce(state, action) {
@@ -9318,7 +9321,7 @@
 	var Actions = __webpack_require__(65);
 	var ShopActions = __webpack_require__(96);
 	function ProductListPageComponent(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, shopEditing: props.shopEditing, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave({
+	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, shopEditing: props.shopEditing, updatedProductId: props.updatedProductId, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave({
 	        id: shopId,
 	        deliveryPrice: deliveryPrice,
 	        isBase: null,
@@ -9330,7 +9333,8 @@
 	    products: state.products.filteredProducts,
 	    shops: state.products.shops,
 	    isLoading: state.products.isLoading,
-	    shopEditing: state.shopEditing
+	    shopEditing: state.shopEditing,
+	    updatedProductId: state.products.updatedProductId
 	}); }, function (dispatch) { return ({
 	    onFilter: function (filter) { return dispatch({
 	        type: Actions.PRODUCT_SEARCH,
@@ -9422,7 +9426,7 @@
 	    ProductsGrid.prototype.renderData = function () {
 	        var _this = this;
 	        return (this.props.products.map(function (product) {
-	            return (React.createElement(Row, {className: "product-row", key: product.id}, React.createElement(Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
+	            return (React.createElement(Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId }), key: product.id}, React.createElement(Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
 	                var values = (product.values || {})[shop.id];
 	                return (React.createElement(Cell, {className: "product-cell", key: product.id + "::" + index}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null));
 	            })));
@@ -9635,6 +9639,25 @@
 	    return ProductInputField;
 	}(React.Component));
 	exports.ProductInputField = ProductInputField;
+
+
+/***/ },
+/* 111 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function productRefreshedFromServer(state, action) {
+	    var refreshProduct = function (p) { return p.id === action.product.id ? action.product : p; };
+	    var newState = Object.assign({}, state, {
+	        updatedProductId: action.product.id,
+	        products: state.products.map(refreshProduct),
+	        filteredProducts: state.filteredProducts.map(refreshProduct)
+	    });
+	    return newState;
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = productRefreshedFromServer;
 
 
 /***/ }
