@@ -4,6 +4,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Link} from "react-router"
 
+import { debounce } from "../../utils";
+
 interface GridProps extends React.Props<any> {
     isLoading: boolean;
     products: Api.Product[];
@@ -11,10 +13,44 @@ interface GridProps extends React.Props<any> {
 }
 
 export interface GridHandlers {
-    onShopSave: (shop: Api.WebShop) => void;
+    onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: number) => void;
 }
 
-export default class ProductsGrid extends React.Component<GridProps & GridHandlers, {}> {
+export interface ProductGridState {
+    shopState: {
+        [shopId: string]: {
+            id: string;
+            deliveryPrice: any;
+            error?: string;
+        }
+    }
+}
+
+export default class ProductsGrid extends React.Component<GridProps & GridHandlers, ProductGridState> {
+    private debouncer = debounce(1000);
+
+    constructor() {
+        super();
+
+        this.state = {
+            shopState: {}
+        };
+    }
+
+    componentWillReceiveProps(newProps: GridProps & GridHandlers) {
+        this.setState(state => {
+
+            state.shopState = newProps.shops
+                .toHash(shop => shop.id, shop => ({
+                    id: shop.id,
+                    deliveryPrice: shop.deliveryPrice,
+                    error: null
+                }));
+
+            return state;
+        });
+    }
+
     renderHeader() {
         return (
             <div className="row">
@@ -27,18 +63,15 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
             </div>);
     }
 
-    onDeliveryPriceChanged(e) {
-        let shop: Api.WebShop = {
-            id: e.target.name,
-            deliveryPrice: e.target.value,
-            isBase: true,
-            title: '',
-            scrapingSettings: null
-        }
+    onDeliveryPriceChanged(shopId: string, deliveryPrice: any) {
+        this.setState(state => {
+            state.shopState[shopId].deliveryPrice = deliveryPrice;
+            return state;
+        });
 
-        if (this.props.onShopSave) {
-            this.props.onShopSave(shop);
-        }
+        if (this.props.onShopDeliveryPriceUpdated) {
+            this.debouncer(() => this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice))
+        };
     }
 
     renderDeliveryPrice() {
@@ -48,7 +81,11 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
                 {
                     this.props.shops.map(shop => (
                         <div className="col-md-2 product-cell" key={ `$dp::${shop.id}` }>
-                            <input type="text" name={shop.id} className="form-control" value={shop.deliveryPrice} onChange={e => this.onDeliveryPriceChanged(e) } />
+                            <input type="text"
+                                name={shop.id}
+                                className="form-control"
+                                value={ this.state.shopState[shop.id].deliveryPrice || "" }
+                                onChange={ e => this.onDeliveryPriceChanged(shop.id, e.target["value"]) } />
                         </div>
                     ))
                 }
@@ -99,16 +136,16 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
                 <img className="product-img" src={ values.image } />
                 <div className="product-price">
                     {
-                        shop.deliveryPrice 
-                        ? this.formatPrice(values.price + shop.deliveryPrice)
-                        : this.formatPrice(values.price)
+                        shop.deliveryPrice
+                            ? this.formatPrice(values.price + shop.deliveryPrice)
+                            : this.formatPrice(values.price)
                     }
                 </div>
                 <div className="product-price delivery">
                     {
-                        shop.deliveryPrice 
-                        ? `${this.formatPrice(values.price)} + ${this.formatPrice(shop.deliveryPrice)}`
-                        : ''
+                        shop.deliveryPrice
+                            ? `${this.formatPrice(values.price)} + ${this.formatPrice(shop.deliveryPrice)}`
+                            : ''
                     }
                 </div>
             </div>

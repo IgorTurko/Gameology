@@ -26,7 +26,16 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
         <div className="container">
             <SearchBox placeholder="Search products.." onFiltering={ filter => props.onFilter(filter) } />
             <NewProduct />
-            <ProductGrid products={ props.products } shops={ props.shops } isLoading={ props.isLoading } onShopSave={shop => props.onShopSave(shop)} />
+            <ProductGrid products={ props.products }
+                shops={ props.shops }
+                isLoading={ props.isLoading }
+                onShopDeliveryPriceUpdated={(shopId, deliveryPrice) => props.onShopSave({
+                    id: shopId,
+                    deliveryPrice: deliveryPrice,
+                    isBase: null,
+                    scrapingSettings: null,
+                    title: null
+                }) } />
         </div>
     );
 }
@@ -46,8 +55,8 @@ const ProductListPart = connect(
         } as Actions.ProductListSearchAction),
 
         onShopSave: shop => dispatch({
-                type: Actions.SHOP_SAVE,
-                shop: shop
+            type: Actions.SHOP_SAVE,
+            shop: shop
         } as Actions.ShopSaveAction)
     }))(ProductListPageComponent);
 
