@@ -1,6 +1,7 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
 
-import { validateWithPromise as validate, ValidationRule, rules } from "../../validator";
+import { ValidationRule, rules } from "pojo-fluent-validator";
+import { validate } from "../utils";
 
 export default class WebShopValidator {
     /** Only updateable fields is validated */
