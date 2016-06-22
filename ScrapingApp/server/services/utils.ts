@@ -10,7 +10,7 @@ export function validate<T>(value: any, ...validators: ValidationRule<T>[]): Pro
     return new Promise((resolve, reject) => {
         validateWithCallback(
             value,
-            (result, errors) => {
+            (errors, result) => {
                 if (errors) {
                     reject(errors);
                 }

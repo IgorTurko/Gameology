@@ -18,7 +18,6 @@ export default class ProductValidator {
             { errorMessage: "At least one scraping URL must be specified." })
     });
 
-
     validate(product: Api.Product): Promise<Api.Product> {
         if (!product)
             throw new Error("product is undefined");

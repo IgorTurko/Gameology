@@ -22,7 +22,7 @@
     "node-schedule": "^1.1.0",
     "node-uuid": "^1.4.7",
     "node-validator": "^0.1.23",
-    "pojo-fluent-validator": "^1.0.4",
+    "pojo-fluent-validator": "^1.1.7",
     "react": "^15.1.0",
     "react-redux": "^4.4.5",
     "react-router": "^2.4.1",
