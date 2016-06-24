@@ -29,9 +29,9 @@ export default class JsdomScraper implements Scraping.IScraper {
                     ProcessExternalResources: false
                 },
                 done: (err, window) => {
-                    if (err && err.length) {
+                    if ((err && err.length) || !window || !window.document) {
                         result.isSuccessful = false;
-                        result.error = err;
+                        result.error = err || "Loading document failed.";
 
                         resolve(result);
 
