@@ -21,7 +21,7 @@ interface ProductListPageProps {
 
 interface ProductListPageHandlers {
     onFilter: (filter: string) => void;
-    onShopSave: (shop: Api.WebShop) => void;
+    onShopSave: (shopId: string, deliveryPrice: string) => void;
 }
 
 function ProductListPageComponent(props: ProductListPageProps & ProductListPageHandlers) {
@@ -34,13 +34,7 @@ function ProductListPageComponent(props: ProductListPageProps & ProductListPageH
                 isLoading={ props.isLoading }
                 shopEditing={ props.shopEditing }
                 updatedProductId = { props.updatedProductId }
-                onShopDeliveryPriceUpdated={(shopId, deliveryPrice) => props.onShopSave({
-                    id: shopId,
-                    deliveryPrice: deliveryPrice,
-                    isBase: null,
-                    scrapingSettings: null,
-                    title: null
-                }) } />
+                onShopDeliveryPriceUpdated={(shopId, deliveryPrice) => props.onShopSave(shopId, deliveryPrice) } />
         </div>
     );
 }
@@ -61,7 +55,7 @@ const ProductListPart = connect(
             filter: filter
         } as Actions.ProductListSearchAction),
 
-        onShopSave: shop => dispatch(ShopActions.shopSave(shop))
+        onShopSave: (shopId: string, deliveryPrice: string) => dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice))
     }))(ProductListPageComponent);
 
 export default ProductListPart;

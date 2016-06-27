@@ -9152,16 +9152,22 @@
 	}
 	exports.shopsLoaded = shopsLoaded;
 	exports.SHOP_SAVE = "shop-save";
-	function shopSave(shop) {
-	    if (!shop) {
-	        throw new Error("shop is required");
+	function updateShopDeliveryPrice(shopId, deliveryPrice) {
+	    if (!shopId) {
+	        throw new Error("Shop ID is required");
 	    }
 	    return {
 	        type: exports.SHOP_SAVE,
-	        shop: shop
+	        shop: {
+	            id: shopId,
+	            deliveryPrice: deliveryPrice,
+	            isBase: null,
+	            scrapingSettings: null,
+	            title: null
+	        }
 	    };
 	}
-	exports.shopSave = shopSave;
+	exports.updateShopDeliveryPrice = updateShopDeliveryPrice;
 	exports.SHOP_SAVE_SUCCESS = "shop-save-success";
 	function shopSaveSuccess(shopId) {
 	    if (!shopId) {
@@ -9426,13 +9432,7 @@
 	var Actions = __webpack_require__(67);
 	var ShopActions = __webpack_require__(98);
 	function ProductListPageComponent(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, shopEditing: props.shopEditing, updatedProductId: props.updatedProductId, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave({
-	        id: shopId,
-	        deliveryPrice: deliveryPrice,
-	        isBase: null,
-	        scrapingSettings: null,
-	        title: null
-	    }); }})));
+	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, shopEditing: props.shopEditing, updatedProductId: props.updatedProductId, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave(shopId, deliveryPrice); }})));
 	}
 	var ProductListPart = react_redux_1.connect(function (state) { return ({
 	    products: state.products.filteredProducts,
@@ -9445,7 +9445,7 @@
 	        type: Actions.PRODUCT_SEARCH,
 	        filter: filter
 	    }); },
-	    onShopSave: function (shop) { return dispatch(ShopActions.shopSave(shop)); }
+	    onShopSave: function (shopId, deliveryPrice) { return dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice)); }
 	}); })(ProductListPageComponent);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = ProductListPart;

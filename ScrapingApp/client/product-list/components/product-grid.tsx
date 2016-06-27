@@ -15,7 +15,7 @@ interface GridProps extends React.Props<any> {
 }
 
 export interface GridHandlers {
-    onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: number) => void;
+    onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: string) => void;
 }
 
 interface PropsWithClassName extends React.Props<any> {
@@ -48,7 +48,7 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
         this.windowResizeHandler = () => this.onWindowResize();
     }
 
-    onDeliveryPriceChanged(shopId: string, deliveryPrice: any) {
+    onDeliveryPriceChanged(shopId: string, deliveryPrice: string) {
         if (this.props.onShopDeliveryPriceUpdated) {
             this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice);
         }

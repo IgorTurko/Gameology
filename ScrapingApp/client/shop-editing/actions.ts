@@ -11,7 +11,7 @@ export function shopsLoaded(shops: Api.WebShop[]): ShopLoadedAction {
     if (!shops) {
         throw new Error("Shops is required.");
     }
-    
+
     return {
         type: SHOPS_LOADED,
         shops: shops
@@ -23,14 +23,20 @@ export interface ShopSaveAction extends redux.IAction {
     shop: Api.WebShop
 }
 
-export function shopSave(shop: Api.WebShop): ShopSaveAction {
-    if (!shop) {
-        throw new Error("shop is required");
+export function updateShopDeliveryPrice(shopId: string, deliveryPrice: any): ShopSaveAction {
+    if (!shopId) {
+        throw new Error("Shop ID is required");
     }
 
     return {
         type: SHOP_SAVE,
-        shop: shop
+        shop: {
+            id: shopId,
+            deliveryPrice: deliveryPrice,
+            isBase: null,
+            scrapingSettings: null,
+            title: null
+        }
     };
 }
 

@@ -6,6 +6,7 @@
         "sourceMap": true,
         "noEmit": true,
         "target": "ES5",
-        "jsx": "react"
+        "jsx": "react",
+        "experimentalDecorators": true
     }
 }
