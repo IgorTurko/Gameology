@@ -7,17 +7,21 @@ export default class HttpClient {
     };
 
     post<T>(url: string, body: any): Promise<T> {
-        return this.fetch(url, body);
+        return this.fetch(url, "POST", body);
     };
 
-    private fetch<T>(url: string, body?: any): Promise<T> {
+    delete<T>(url: string, body?: any): Promise<any> {
+        return this.fetch(url, "DELETE", body);
+    }
+
+    private fetch<T>(url: string, method?: "GET" | "POST" | "DELETE", body?: any): Promise<T> {
         const options: RequestInit = {
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            method: method || "GET"
         };
 
         if (body) {
             options.body = JSON.stringify(body);
-            options.method = 'POST';
             options.headers = { "Content-Type": "application/json" }
         }
 

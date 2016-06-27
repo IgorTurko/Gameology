@@ -44,7 +44,7 @@ export default class ProductService {
                         eventBus.emit(EventNames.ProductUpdated, product.id);
                         return product;
                     });
-            });        
+            });
     }
 
     one(productId: string): Promise<Api.Product> {
@@ -111,5 +111,11 @@ export default class ProductService {
 
                 return this.storage.setScrapingData(product.id, webshopId, values, log);
             });
+    }
+
+    delete(productId: string): Promise<any> {
+        if (!productId)
+            throw new Error("Product ID is not defined.");
+        return this.storage.delete(productId);
     }
 }

@@ -2,12 +2,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-interface SearchBoxProps {
-    onFiltering: (filter:string) => void;
+import { classNames } from "../../utils";
+
+export interface SearchBoxProps {
     placeholder: string;
+    className?: string;
 }
 
-export default class SearchBox extends React.Component<SearchBoxProps, {}> {
+export interface SearchBoxHandlers {
+    onFiltering: (filter: string) => void;
+}
+
+export class SearchBox extends React.Component<SearchBoxProps & SearchBoxHandlers, {}> {
     onFormSubmit(e: React.FormEvent) {
         e.preventDefault();
 
@@ -20,16 +26,18 @@ export default class SearchBox extends React.Component<SearchBoxProps, {}> {
 
     render() {
         return (
-            <form onSubmit={e => this.onFormSubmit(e) }>
-                <div className="search-box input-group">
-                    <input
-                        name="filter"
-                        type="text"
-                        className="form-control"
-                        placeholder={this.props.placeholder} />
-                    <span className="input-group-btn">
-                        <button className="btn btn-default" type="submit">Search</button>
-                    </span>
+            <form className={ this.props.className } onSubmit={e => this.onFormSubmit(e) }>
+                <div className="form-group">
+                    <div className="search-box input-group">
+                        <input
+                            name="filter"
+                            type="text"
+                            className="form-control"
+                            placeholder={this.props.placeholder} />
+                        <span className="input-group-btn">
+                            <button className="btn btn-default" type="submit">Search</button>
+                        </span>
+                    </div>
                 </div>
             </form>);
     }

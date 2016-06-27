@@ -9,6 +9,8 @@ import { Provider } from "react-redux";
 
 import { eventBus, Events } from "./event-bus";
 
+import RoutingMiddleware from "./routing/middlewares/routing-middleware";
+
 import * as ProductListActions from "./product-list/actions";
 import productListReducer from "./product-list/reducers/index";
 import ProductListMiddleware from "./product-list/middlewares/product-list-middleware";
@@ -21,9 +23,10 @@ import * as ProductDetailsActions from "./product-details/actions";
 import productDetailsReducer from "./product-details/reducers";
 import ProductDetailsMiddleware from "./product-details/middlewares/product-details-middleware"
 
-import * as ShopActions from "./shop-editing/actions";
 import shopReducers from "./shop-editing/reducers";
 import ShopEditingMiddleware from "./shop-editing/middlewares";
+
+
 
 import router from "./router"
 
@@ -31,6 +34,7 @@ const loginMiddleware = new LoginMiddleware();
 const productListMiddleware = new ProductListMiddleware();
 const productDetailsMiddleware = new ProductDetailsMiddleware();
 const shopMiddleware = new ShopEditingMiddleware();
+const routingMiddleware = new RoutingMiddleware();
 
 const reducers = combineReducers({
     products: productListReducer,
@@ -40,6 +44,7 @@ const reducers = combineReducers({
 });
 
 const enhancer = applyMiddleware<AppState.App>(
+    s => routingMiddleware.run(s),
     s => loginMiddleware.run(s),
     s => productListMiddleware.run(s),
     s => productDetailsMiddleware.run(s),

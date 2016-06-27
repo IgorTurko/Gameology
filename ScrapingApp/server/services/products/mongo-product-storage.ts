@@ -59,6 +59,16 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(() => product);
     }
 
+    delete(productId: string): Promise<any> {
+        if (!productId)
+            throw new Error("Product ID is not defined.");
+
+        return this.db
+            .collection(Database.Collections.products)
+            .then(c => c.deleteOne({ id: productId }))
+            .then(c => true);
+    }
+
     setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues, log: Api.ScrapeLog): Promise<Api.Product> {
         if (!productId)
             throw new Error("productId is undefined");

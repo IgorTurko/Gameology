@@ -8,6 +8,8 @@ import ProductRepository from "../../data/product-repo";
 import ShopRepository from "../../data/shop-repo";
 import * as Actions from "../actions";
 import * as LoginActions from "../../login/actions";
+import * as ProductDetailsActions from "../../product-details/actions";
+import * as RoutingActions from "../../routing/actions";
 
 export default class ProductListMiddleware extends MiddlewareBase<AppState.App> {
     private productRepo = new ProductRepository();
@@ -38,11 +40,16 @@ export default class ProductListMiddleware extends MiddlewareBase<AppState.App> 
         });
     }
 
-    [LoginActions.LOGIN_SUCCESS](state, action, dispatch: redux.IDispatch, store: redux.IMiddlewareStore<AppState.App>) {
-        const reloadProductList: Actions.LoadProductListRequestAction = {
-            type: Actions.PRODUCT_LOAD_REQUEST
-        };
+    [Actions.PRODUCT_SEARCH](state, action, dispatch, store: redux.IMiddlewareStore<AppState.App>) {
+        store.dispatch(RoutingActions.goToProductList());
+    }
 
+    [LoginActions.LOGIN_SUCCESS](state, action, dispatch: redux.IDispatch, store: redux.IMiddlewareStore<AppState.App>) {
+        const reloadProductList = Actions.reloadProductList();
         store.dispatch(reloadProductList);
-    }    
+    }
+
+    [ProductDetailsActions.PRODUCT_DELETED](state, action, dispatch, store: redux.IMiddlewareStore<AppState.App>) {
+        store.dispatch(Actions.reloadProductList());
+    }
 }

@@ -82,29 +82,31 @@
 	var redux_1 = __webpack_require__(52);
 	var react_redux_1 = __webpack_require__(53);
 	var event_bus_1 = __webpack_require__(54);
-	var ProductListActions = __webpack_require__(63);
-	var index_1 = __webpack_require__(64);
-	var product_list_middleware_1 = __webpack_require__(69);
-	var LoginActions = __webpack_require__(74);
-	var reducers_1 = __webpack_require__(75);
-	var login_middleware_1 = __webpack_require__(80);
-	var ProductDetailsActions = __webpack_require__(82);
-	var reducers_2 = __webpack_require__(83);
-	var product_details_middleware_1 = __webpack_require__(89);
-	var reducers_3 = __webpack_require__(90);
-	var middlewares_1 = __webpack_require__(96);
-	var router_1 = __webpack_require__(98);
+	var routing_middleware_1 = __webpack_require__(63);
+	var ProductListActions = __webpack_require__(67);
+	var index_1 = __webpack_require__(68);
+	var product_list_middleware_1 = __webpack_require__(73);
+	var LoginActions = __webpack_require__(77);
+	var reducers_1 = __webpack_require__(79);
+	var login_middleware_1 = __webpack_require__(84);
+	var ProductDetailsActions = __webpack_require__(78);
+	var reducers_2 = __webpack_require__(86);
+	var product_details_middleware_1 = __webpack_require__(92);
+	var reducers_3 = __webpack_require__(93);
+	var middlewares_1 = __webpack_require__(99);
+	var router_1 = __webpack_require__(101);
 	var loginMiddleware = new login_middleware_1.default();
 	var productListMiddleware = new product_list_middleware_1.default();
 	var productDetailsMiddleware = new product_details_middleware_1.default();
 	var shopMiddleware = new middlewares_1.default();
+	var routingMiddleware = new routing_middleware_1.default();
 	var reducers = redux_1.combineReducers({
 	    products: index_1.default,
 	    login: reducers_1.default,
 	    currentProduct: reducers_2.default,
 	    shopEditing: reducers_3.default
 	});
-	var enhancer = redux_1.applyMiddleware(function (s) { return loginMiddleware.run(s); }, function (s) { return productListMiddleware.run(s); }, function (s) { return productDetailsMiddleware.run(s); }, function (s) { return shopMiddleware.run(s); });
+	var enhancer = redux_1.applyMiddleware(function (s) { return routingMiddleware.run(s); }, function (s) { return loginMiddleware.run(s); }, function (s) { return productListMiddleware.run(s); }, function (s) { return productDetailsMiddleware.run(s); }, function (s) { return shopMiddleware.run(s); });
 	var store = redux_1.createStore(reducers, undefined, enhancer);
 	event_bus_1.eventBus.addListener(event_bus_1.Events.AuthorizationError, function () {
 	    var action = {
@@ -8221,11 +8223,97 @@
 
 /***/ },
 /* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var react_router_1 = __webpack_require__(64);
+	var middleware_base_1 = __webpack_require__(65);
+	var Actions = __webpack_require__(66);
+	var RoutingMiddleware = (function (_super) {
+	    __extends(RoutingMiddleware, _super);
+	    function RoutingMiddleware() {
+	        _super.apply(this, arguments);
+	    }
+	    RoutingMiddleware.prototype[Actions.GO_TO_PRODUCT_LIST] = function () {
+	        this.navigate("/");
+	    };
+	    RoutingMiddleware.prototype.navigate = function (url) {
+	        react_router_1.browserHistory.push(url);
+	    };
+	    return RoutingMiddleware;
+	}(middleware_base_1.default));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = RoutingMiddleware;
+
+
+/***/ },
+/* 64 */
+/***/ function(module, exports) {
+
+	module.exports = ReactRouter;
+
+/***/ },
+/* 65 */
+/***/ function(module, exports) {
+
+	/// <reference path="./typings/index.d.ts" />
+	"use strict";
+	var MiddlewareBase = (function () {
+	    function MiddlewareBase() {
+	    }
+	    MiddlewareBase.prototype.run = function (store) {
+	        var _this = this;
+	        return function (dispatch) { return function (action) {
+	            var handler = _this[action.type];
+	            if (handler) {
+	                var state = store.getState();
+	                handler.call(_this, state, action, dispatch, store);
+	            }
+	            return dispatch(action);
+	        }; };
+	    };
+	    return MiddlewareBase;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = MiddlewareBase;
+
+
+/***/ },
+/* 66 */
+/***/ function(module, exports) {
+
+	/// <reference path="../typings/index.d.ts" />
+	"use strict";
+	exports.GO_TO_PRODUCT_LIST = "go-to-product-list";
+	function goToProductList() {
+	    var result = {
+	        type: exports.GO_TO_PRODUCT_LIST
+	    };
+	    return result;
+	}
+	exports.goToProductList = goToProductList;
+
+
+/***/ },
+/* 67 */
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/index.d.ts" />
 	"use strict";
 	exports.PRODUCT_SEARCH = "product-list-search";
+	function searchProducts(filter) {
+	    return {
+	        type: exports.PRODUCT_SEARCH,
+	        filter: filter
+	    };
+	}
+	exports.searchProducts = searchProducts;
 	exports.PRODUCTS_LOADED = "product-list-loaded";
 	exports.PRODUCT_LOAD_REQUEST = "load-product-list-request";
 	function reloadProductList() {
@@ -8248,16 +8336,16 @@
 
 
 /***/ },
-/* 64 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var product_list_loaded_1 = __webpack_require__(65);
-	var search_product_list_1 = __webpack_require__(66);
-	var load_product_list_request_1 = __webpack_require__(67);
-	var product_refreshed_from_server_1 = __webpack_require__(68);
-	var Actions = __webpack_require__(63);
+	var product_list_loaded_1 = __webpack_require__(69);
+	var search_product_list_1 = __webpack_require__(70);
+	var load_product_list_request_1 = __webpack_require__(71);
+	var product_refreshed_from_server_1 = __webpack_require__(72);
+	var Actions = __webpack_require__(67);
 	var productInitialState = {
 	    isLoading: false,
 	    products: [],
@@ -8286,32 +8374,34 @@
 
 
 /***/ },
-/* 65 */
-/***/ function(module, exports) {
+/* 69 */
+/***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
+	var Actions = __webpack_require__(67);
+	var search_product_list_1 = __webpack_require__(70);
 	function productListLoaded(state, action) {
-	    return Object.assign({}, state, {
+	    var newState = Object.assign({}, state, {
 	        isLoading: false,
 	        products: action.products,
-	        search: "",
-	        filteredProducts: action.products,
 	        shops: action.shops
 	    });
+	    return search_product_list_1.default(newState, Actions.searchProducts(state.search));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = productListLoaded;
 
 
 /***/ },
-/* 66 */
+/* 70 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	function searchProductList(state, action) {
 	    return Object.assign({}, state, {
+	        search: action.filter,
 	        filteredProducts: state.products
 	            .filter(function (p) { return !action.filter || p.title.toLowerCase().indexOf(action.filter.toLowerCase()) !== -1; })
 	    });
@@ -8321,7 +8411,7 @@
 
 
 /***/ },
-/* 67 */
+/* 71 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -8336,7 +8426,7 @@
 
 
 /***/ },
-/* 68 */
+/* 72 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -8362,7 +8452,7 @@
 
 
 /***/ },
-/* 69 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -8372,11 +8462,13 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var middleware_base_1 = __webpack_require__(70);
-	var product_repo_1 = __webpack_require__(71);
-	var shop_repo_1 = __webpack_require__(73);
-	var Actions = __webpack_require__(63);
-	var LoginActions = __webpack_require__(74);
+	var middleware_base_1 = __webpack_require__(65);
+	var product_repo_1 = __webpack_require__(74);
+	var shop_repo_1 = __webpack_require__(76);
+	var Actions = __webpack_require__(67);
+	var LoginActions = __webpack_require__(77);
+	var ProductDetailsActions = __webpack_require__(78);
+	var RoutingActions = __webpack_require__(66);
 	var ProductListMiddleware = (function (_super) {
 	    __extends(ProductListMiddleware, _super);
 	    function ProductListMiddleware() {
@@ -8405,11 +8497,15 @@
 	            dispatch(action);
 	        });
 	    };
+	    ProductListMiddleware.prototype[Actions.PRODUCT_SEARCH] = function (state, action, dispatch, store) {
+	        store.dispatch(RoutingActions.goToProductList());
+	    };
 	    ProductListMiddleware.prototype[LoginActions.LOGIN_SUCCESS] = function (state, action, dispatch, store) {
-	        var reloadProductList = {
-	            type: Actions.PRODUCT_LOAD_REQUEST
-	        };
+	        var reloadProductList = Actions.reloadProductList();
 	        store.dispatch(reloadProductList);
+	    };
+	    ProductListMiddleware.prototype[ProductDetailsActions.PRODUCT_DELETED] = function (state, action, dispatch, store) {
+	        store.dispatch(Actions.reloadProductList());
 	    };
 	    return ProductListMiddleware;
 	}(middleware_base_1.default));
@@ -8418,38 +8514,12 @@
 
 
 /***/ },
-/* 70 */
-/***/ function(module, exports) {
-
-	/// <reference path="./typings/index.d.ts" />
-	"use strict";
-	var MiddlewareBase = (function () {
-	    function MiddlewareBase() {
-	    }
-	    MiddlewareBase.prototype.run = function (store) {
-	        var _this = this;
-	        return function (dispatch) { return function (action) {
-	            var handler = _this[action.type];
-	            if (handler) {
-	                var state = store.getState();
-	                handler.call(_this, state, action, dispatch, store);
-	            }
-	            return dispatch(action);
-	        }; };
-	    };
-	    return MiddlewareBase;
-	}());
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = MiddlewareBase;
-
-
-/***/ },
-/* 71 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../typings/index.d.ts"/>
 	"use strict";
-	var http_client_1 = __webpack_require__(72);
+	var http_client_1 = __webpack_require__(75);
 	var ProductRepository = (function () {
 	    function ProductRepository() {
 	        this.httpClient = new http_client_1.default();
@@ -8466,6 +8536,9 @@
 	        return this.httpClient.post("/api/products", product);
 	    };
 	    ;
+	    ProductRepository.prototype.deleteProduct = function (id) {
+	        return this.httpClient.delete("/api/products/" + id);
+	    };
 	    return ProductRepository;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -8473,7 +8546,7 @@
 
 
 /***/ },
-/* 72 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -8487,16 +8560,19 @@
 	    };
 	    ;
 	    HttpClient.prototype.post = function (url, body) {
-	        return this.fetch(url, body);
+	        return this.fetch(url, "POST", body);
 	    };
 	    ;
-	    HttpClient.prototype.fetch = function (url, body) {
+	    HttpClient.prototype.delete = function (url, body) {
+	        return this.fetch(url, "DELETE", body);
+	    };
+	    HttpClient.prototype.fetch = function (url, method, body) {
 	        var options = {
-	            credentials: 'same-origin'
+	            credentials: 'same-origin',
+	            method: method || "GET"
 	        };
 	        if (body) {
 	            options.body = JSON.stringify(body);
-	            options.method = 'POST';
 	            options.headers = { "Content-Type": "application/json" };
 	        }
 	        return new Promise(function (resolve, reject) {
@@ -8525,12 +8601,12 @@
 
 
 /***/ },
-/* 73 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts"/>
-	var http_client_1 = __webpack_require__(72);
+	var http_client_1 = __webpack_require__(75);
 	var ShopRepository = (function () {
 	    function ShopRepository() {
 	        this.httpClient = new http_client_1.default();
@@ -8550,7 +8626,7 @@
 
 
 /***/ },
-/* 74 */
+/* 77 */
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/index.d.ts" />
@@ -8562,15 +8638,60 @@
 
 
 /***/ },
-/* 75 */
+/* 78 */
+/***/ function(module, exports) {
+
+	/// <reference path="../typings/index.d.ts" />
+	"use strict";
+	exports.SAVE_PRODUCT = "save-product";
+	function saveProduct(product) {
+	    if (!product)
+	        throw new Error("Product is required.");
+	    var result = {
+	        type: exports.SAVE_PRODUCT,
+	        product: product
+	    };
+	    return result;
+	}
+	exports.saveProduct = saveProduct;
+	exports.PRODUCT_LOAD_REQUEST = "load-product";
+	exports.SAVE_ERROR = "save-error";
+	exports.SAVE_SUCCESS = "save-success";
+	exports.PRODUCT_LOADED = "product-details-loaded";
+	exports.PRODUCT_DELETE_REQUEST = "delete-product";
+	function productDeleteRequest(productId) {
+	    if (!productId)
+	        throw new Error("Product ID is not defined.");
+	    var action = {
+	        type: exports.PRODUCT_DELETE_REQUEST,
+	        productId: productId
+	    };
+	    return action;
+	}
+	exports.productDeleteRequest = productDeleteRequest;
+	exports.PRODUCT_DELETED = "product-deleted";
+	function productDeleted(productId) {
+	    if (!productId)
+	        throw new Error("Product ID is not defined.");
+	    var action = {
+	        type: exports.PRODUCT_DELETED,
+	        productId: productId
+	    };
+	    return action;
+	}
+	exports.productDeleted = productDeleted;
+
+
+/***/ },
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Actions = __webpack_require__(74);
-	var login_required_1 = __webpack_require__(76);
-	var login_on_server_1 = __webpack_require__(77);
-	var login_error_1 = __webpack_require__(78);
-	var login_success_1 = __webpack_require__(79);
+	var Actions = __webpack_require__(77);
+	var login_required_1 = __webpack_require__(80);
+	var login_on_server_1 = __webpack_require__(81);
+	var login_error_1 = __webpack_require__(82);
+	var login_success_1 = __webpack_require__(83);
 	var loginInitialState = {
 	    isLoginRequired: false,
 	    isLogging: false,
@@ -8596,7 +8717,7 @@
 
 
 /***/ },
-/* 76 */
+/* 80 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -8613,7 +8734,7 @@
 
 
 /***/ },
-/* 77 */
+/* 81 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -8628,7 +8749,7 @@
 
 
 /***/ },
-/* 78 */
+/* 82 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -8644,7 +8765,7 @@
 
 
 /***/ },
-/* 79 */
+/* 83 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -8661,7 +8782,7 @@
 
 
 /***/ },
-/* 80 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -8670,9 +8791,9 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var login_repo_1 = __webpack_require__(81);
-	var middleware_base_1 = __webpack_require__(70);
-	var Actions = __webpack_require__(74);
+	var login_repo_1 = __webpack_require__(85);
+	var middleware_base_1 = __webpack_require__(65);
+	var Actions = __webpack_require__(77);
 	var LoginMiddleware = (function (_super) {
 	    __extends(LoginMiddleware, _super);
 	    function LoginMiddleware() {
@@ -8705,11 +8826,11 @@
 
 
 /***/ },
-/* 81 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http_client_1 = __webpack_require__(72);
+	var http_client_1 = __webpack_require__(75);
 	var LoginRepository = (function () {
 	    function LoginRepository() {
 	        this.httpClient = new http_client_1.default();
@@ -8725,30 +8846,17 @@
 
 
 /***/ },
-/* 82 */
-/***/ function(module, exports) {
-
-	/// <reference path="../typings/index.d.ts" />
-	"use strict";
-	exports.SAVE_PRODUCT = "save-product";
-	exports.PRODUCT_LOAD_REQUEST = "load-product";
-	exports.SAVE_ERROR = "save-error";
-	exports.SAVE_SUCCESS = "save-success";
-	exports.PRODUCT_LOADED = "product-details-loaded";
-
-
-/***/ },
-/* 83 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	///<reference path="../../typings/index.d.ts" />
 	"use strict";
-	var Actions = __webpack_require__(82);
-	var save_product_1 = __webpack_require__(84);
-	var product_details_loaded_1 = __webpack_require__(85);
-	var load_product_details_request_1 = __webpack_require__(86);
-	var save_product_error_1 = __webpack_require__(87);
-	var save_product_success_1 = __webpack_require__(88);
+	var Actions = __webpack_require__(78);
+	var save_product_1 = __webpack_require__(87);
+	var product_details_loaded_1 = __webpack_require__(88);
+	var load_product_details_request_1 = __webpack_require__(89);
+	var save_product_error_1 = __webpack_require__(90);
+	var save_product_success_1 = __webpack_require__(91);
 	var productInitialState = {
 	    product: {
 	        id: '',
@@ -8783,7 +8891,7 @@
 
 
 /***/ },
-/* 84 */
+/* 87 */
 /***/ function(module, exports) {
 
 	///<reference path="../../typings/index.d.ts" />
@@ -8798,7 +8906,7 @@
 
 
 /***/ },
-/* 85 */
+/* 88 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -8814,7 +8922,7 @@
 
 
 /***/ },
-/* 86 */
+/* 89 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -8830,7 +8938,7 @@
 
 
 /***/ },
-/* 87 */
+/* 90 */
 /***/ function(module, exports) {
 
 	///<reference path="../../typings/index.d.ts" />
@@ -8847,7 +8955,7 @@
 
 
 /***/ },
-/* 88 */
+/* 91 */
 /***/ function(module, exports) {
 
 	///<reference path="../../typings/index.d.ts" />
@@ -8863,7 +8971,7 @@
 
 
 /***/ },
-/* 89 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	///<reference path="../../typings/index.d.ts"/>
@@ -8873,10 +8981,11 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var product_repo_1 = __webpack_require__(71);
-	var shop_repo_1 = __webpack_require__(73);
-	var middleware_base_1 = __webpack_require__(70);
-	var Actions = __webpack_require__(82);
+	var RoutingActions = __webpack_require__(66);
+	var product_repo_1 = __webpack_require__(74);
+	var shop_repo_1 = __webpack_require__(76);
+	var middleware_base_1 = __webpack_require__(65);
+	var Actions = __webpack_require__(78);
 	var ProductDetailsMiddleware = (function (_super) {
 	    __extends(ProductDetailsMiddleware, _super);
 	    function ProductDetailsMiddleware() {
@@ -8920,6 +9029,15 @@
 	            });
 	        });
 	    };
+	    ProductDetailsMiddleware.prototype[Actions.PRODUCT_DELETE_REQUEST] = function (state, action, dispatch, store) {
+	        this.productRepository
+	            .deleteProduct(action.productId)
+	            .then(function () {
+	            var a = Actions.productDeleted(action.productId);
+	            store.dispatch(a);
+	            store.dispatch(RoutingActions.goToProductList());
+	        });
+	    };
 	    return ProductDetailsMiddleware;
 	}(middleware_base_1.default));
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -8927,16 +9045,16 @@
 
 
 /***/ },
-/* 90 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var shop_save_1 = __webpack_require__(91);
-	var shop_save_error_1 = __webpack_require__(92);
-	var shop_save_success_1 = __webpack_require__(93);
-	var shops_loaded_1 = __webpack_require__(94);
-	var Actions = __webpack_require__(95);
+	var shop_save_1 = __webpack_require__(94);
+	var shop_save_error_1 = __webpack_require__(95);
+	var shop_save_success_1 = __webpack_require__(96);
+	var shops_loaded_1 = __webpack_require__(97);
+	var Actions = __webpack_require__(98);
 	var shopEditingInitialState = {};
 	var actionMap = (_a = {},
 	    _a[Actions.SHOP_SAVE] = shop_save_1.default,
@@ -8958,7 +9076,7 @@
 
 
 /***/ },
-/* 91 */
+/* 94 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -8976,7 +9094,7 @@
 
 
 /***/ },
-/* 92 */
+/* 95 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -8994,7 +9112,7 @@
 
 
 /***/ },
-/* 93 */
+/* 96 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9013,7 +9131,7 @@
 
 
 /***/ },
-/* 94 */
+/* 97 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9029,7 +9147,7 @@
 
 
 /***/ },
-/* 95 */
+/* 98 */
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/index.d.ts" />
@@ -9046,16 +9164,22 @@
 	}
 	exports.shopsLoaded = shopsLoaded;
 	exports.SHOP_SAVE = "shop-save";
-	function shopSave(shop) {
-	    if (!shop) {
-	        throw new Error("shop is required");
+	function updateShopDeliveryPrice(shopId, deliveryPrice) {
+	    if (!shopId) {
+	        throw new Error("Shop ID is required");
 	    }
 	    return {
 	        type: exports.SHOP_SAVE,
-	        shop: shop
+	        shop: {
+	            id: shopId,
+	            deliveryPrice: deliveryPrice,
+	            isBase: null,
+	            scrapingSettings: null,
+	            title: null
+	        }
 	    };
 	}
-	exports.shopSave = shopSave;
+	exports.updateShopDeliveryPrice = updateShopDeliveryPrice;
 	exports.SHOP_SAVE_SUCCESS = "shop-save-success";
 	function shopSaveSuccess(shopId) {
 	    if (!shopId) {
@@ -9082,7 +9206,7 @@
 
 
 /***/ },
-/* 96 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9092,11 +9216,11 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var utils_1 = __webpack_require__(97);
-	var middleware_base_1 = __webpack_require__(70);
-	var shop_repo_1 = __webpack_require__(73);
-	var Actions = __webpack_require__(95);
-	var ProductActions = __webpack_require__(63);
+	var utils_1 = __webpack_require__(100);
+	var middleware_base_1 = __webpack_require__(65);
+	var shop_repo_1 = __webpack_require__(76);
+	var Actions = __webpack_require__(98);
+	var ProductActions = __webpack_require__(67);
 	var ShopEditingMiddleware = (function (_super) {
 	    __extends(ShopEditingMiddleware, _super);
 	    function ShopEditingMiddleware() {
@@ -9133,7 +9257,7 @@
 
 
 /***/ },
-/* 97 */
+/* 100 */
 /***/ function(module, exports) {
 
 	/// <reference path="./typings/index.d.ts" />
@@ -9197,16 +9321,16 @@
 
 
 /***/ },
-/* 98 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	///<reference path="./typings/index.d.ts"/>
 	"use strict";
 	var React = __webpack_require__(50);
-	var react_router_1 = __webpack_require__(99);
-	var login_part_1 = __webpack_require__(100);
-	var product_list_part_1 = __webpack_require__(103);
-	var product_details_part_1 = __webpack_require__(107);
+	var react_router_1 = __webpack_require__(64);
+	var login_part_1 = __webpack_require__(102);
+	var product_list_part_1 = __webpack_require__(105);
+	var product_details_part_1 = __webpack_require__(109);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = function (loadProducts, loadProduct) { return (React.createElement(react_router_1.Router, {history: react_router_1.browserHistory}, React.createElement(react_router_1.Route, {component: login_part_1.default}, React.createElement(react_router_1.Route, {path: "/", component: product_list_part_1.default, onEnter: function () { return loadProducts(); }}), React.createElement(react_router_1.Route, {path: "/product/:productId", component: product_details_part_1.default, onEnter: function (_a) {
 	    var params = _a.params;
@@ -9215,13 +9339,7 @@
 
 
 /***/ },
-/* 99 */
-/***/ function(module, exports) {
-
-	module.exports = ReactRouter;
-
-/***/ },
-/* 100 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9236,10 +9354,12 @@
 	};
 	var React = __webpack_require__(50);
 	var react_redux_1 = __webpack_require__(53);
-	var Actions = __webpack_require__(74);
-	var header_1 = __webpack_require__(101);
+	var Actions = __webpack_require__(77);
+	var header_1 = __webpack_require__(103);
+	var search_product_part_1 = __webpack_require__(113);
+	var new_product_1 = __webpack_require__(108);
 	function loginPart(props) {
-	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props)), props.children));
+	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props), React.createElement(search_product_part_1.default, {className: "navbar-form navbar-left"}), React.createElement(new_product_1.default, {className: "navbar-btn"})), React.createElement("div", {className: "container"}, props.children)));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(function (state) { return ({
@@ -9257,15 +9377,16 @@
 
 
 /***/ },
-/* 101 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	///<reference path="../../typings/index.d.ts" />
 	"use strict";
 	var React = __webpack_require__(50);
-	var login_form_1 = __webpack_require__(102);
+	var react_router_1 = __webpack_require__(64);
+	var login_form_1 = __webpack_require__(104);
 	function Header(props) {
-	    return (React.createElement("nav", {className: "navbar navbar-default navbar-fixed-top"}, React.createElement("div", {className: "container"}, React.createElement("div", {className: "navbar-left"}, React.createElement("h3", null, "Gameology")), React.createElement("div", {className: "navbar-right"}, props.isLoggedIn
+	    return (React.createElement("nav", {className: "navbar navbar-default navbar-fixed-top"}, React.createElement("div", {className: "container"}, React.createElement("div", {className: "navbar-header"}, React.createElement(react_router_1.Link, {to: "/", className: "navbar-brand"}, "Gameology")), props.children, React.createElement("div", {className: "navbar-right"}, props.isLoggedIn
 	        ? (React.createElement("div", {className: "navbar-text"}, "You are logged in"))
 	        : (React.createElement(login_form_1.LoginForm, {errorMessage: props.errorMessage, onLogin: function (c) { return props.onLogin(c); }}))))));
 	}
@@ -9273,7 +9394,7 @@
 
 
 /***/ },
-/* 102 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	///<reference path="../../typings/index.d.ts" />
@@ -9313,46 +9434,30 @@
 
 
 /***/ },
-/* 103 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var React = __webpack_require__(50);
-	var react_redux_1 = __webpack_require__(53);
-	var search_box_1 = __webpack_require__(104);
-	var product_grid_1 = __webpack_require__(105);
-	var new_product_1 = __webpack_require__(106);
-	var Actions = __webpack_require__(63);
-	var ShopActions = __webpack_require__(95);
-	function ProductListPageComponent(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, shopEditing: props.shopEditing, updatedProductId: props.updatedProductId, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave({
-	        id: shopId,
-	        deliveryPrice: deliveryPrice,
-	        isBase: null,
-	        scrapingSettings: null,
-	        title: null
-	    }); }})));
-	}
-	var ProductListPart = react_redux_1.connect(function (state) { return ({
+	var redux_utils_1 = __webpack_require__(112);
+	var product_grid_1 = __webpack_require__(107);
+	var Actions = __webpack_require__(67);
+	var ShopActions = __webpack_require__(98);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = redux_utils_1.connect(function (state) { return ({
 	    products: state.products.filteredProducts,
 	    shops: state.products.shops,
 	    isLoading: state.products.isLoading,
 	    shopEditing: state.shopEditing,
 	    updatedProductId: state.products.updatedProductId
 	}); }, function (dispatch) { return ({
-	    onFilter: function (filter) { return dispatch({
-	        type: Actions.PRODUCT_SEARCH,
-	        filter: filter
-	    }); },
-	    onShopSave: function (shop) { return dispatch(ShopActions.shopSave(shop)); }
-	}); })(ProductListPageComponent);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProductListPart;
+	    onFilter: function (filter) { return dispatch(Actions.searchProducts(filter)); },
+	    onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice)); }
+	}); })(product_grid_1.ProductGrid);
 
 
 /***/ },
-/* 104 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9377,16 +9482,15 @@
 	    };
 	    SearchBox.prototype.render = function () {
 	        var _this = this;
-	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }}, React.createElement("div", {className: "search-box input-group"}, React.createElement("input", {name: "filter", type: "text", className: "form-control", placeholder: this.props.placeholder}), React.createElement("span", {className: "input-group-btn"}, React.createElement("button", {className: "btn btn-default", type: "submit"}, "Search")))));
+	        return (React.createElement("form", {className: this.props.className, onSubmit: function (e) { return _this.onFormSubmit(e); }}, React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "search-box input-group"}, React.createElement("input", {name: "filter", type: "text", className: "form-control", placeholder: this.props.placeholder}), React.createElement("span", {className: "input-group-btn"}, React.createElement("button", {className: "btn btn-default", type: "submit"}, "Search"))))));
 	    };
 	    return SearchBox;
 	}(React.Component));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = SearchBox;
+	exports.SearchBox = SearchBox;
 
 
 /***/ },
-/* 105 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9398,37 +9502,37 @@
 	};
 	var React = __webpack_require__(50);
 	var ReactDOM = __webpack_require__(51);
-	var react_router_1 = __webpack_require__(99);
-	var utils_1 = __webpack_require__(97);
+	var react_router_1 = __webpack_require__(64);
+	var utils_1 = __webpack_require__(100);
 	function Row(props) {
 	    return (React.createElement("div", {className: utils_1.classNames("grid-row", props.className)}, props.children));
 	}
 	function Cell(props) {
 	    return (React.createElement("div", {className: utils_1.classNames("col-xs-2 grid-cell", props.className)}, props.children));
 	}
-	var ProductsGrid = (function (_super) {
-	    __extends(ProductsGrid, _super);
-	    function ProductsGrid() {
+	var ProductGrid = (function (_super) {
+	    __extends(ProductGrid, _super);
+	    function ProductGrid() {
 	        var _this = this;
 	        _super.call(this);
 	        this.windowResizeHandler = function () { return _this.onWindowResize(); };
 	    }
-	    ProductsGrid.prototype.onDeliveryPriceChanged = function (shopId, deliveryPrice) {
+	    ProductGrid.prototype.onDeliveryPriceChanged = function (shopId, deliveryPrice) {
 	        if (this.props.onShopDeliveryPriceUpdated) {
 	            this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice);
 	        }
 	    };
-	    ProductsGrid.prototype.renderHeader = function (className) {
+	    ProductGrid.prototype.renderHeader = function (className) {
 	        return (React.createElement(Row, {className: utils_1.classNames("header-row", className)}, React.createElement(Cell, {className: "header-cell"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: shop.id, className: "header"}, shop.title)); })));
 	    };
-	    ProductsGrid.prototype.renderDeliveryPrice = function () {
+	    ProductGrid.prototype.renderDeliveryPrice = function () {
 	        var _this = this;
 	        return (React.createElement(Row, {className: "delivery-price-row"}, React.createElement(Cell, {className: "delivery-price-cell"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: "$dp::" + shop.id, className: utils_1.classNames("delivery-price-cell", { "has-error": _this.props.shopEditing[shop.id].errorMessage })}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.props.shopEditing[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: utils_1.classNames("help-block", { "hidden": !_this.props.shopEditing[shop.id].errorMessage })}, _this.props.shopEditing[shop.id].errorMessage))); })));
 	    };
-	    ProductsGrid.prototype.renderEmptyRow = function () {
+	    ProductGrid.prototype.renderEmptyRow = function () {
 	        return React.createElement("div", {className: "col-md-12"}, "No products");
 	    };
-	    ProductsGrid.prototype.renderData = function () {
+	    ProductGrid.prototype.renderData = function () {
 	        var _this = this;
 	        return (this.props.products.map(function (product) {
 	            return (React.createElement(Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId }), key: product.id}, React.createElement(Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
@@ -9437,17 +9541,17 @@
 	            })));
 	        }));
 	    };
-	    ProductsGrid.prototype.renderLoadingIndicator = function () {
+	    ProductGrid.prototype.renderLoadingIndicator = function () {
 	        return (React.createElement("div", {className: "row"}, "Loading..."));
 	    };
-	    ProductsGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
+	    ProductGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
 	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement("div", {className: "product-price"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price + shop.deliveryPrice)
 	            : this.formatPrice(values.price)), React.createElement("div", {className: "product-price delivery"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price) + " + " + this.formatPrice(shop.deliveryPrice)
 	            : '')));
 	    };
-	    ProductsGrid.prototype.render = function () {
+	    ProductGrid.prototype.render = function () {
 	        if (this.props.isLoading) {
 	            return (React.createElement("div", {className: "product-grid"}, this.renderLoadingIndicator()));
 	        }
@@ -9456,24 +9560,24 @@
 	        }
 	        return (React.createElement("div", {className: "product-grid row"}, React.createElement("div", {ref: "header", className: "product-grid-header"}, this.renderHeader(), this.renderDeliveryPrice()), React.createElement("div", {ref: "rows", className: "product-grid-rows"}, this.renderData())));
 	    };
-	    ProductsGrid.prototype.componentDidMount = function () {
+	    ProductGrid.prototype.componentDidMount = function () {
 	        window.removeEventListener("resize", this.windowResizeHandler);
 	        window.addEventListener("resize", this.windowResizeHandler);
 	        this.onWindowResize();
 	        this.alignHeaderWithRows();
 	    };
-	    ProductsGrid.prototype.componentDidUpdate = function () {
+	    ProductGrid.prototype.componentDidUpdate = function () {
 	        this.alignHeaderWithRows();
 	    };
-	    ProductsGrid.prototype.componentWillUnmount = function () {
+	    ProductGrid.prototype.componentWillUnmount = function () {
 	        window.removeEventListener("resize", this.windowResizeHandler);
 	    };
-	    ProductsGrid.prototype.formatPrice = function (price) {
+	    ProductGrid.prototype.formatPrice = function (price) {
 	        if (price == null || price === undefined || isNaN(price))
 	            return "";
 	        return "$" + price.toFixed(2);
 	    };
-	    ProductsGrid.prototype.alignHeaderWithRows = function () {
+	    ProductGrid.prototype.alignHeaderWithRows = function () {
 	        if (this.refs["header"]) {
 	            var scrollbarWidth = utils_1.getScrollbarWidth();
 	            var headerElement = ReactDOM.findDOMNode(this.refs["header"]);
@@ -9482,7 +9586,7 @@
 	            }
 	        }
 	    };
-	    ProductsGrid.prototype.onWindowResize = function () {
+	    ProductGrid.prototype.onWindowResize = function () {
 	        var element = ReactDOM.findDOMNode(this);
 	        if (element) {
 	            var top_1 = element.offsetTop;
@@ -9490,51 +9594,47 @@
 	            element.style.maxHeight = maxHeight + "px";
 	        }
 	    };
-	    return ProductsGrid;
+	    return ProductGrid;
 	}(React.Component));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProductsGrid;
+	exports.ProductGrid = ProductGrid;
 
 
 /***/ },
-/* 106 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
 	/// <reference path="./../../typings/index.d.ts" />
 	var React = __webpack_require__(50);
-	var react_router_1 = __webpack_require__(99);
-	var NewProduct = (function (_super) {
-	    __extends(NewProduct, _super);
-	    function NewProduct() {
-	        _super.apply(this, arguments);
-	    }
-	    NewProduct.prototype.render = function () {
-	        return (React.createElement("div", {className: "row add-product"}, React.createElement(react_router_1.Link, {to: "/product/new", className: "btn btn-default"}, "New Product >")));
-	    };
-	    return NewProduct;
-	}(React.Component));
+	var react_router_1 = __webpack_require__(64);
+	var utils_1 = __webpack_require__(100);
+	function NewProduct(props) {
+	    return (React.createElement(react_router_1.Link, {to: "/product/new", className: utils_1.classNames("btn btn-default", props.className)}, "New Product > "));
+	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = NewProduct;
 
 
 /***/ },
-/* 107 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
+	var __assign = (this && this.__assign) || Object.assign || function(t) {
+	    for (var s, i = 1, n = arguments.length; i < n; i++) {
+	        s = arguments[i];
+	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+	            t[p] = s[p];
+	    }
+	    return t;
+	};
 	var React = __webpack_require__(50);
 	var react_redux_1 = __webpack_require__(53);
-	var Actions = __webpack_require__(82);
-	var product_form_1 = __webpack_require__(108);
+	var Actions = __webpack_require__(78);
+	var product_form_1 = __webpack_require__(110);
 	function ProductDetailsPageComponent(props) {
-	    return (React.createElement(product_form_1.ProductForm, {product: props.product, shops: props.shops, errors: props.errors, saved: props.saved, onSaveProduct: function (product) { return props.onSaveProduct(product); }}));
+	    return (React.createElement(product_form_1.ProductForm, __assign({}, props)));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(function (state) { return ({
@@ -9544,17 +9644,16 @@
 	    saved: state.currentProduct.saved
 	}); }, function (dispatch) { return ({
 	    onSaveProduct: function (product) {
-	        var action = {
-	            type: Actions.SAVE_PRODUCT,
-	            product: product
-	        };
-	        dispatch(action);
+	        dispatch(Actions.saveProduct(product));
+	    },
+	    onDeleteProduct: function (productId) {
+	        dispatch(Actions.productDeleteRequest(productId));
 	    }
 	}); })(ProductDetailsPageComponent);
 
 
 /***/ },
-/* 108 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9565,8 +9664,9 @@
 	};
 	/// <reference path="../../typings/index.d.ts" />
 	var React = __webpack_require__(50);
-	var react_router_1 = __webpack_require__(99);
-	var product_input_field_1 = __webpack_require__(109);
+	var react_router_1 = __webpack_require__(64);
+	var utils_1 = __webpack_require__(100);
+	var product_input_field_1 = __webpack_require__(111);
 	var ProductForm = (function (_super) {
 	    __extends(ProductForm, _super);
 	    function ProductForm(props) {
@@ -9601,6 +9701,14 @@
 	            this.props.onSaveProduct(this.state);
 	        }
 	    };
+	    ProductForm.prototype.onDeleteProduct = function () {
+	        if (!this.props.product || !this.props.product.id || !this.props.onDeleteProduct) {
+	            return;
+	        }
+	        if (confirm("Are you sure you want to delete product?")) {
+	            this.props.onDeleteProduct(this.props.product.id);
+	        }
+	    };
 	    ProductForm.prototype.render = function () {
 	        var _this = this;
 	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }, className: "form-horizontal product-form"}, (function () {
@@ -9614,7 +9722,7 @@
 	            if (errors.length > 0) {
 	                return (errors.map(function (error, index) { return (React.createElement("div", {key: "{index}", className: "alert alert-danger", role: "alert"}, error)); }));
 	            }
-	        })(), React.createElement(product_input_field_1.ProductInputField, {label: "Product", id: "title", errors: this.props.errors["title"]}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }})), this.props.shops.map(function (shop) { return (React.createElement(product_input_field_1.ProductInputField, {key: shop.id, label: "Url for " + shop.title, id: shop.id, errors: _this.props.errors[("scrapingUrls." + shop.id)]}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id] || '', id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }}))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement(react_router_1.Link, {to: "/", className: "btn btn-default"}, "< Back"), " ", React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save")))));
+	        })(), React.createElement(product_input_field_1.ProductInputField, {label: "Product", id: "title", errors: this.props.errors["title"]}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }})), this.props.shops.map(function (shop) { return (React.createElement(product_input_field_1.ProductInputField, {key: shop.id, label: "Url for " + shop.title, id: shop.id, errors: _this.props.errors[("scrapingUrls." + shop.id)]}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id] || '', id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }}))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement(react_router_1.Link, {to: "/", className: "btn btn-default"}, "< Back"), " ", React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save"), " ", React.createElement("button", {type: "button", className: utils_1.classNames("btn btn-danger", { "hidden": !this.props.product.id }), onClick: function () { return _this.onDeleteProduct(); }}, "Delete")))));
 	    };
 	    return ProductForm;
 	}(React.Component));
@@ -9622,7 +9730,7 @@
 
 
 /***/ },
-/* 109 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9644,6 +9752,38 @@
 	    return ProductInputField;
 	}(React.Component));
 	exports.ProductInputField = ProductInputField;
+
+
+/***/ },
+/* 112 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="./typings/index.d.ts" />
+	"use strict";
+	var react_redux_1 = __webpack_require__(53);
+	function connect(mapState, mapHandlers) {
+	    return react_redux_1.connect(mapState, mapHandlers);
+	}
+	exports.connect = connect;
+
+
+/***/ },
+/* 113 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var redux_utils_1 = __webpack_require__(112);
+	var search_box_1 = __webpack_require__(106);
+	var Actions = __webpack_require__(67);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = redux_utils_1.connect(function (state) { return ({
+	    placeholder: "Search products..."
+	}); }, function (dispatch) { return ({
+	    onFiltering: function (filter) {
+	        dispatch(Actions.searchProducts(filter));
+	    }
+	}); })(search_box_1.SearchBox);
 
 
 /***/ }

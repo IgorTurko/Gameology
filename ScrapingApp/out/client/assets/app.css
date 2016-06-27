@@ -109,9 +109,3 @@
 .product-grid-rows .grid-row:first-child .grid-cell {
     border-top: 0 none;
 }
-
-.search-box {
-    margin-top: 20px;
-    margin-left: -15px;
-    margin-right: -15px;
-}

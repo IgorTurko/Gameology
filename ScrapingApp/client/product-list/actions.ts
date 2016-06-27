@@ -7,6 +7,13 @@ export interface ProductListSearchAction extends redux.IAction {
     filter: string;
 }
 
+export function searchProducts(filter: string): ProductListSearchAction {
+    return {
+        type: PRODUCT_SEARCH,
+        filter: filter
+    };
+}
+
 export const PRODUCTS_LOADED = "product-list-loaded";
 export interface ProductListLoadedAction extends redux.IAction {
     products: Api.Product[];

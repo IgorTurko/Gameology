@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Link} from "react-router"
+import {Link} from "react-router";
 
 import { classNames, getScrollbarWidth } from "../../utils";
 
-interface GridProps extends React.Props<any> {
+export interface ProductGridProps extends React.Props<any> {
     isLoading: boolean;
     products: Api.Product[];
     shops: Api.WebShop[];
@@ -14,8 +14,8 @@ interface GridProps extends React.Props<any> {
     updatedProductId: string;
 }
 
-export interface GridHandlers {
-    onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: number) => void;
+export interface ProductGridHandlers {
+    onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: string) => void;
 }
 
 interface PropsWithClassName extends React.Props<any> {
@@ -39,7 +39,7 @@ function Cell(props: PropsWithClassName): JSX.Element {
     );
 }
 
-export default class ProductsGrid extends React.Component<GridProps & GridHandlers, {}> {
+export class ProductGrid extends React.Component<ProductGridProps & ProductGridHandlers, {}> {
     private windowResizeHandler: () => void;
 
     constructor() {
@@ -48,7 +48,7 @@ export default class ProductsGrid extends React.Component<GridProps & GridHandle
         this.windowResizeHandler = () => this.onWindowResize();
     }
 
-    onDeliveryPriceChanged(shopId: string, deliveryPrice: any) {
+    onDeliveryPriceChanged(shopId: string, deliveryPrice: string) {
         if (this.props.onShopDeliveryPriceUpdated) {
             this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice);
         }

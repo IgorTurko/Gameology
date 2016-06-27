@@ -10,12 +10,7 @@ import { ProductForm, ProductFormProps, ProductFormHandlers } from "../component
 
 function ProductDetailsPageComponent(props: ProductFormProps & ProductFormHandlers) {
     return (
-        <ProductForm
-            product={props.product}
-            shops={props.shops}
-            errors={props.errors}
-            saved={props.saved}
-            onSaveProduct={product => props.onSaveProduct(product) } />
+        <ProductForm {...props} />
     );
 }
 
@@ -29,12 +24,11 @@ export default connect(
 
     (dispatch: redux.IDispatch) => ({
         onSaveProduct(product: Api.Product) {
-            const action: Actions.SaveProductAction = {
-                type: Actions.SAVE_PRODUCT,
-                product: product
-            };
+            dispatch(Actions.saveProduct(product));
+        },
 
-            dispatch(action);
+        onDeleteProduct(productId: string) {
+            dispatch(Actions.productDeleteRequest(productId));
         }
     } as ProductFormHandlers)
 
