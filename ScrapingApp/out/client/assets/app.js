@@ -64,6 +64,19 @@
 	        }, {});
 	    };
 	}
+	if (!Array.prototype.flattern) {
+	    Array.prototype.flattern = function flattern(selector) {
+	        var result = [];
+	        for (var _i = 0, _a = this; _i < _a.length; _i++) {
+	            var e = _a[_i];
+	            var subArray = selector(e);
+	            if (subArray) {
+	                result.push.apply(result, subArray);
+	            }
+	        }
+	        return result;
+	    };
+	}
 	if (!Object.entries) {
 	    Object.entries = function (obj) { return Object.keys(obj)
 	        .map(function (key) { return ([key, obj[key]]); }); };
@@ -9330,7 +9343,7 @@
 	var react_router_1 = __webpack_require__(64);
 	var login_part_1 = __webpack_require__(102);
 	var product_list_part_1 = __webpack_require__(109);
-	var product_details_part_1 = __webpack_require__(111);
+	var product_details_part_1 = __webpack_require__(110);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = function (loadProducts, loadProduct) { return (React.createElement(react_router_1.Router, {history: react_router_1.browserHistory}, React.createElement(react_router_1.Route, {component: login_part_1.default}, React.createElement(react_router_1.Route, {path: "/", component: product_list_part_1.default, onEnter: function () { return loadProducts(); }}), React.createElement(react_router_1.Route, {path: "/product/:productId", component: product_details_part_1.default, onEnter: function (_a) {
 	    var params = _a.params;
@@ -9521,7 +9534,7 @@
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var redux_utils_1 = __webpack_require__(106);
-	var product_grid_1 = __webpack_require__(110);
+	var product_grid_1 = __webpack_require__(113);
 	var Actions = __webpack_require__(67);
 	var ShopActions = __webpack_require__(98);
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -9543,121 +9556,6 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var React = __webpack_require__(50);
-	var ReactDOM = __webpack_require__(51);
-	var react_router_1 = __webpack_require__(64);
-	var utils_1 = __webpack_require__(100);
-	function Row(props) {
-	    return (React.createElement("div", {className: utils_1.classNames("grid-row", props.className)}, props.children));
-	}
-	function Cell(props) {
-	    return (React.createElement("div", {className: utils_1.classNames("col-xs-2 grid-cell", props.className), title: props.title}, props.children));
-	}
-	var ProductGrid = (function (_super) {
-	    __extends(ProductGrid, _super);
-	    function ProductGrid() {
-	        var _this = this;
-	        _super.call(this);
-	        this.windowResizeHandler = function () { return _this.onWindowResize(); };
-	    }
-	    ProductGrid.prototype.onDeliveryPriceChanged = function (shopId, deliveryPrice) {
-	        if (this.props.onShopDeliveryPriceUpdated) {
-	            this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice);
-	        }
-	    };
-	    ProductGrid.prototype.renderHeader = function (className) {
-	        return (React.createElement(Row, {className: utils_1.classNames("header-row", className)}, React.createElement(Cell, {className: "header-cell"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: shop.id, className: "header"}, shop.title)); })));
-	    };
-	    ProductGrid.prototype.renderDeliveryPrice = function () {
-	        var _this = this;
-	        return (React.createElement(Row, {className: "delivery-price-row"}, React.createElement(Cell, {className: "delivery-price-cell"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: "$dp::" + shop.id, className: utils_1.classNames("delivery-price-cell", { "has-error": _this.props.shopEditing[shop.id].errorMessage })}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.props.shopEditing[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: utils_1.classNames("help-block", { "hidden": !_this.props.shopEditing[shop.id].errorMessage })}, _this.props.shopEditing[shop.id].errorMessage))); })));
-	    };
-	    ProductGrid.prototype.renderEmptyRow = function () {
-	        return React.createElement("div", {className: "col-md-12"}, "No products");
-	    };
-	    ProductGrid.prototype.renderData = function () {
-	        var _this = this;
-	        return (this.props.products.map(function (product) {
-	            return (React.createElement(Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId }), key: product.id}, React.createElement(Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
-	                var values = (product.values || {})[shop.id];
-	                var log = product.log[shop.id];
-	                var hasError = log && (log.error || Object.entries(log.values).some(function (_a) {
-	                    var _ = _a[0], l = _a[1];
-	                    return l.error;
-	                }));
-	                return (React.createElement(Cell, {className: utils_1.classNames("product-cell", { "bg-danger": hasError }), key: product.id + "::" + index, title: hasError ? "Error scraping product data. Please check product settings or contact developer." : (values && values.title)}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null));
-	            })));
-	        }));
-	    };
-	    ProductGrid.prototype.renderLoadingIndicator = function () {
-	        return (React.createElement("div", {className: "row"}, "Loading..."));
-	    };
-	    ProductGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
-	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement("div", {className: "product-price"}, shop.deliveryPrice
-	            ? this.formatPrice(values.price + shop.deliveryPrice)
-	            : this.formatPrice(values.price)), React.createElement("div", {className: "product-price delivery"}, shop.deliveryPrice
-	            ? this.formatPrice(values.price) + " + " + this.formatPrice(shop.deliveryPrice)
-	            : '')));
-	    };
-	    ProductGrid.prototype.render = function () {
-	        if (this.props.isLoading) {
-	            return (React.createElement("div", {className: "product-grid"}, this.renderLoadingIndicator()));
-	        }
-	        if (this.props.products == null || this.props.products.length == 0) {
-	            return (React.createElement("div", {className: "product-grid"}, this.props.shops != null && this.props.shops.length ? this.renderHeader() : null, this.renderEmptyRow()));
-	        }
-	        return (React.createElement("div", {className: "product-grid row"}, React.createElement("div", {ref: "header", className: "product-grid-header"}, this.renderHeader(), this.renderDeliveryPrice()), React.createElement("div", {ref: "rows", className: "product-grid-rows"}, this.renderData())));
-	    };
-	    ProductGrid.prototype.componentDidMount = function () {
-	        window.removeEventListener("resize", this.windowResizeHandler);
-	        window.addEventListener("resize", this.windowResizeHandler);
-	        this.onWindowResize();
-	        this.alignHeaderWithRows();
-	    };
-	    ProductGrid.prototype.componentDidUpdate = function () {
-	        this.alignHeaderWithRows();
-	    };
-	    ProductGrid.prototype.componentWillUnmount = function () {
-	        window.removeEventListener("resize", this.windowResizeHandler);
-	    };
-	    ProductGrid.prototype.formatPrice = function (price) {
-	        if (price == null || price === undefined || isNaN(price))
-	            return "";
-	        return "$" + price.toFixed(2);
-	    };
-	    ProductGrid.prototype.alignHeaderWithRows = function () {
-	        if (this.refs["header"]) {
-	            var scrollbarWidth = utils_1.getScrollbarWidth();
-	            var headerElement = ReactDOM.findDOMNode(this.refs["header"]);
-	            if (headerElement) {
-	                headerElement.style.marginRight = scrollbarWidth + "px";
-	            }
-	        }
-	    };
-	    ProductGrid.prototype.onWindowResize = function () {
-	        var element = ReactDOM.findDOMNode(this);
-	        if (element) {
-	            var top_1 = element.offsetTop;
-	            var maxHeight = window.innerHeight - top_1 - 10;
-	            element.style.maxHeight = maxHeight + "px";
-	        }
-	    };
-	    return ProductGrid;
-	}(React.Component));
-	exports.ProductGrid = ProductGrid;
-
-
-/***/ },
-/* 111 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// <reference path="../../typings/index.d.ts" />
-	"use strict";
 	var __assign = (this && this.__assign) || Object.assign || function(t) {
 	    for (var s, i = 1, n = arguments.length; i < n; i++) {
 	        s = arguments[i];
@@ -9669,7 +9567,7 @@
 	var React = __webpack_require__(50);
 	var react_redux_1 = __webpack_require__(53);
 	var Actions = __webpack_require__(78);
-	var product_form_1 = __webpack_require__(112);
+	var product_form_1 = __webpack_require__(111);
 	function ProductDetailsPageComponent(props) {
 	    return (React.createElement(product_form_1.ProductForm, __assign({}, props)));
 	}
@@ -9690,7 +9588,7 @@
 
 
 /***/ },
-/* 112 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9703,7 +9601,7 @@
 	var React = __webpack_require__(50);
 	var react_router_1 = __webpack_require__(64);
 	var utils_1 = __webpack_require__(100);
-	var product_input_field_1 = __webpack_require__(113);
+	var product_input_field_1 = __webpack_require__(112);
 	var ProductForm = (function (_super) {
 	    __extends(ProductForm, _super);
 	    function ProductForm(props) {
@@ -9767,7 +9665,7 @@
 
 
 /***/ },
-/* 113 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9789,6 +9687,231 @@
 	    return ProductInputField;
 	}(React.Component));
 	exports.ProductInputField = ProductInputField;
+
+
+/***/ },
+/* 113 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	function __export(m) {
+	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+	}
+	__export(__webpack_require__(114));
+
+
+/***/ },
+/* 114 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../../typings/index.d.ts" />
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(50);
+	var react_router_1 = __webpack_require__(64);
+	var grid_1 = __webpack_require__(115);
+	var row_tsx_1 = __webpack_require__(119);
+	var cell_tsx_1 = __webpack_require__(120);
+	var utils_1 = __webpack_require__(100);
+	var ProductGrid = (function (_super) {
+	    __extends(ProductGrid, _super);
+	    function ProductGrid() {
+	        _super.apply(this, arguments);
+	    }
+	    ProductGrid.prototype.onDeliveryPriceChanged = function (shopId, deliveryPrice) {
+	        if (this.props.onShopDeliveryPriceUpdated) {
+	            this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice);
+	        }
+	    };
+	    ProductGrid.prototype.renderHeader = function (className) {
+	        return (React.createElement(row_tsx_1.Row, {className: utils_1.classNames("header-row", className)}, React.createElement(cell_tsx_1.Cell, {className: "header-cell"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement(cell_tsx_1.Cell, {key: shop.id, className: "header"}, shop.title)); })));
+	    };
+	    ProductGrid.prototype.renderDeliveryPrice = function () {
+	        var _this = this;
+	        return (React.createElement(row_tsx_1.Row, {className: "delivery-price-row"}, React.createElement(cell_tsx_1.Cell, {className: "delivery-price-cell"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement(cell_tsx_1.Cell, {key: "$dp::" + shop.id, className: utils_1.classNames("delivery-price-cell", { "has-error": _this.props.shopEditing[shop.id].errorMessage })}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.props.shopEditing[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: utils_1.classNames("help-block", { "hidden": !_this.props.shopEditing[shop.id].errorMessage })}, _this.props.shopEditing[shop.id].errorMessage))); })));
+	    };
+	    ProductGrid.prototype.renderEmptyRow = function () {
+	        return React.createElement("div", {className: "col-md-12"}, "No products");
+	    };
+	    ProductGrid.prototype.renderData = function () {
+	        var _this = this;
+	        return (this.props.products.map(function (product) {
+	            return (React.createElement(row_tsx_1.Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId }), key: product.id}, React.createElement(cell_tsx_1.Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
+	                var values = (product.values || {})[shop.id];
+	                var log = product.log[shop.id];
+	                var hasError = log && (log.error || Object.entries(log.values).some(function (_a) {
+	                    var _ = _a[0], l = _a[1];
+	                    return l.error;
+	                }));
+	                return (React.createElement(cell_tsx_1.Cell, {className: utils_1.classNames("product-cell", { "bg-danger": hasError }), key: product.id + "::" + index, title: hasError ? "Error scraping product data. Please check product settings or contact developer." : (values && values.title)}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null));
+	            })));
+	        }));
+	    };
+	    ProductGrid.prototype.renderLoadingIndicator = function () {
+	        return (React.createElement("div", {className: "row"}, "Loading..."));
+	    };
+	    ProductGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
+	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement("div", {className: "product-price"}, shop.deliveryPrice
+	            ? this.formatPrice(values.price + shop.deliveryPrice)
+	            : this.formatPrice(values.price)), React.createElement("div", {className: "product-price delivery"}, shop.deliveryPrice
+	            ? this.formatPrice(values.price) + " + " + this.formatPrice(shop.deliveryPrice)
+	            : '')));
+	    };
+	    ProductGrid.prototype.render = function () {
+	        if (this.props.isLoading) {
+	            return (React.createElement(grid_1.Grid, null, React.createElement(grid_1.Header, null), React.createElement(grid_1.Rows, null, this.renderLoadingIndicator())));
+	        }
+	        if (this.props.products == null || this.props.products.length == 0) {
+	            return (React.createElement(grid_1.Grid, null, React.createElement(grid_1.Header, null, this.props.shops != null && this.props.shops.length ? this.renderHeader() : null), React.createElement(grid_1.Rows, null, this.renderEmptyRow())));
+	        }
+	        return (React.createElement(grid_1.Grid, null, React.createElement(grid_1.Header, null, this.renderHeader(), this.renderDeliveryPrice()), React.createElement(grid_1.Rows, null, this.renderData())));
+	    };
+	    ProductGrid.prototype.formatPrice = function (price) {
+	        if (price == null || price === undefined || isNaN(price))
+	            return "";
+	        return "$" + price.toFixed(2);
+	    };
+	    return ProductGrid;
+	}(React.Component));
+	exports.ProductGrid = ProductGrid;
+
+
+/***/ },
+/* 115 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	function __export(m) {
+	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+	}
+	__export(__webpack_require__(116));
+	__export(__webpack_require__(117));
+	__export(__webpack_require__(118));
+
+
+/***/ },
+/* 116 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var React = __webpack_require__(50);
+	function Header(props) {
+	    return (React.createElement("div", null, props.children));
+	}
+	exports.Header = Header;
+
+
+/***/ },
+/* 117 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var React = __webpack_require__(50);
+	function Rows(props) {
+	    return (React.createElement("div", null, props.children));
+	}
+	exports.Rows = Rows;
+
+
+/***/ },
+/* 118 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(50);
+	var ReactDOM = __webpack_require__(51);
+	var utils_1 = __webpack_require__(100);
+	var header_1 = __webpack_require__(116);
+	var rows_1 = __webpack_require__(117);
+	var Grid = (function (_super) {
+	    __extends(Grid, _super);
+	    function Grid() {
+	        var _this = this;
+	        _super.call(this);
+	        this.windowResizeHandler = function () { return _this.onWindowResize(); };
+	    }
+	    Grid.prototype.render = function () {
+	        return (React.createElement("div", {className: "product-grid row"}, React.createElement("div", {ref: "header", className: "product-grid-header"}, this.contentOf(header_1.Header)), React.createElement("div", {ref: "rows", className: "product-grid-rows"}, this.contentOf(rows_1.Rows))));
+	    };
+	    Grid.prototype.componentDidMount = function () {
+	        window.removeEventListener("resize", this.windowResizeHandler);
+	        window.addEventListener("resize", this.windowResizeHandler);
+	        this.onWindowResize();
+	        this.alignHeaderWithRows();
+	    };
+	    Grid.prototype.componentDidUpdate = function () {
+	        this.alignHeaderWithRows();
+	    };
+	    Grid.prototype.componentWillUnmount = function () {
+	        window.removeEventListener("resize", this.windowResizeHandler);
+	    };
+	    Grid.prototype.contentOf = function (elementType) {
+	        var children = React.Children
+	            .toArray(this.props.children)
+	            .filter(function (e) { return e.type === elementType; })
+	            .flattern(function (e) { return React.Children.toArray(e.props.children); });
+	        return children;
+	    };
+	    Grid.prototype.alignHeaderWithRows = function () {
+	        if (this.refs["header"]) {
+	            var scrollbarWidth = utils_1.getScrollbarWidth();
+	            var headerElement = ReactDOM.findDOMNode(this.refs["header"]);
+	            if (headerElement) {
+	                headerElement.style.marginRight = scrollbarWidth + "px";
+	            }
+	        }
+	    };
+	    Grid.prototype.onWindowResize = function () {
+	        var element = ReactDOM.findDOMNode(this);
+	        if (element) {
+	            var top_1 = element.offsetTop;
+	            var maxHeight = window.innerHeight - top_1 - 10;
+	            element.style.maxHeight = maxHeight + "px";
+	        }
+	    };
+	    return Grid;
+	}(React.Component));
+	exports.Grid = Grid;
+
+
+/***/ },
+/* 119 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../../typings/index.d.ts" />
+	"use strict";
+	var React = __webpack_require__(50);
+	var utils_1 = __webpack_require__(100);
+	function Row(props) {
+	    return (React.createElement("div", {className: utils_1.classNames("grid-row", props.className)}, props.children));
+	}
+	exports.Row = Row;
+
+
+/***/ },
+/* 120 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../../typings/index.d.ts" />
+	"use strict";
+	var React = __webpack_require__(50);
+	var utils_1 = __webpack_require__(100);
+	function Cell(props) {
+	    return (React.createElement("div", {className: utils_1.classNames("col-xs-2 grid-cell", props.className), title: props.title}, props.children));
+	}
+	exports.Cell = Cell;
 
 
 /***/ }

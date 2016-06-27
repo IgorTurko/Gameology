@@ -1,10 +1,16 @@
-﻿/// <reference path="../../typings/index.d.ts" />
+﻿/// <reference path="../../../typings/index.d.ts" />
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Link} from "react-router";
 
-import { classNames, getScrollbarWidth } from "../../utils";
+import { Grid, Rows, Header } from "../../../components/grid";
+
+import { Row } from "./row.tsx";
+import { Cell } from "./cell.tsx";
+
+
+import { classNames, getScrollbarWidth } from "../../../utils";
 
 export interface ProductGridProps extends React.Props<any> {
     isLoading: boolean;
@@ -18,40 +24,7 @@ export interface ProductGridHandlers {
     onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: string) => void;
 }
 
-interface PropsWithClassName extends React.Props<any> {
-    className?: string;
-}
-
-interface CellProps extends PropsWithClassName {
-    title?: string;
-}
-
-function Row(props: PropsWithClassName): JSX.Element {
-    return (
-        <div className={ classNames("grid-row", props.className) }>
-            { props.children }
-        </div>
-    );
-}
-
-function Cell(props: CellProps): JSX.Element {
-    return (
-        <div className={ classNames("col-xs-2 grid-cell", props.className) }
-            title={ props.title } >
-            { props.children }
-        </div>
-
-    );
-}
-
 export class ProductGrid extends React.Component<ProductGridProps & ProductGridHandlers, {}> {
-    private windowResizeHandler: () => void;
-
-    constructor() {
-        super();
-
-        this.windowResizeHandler = () => this.onWindowResize();
-    }
 
     onDeliveryPriceChanged(shopId: string, deliveryPrice: string) {
         if (this.props.onShopDeliveryPriceUpdated) {
@@ -168,47 +141,40 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
     render() {
         if (this.props.isLoading) {
             return (
-                <div className="product-grid">
-                    { this.renderLoadingIndicator() }
-                </div>
+                <Grid>
+                    <Header>
+                    </Header>
+                    <Rows>
+                        { this.renderLoadingIndicator() }
+                    </Rows>
+                </Grid>
             );
         }
 
         if (this.props.products == null || this.props.products.length == 0) {
             return (
-                <div className="product-grid">
-                    { this.props.shops != null && this.props.shops.length ? this.renderHeader() : null }
-                    { this.renderEmptyRow() }
-                </div>);
+                <Grid>
+                    <Header>
+                        { this.props.shops != null && this.props.shops.length ? this.renderHeader() : null }
+                    </Header>
+                    <Rows>
+                        { this.renderEmptyRow() }
+                    </Rows>
+                </Grid>
+            );
         }
 
         return (
-            <div className="product-grid row">
-                <div ref="header" className="product-grid-header">
+            <Grid>
+                <Header>
                     { this.renderHeader() }
                     { this.renderDeliveryPrice() }
-                </div>
-                <div ref="rows" className="product-grid-rows">
+                </Header>
+                <Rows>
                     { this.renderData() }
-                </div>
-            </div>
+                </Rows>
+            </Grid>
         );
-    }
-
-    componentDidMount() {
-        window.removeEventListener("resize", this.windowResizeHandler);
-        window.addEventListener("resize", this.windowResizeHandler);
-        this.onWindowResize();
-
-        this.alignHeaderWithRows();
-    }
-
-    componentDidUpdate() {
-        this.alignHeaderWithRows();
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.windowResizeHandler);
     }
 
     private formatPrice(price: number): string {
@@ -217,25 +183,5 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
 
 
         return `$${price.toFixed(2)}`;
-    }
-
-    private alignHeaderWithRows() {
-        if (this.refs["header"]) {
-            const scrollbarWidth = getScrollbarWidth();
-            const headerElement = ReactDOM.findDOMNode(this.refs["header"]) as HTMLElement;
-            if (headerElement) {
-                headerElement.style.marginRight = `${scrollbarWidth}px`;
-            }
-        }
-    }
-
-    private onWindowResize() {
-        const element = ReactDOM.findDOMNode(this) as HTMLElement;
-        if (element) {
-            const top = element.offsetTop;
-            const maxHeight = window.innerHeight - top - 10;
-
-            element.style.maxHeight = `${maxHeight}px`;
-        }
     }
 } 

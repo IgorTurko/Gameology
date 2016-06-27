@@ -16,6 +16,21 @@ if (!Array.prototype.toHash) {
     };
 }
 
+if (!Array.prototype.flattern) {
+    Array.prototype.flattern = function flattern<T, K>(selector: (elem: T) => K[]): K[] {
+        const result: K[] = [];
+
+        for(let e of this) {
+            const subArray = selector(e);
+            if (subArray) {
+                result.push(...subArray);
+            }
+        }
+
+        return result;
+    }
+}
+
 if (!Object.entries) {
     Object.entries = (obj: any) => Object.keys(obj)
         .map(key => ([key, obj[key]]));
