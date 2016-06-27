@@ -61,7 +61,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                                 className="form-control"
                                 value={ this.props.shopEditing[shop.id].deliveryPrice || "" }
                                 onChange={ e => this.onDeliveryPriceChanged(shop.id, e.target["value"]) } />
-                            <p className={ classNames("help-block", { "hidden": !this.props.shopEditing[shop.id].errorMessage }) }>
+                            <p className={ classNames("help-block", { "hidden": !this.props.shopEditing[shop.id] || !this.props.shopEditing[shop.id].errorMessage }) }>
                                 { this.props.shopEditing[shop.id].errorMessage }
                             </p>
                         </Cell>

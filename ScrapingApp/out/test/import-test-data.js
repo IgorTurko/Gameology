@@ -459,6 +459,15 @@
 	        }); var _a; })
 	            .then(function (r) { return _this.one(productId); });
 	    };
+	    MongoProductStorage.prototype.discardScrapingLog = function (productId) {
+	        return this.db
+	            .collection(db_1.default.Collections.products)
+	            .then(function (c) { return c.updateOne({ id: productId }, {
+	            $unset: {
+	                log: ""
+	            }
+	        }); });
+	    };
 	    return MongoProductStorage;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -504,6 +513,7 @@
 	                }
 	            })
 	                .then(function () { return _this.storage.save(product); })
+	                .then(function () { return _this.storage.discardScrapingLog(product.id); })
 	                .then(function () { return _this.one(product.id); })
 	                .then(function (product) {
 	                event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, product.id);
@@ -637,6 +647,7 @@
 	                .notEmpty({ errorMessage: "Product title is required" })
 	                .must(function (t) { return t.length < 1024; }, { errorMessage: "Product title too long" }),
 	            scrapingUrls: pojo_fluent_validator_1.rules.hash(pojo_fluent_validator_1.rules.str().must(function (url) { return !url || (url.indexOf("http://") === 0 || url.indexOf("https://") === 0); }, { errorMessage: "URL must starts from http:// or https:// " }))
+	                .filter(function (k, v) { return v && v.trim().length > 0; })
 	                .before(function (urls) { return Object.keys(urls)
 	                .map(function (shopId) { return urls[shopId]; })
 	                .filter(function (url) { return url && url.trim().length > 0; })
@@ -672,7 +683,8 @@
 	                }],
 	            price: [{
 	                    type: "number",
-	                    elementSelector: "#ProductPrice"
+	                    elementSelector: "meta[property='og:price:amount']",
+	                    attribute: "content"
 	                }],
 	            image: [{
 	                    type: "string",
