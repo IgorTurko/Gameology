@@ -28,8 +28,7 @@
 
 /* PRODUCT GRID */
 
-.product-grid {    
-    max-height: 600px;;
+.product-grid {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -108,4 +107,14 @@
 .product-grid-rows .grid-row:first-child, 
 .product-grid-rows .grid-row:first-child .grid-cell {
     border-top: 0 none;
+}
+
+@media all and (max-width: 768px) {
+    body {
+        padding-top: 0;
+    }
+
+    .navbar-fixed-top {
+        position: static;
+    }
 }

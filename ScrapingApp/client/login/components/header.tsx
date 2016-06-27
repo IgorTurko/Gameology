@@ -15,7 +15,6 @@ export function Header(props: { children: any } & HeaderProps & LoginFormHandler
     return (
         <nav className="navbar navbar-default navbar-fixed-top">
             <div className="container">
-
                 <div className="navbar-header">
                     <Link to="/" className="navbar-brand">
                         Gameology

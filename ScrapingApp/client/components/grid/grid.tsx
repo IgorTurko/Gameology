@@ -70,10 +70,15 @@ export class Grid extends React.Component<{}, {}> {
     private onWindowResize() {
         const element = ReactDOM.findDOMNode(this) as HTMLElement;
         if (element) {
-            const top = element.offsetTop;
-            const maxHeight = window.innerHeight - top - 10;
+            if (window.innerWidth > 768) {
+                const top = element.offsetTop;
+                const maxHeight = window.innerHeight - top - 10;
 
-            element.style.maxHeight = `${maxHeight}px`;
+                element.style.maxHeight = `${maxHeight}px`;
+            }
+            else {
+                element.style.maxHeight = "";
+            }
         }
     }
 }

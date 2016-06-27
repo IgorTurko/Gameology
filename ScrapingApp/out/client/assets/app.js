@@ -9737,9 +9737,14 @@
 	    Grid.prototype.onWindowResize = function () {
 	        var element = ReactDOM.findDOMNode(this);
 	        if (element) {
-	            var top_1 = element.offsetTop;
-	            var maxHeight = window.innerHeight - top_1 - 10;
-	            element.style.maxHeight = maxHeight + "px";
+	            if (window.innerWidth > 768) {
+	                var top_1 = element.offsetTop;
+	                var maxHeight = window.innerHeight - top_1 - 10;
+	                element.style.maxHeight = maxHeight + "px";
+	            }
+	            else {
+	                element.style.maxHeight = "";
+	            }
 	        }
 	    };
 	    return Grid;
