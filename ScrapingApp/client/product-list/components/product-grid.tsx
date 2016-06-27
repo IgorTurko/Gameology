@@ -22,6 +22,10 @@ interface PropsWithClassName extends React.Props<any> {
     className?: string;
 }
 
+interface CellProps extends PropsWithClassName {
+    title?: string;
+}
+
 function Row(props: PropsWithClassName): JSX.Element {
     return (
         <div className={ classNames("grid-row", props.className) }>
@@ -30,9 +34,10 @@ function Row(props: PropsWithClassName): JSX.Element {
     );
 }
 
-function Cell(props: PropsWithClassName): JSX.Element {
+function Cell(props: CellProps): JSX.Element {
     return (
-        <div className={ classNames("col-xs-2 grid-cell", props.className) }>
+        <div className={ classNames("col-xs-2 grid-cell", props.className) }
+            title={ props.title } >
             { props.children }
         </div>
 
@@ -108,8 +113,14 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                         {
                             this.props.shops.map((shop, index) => {
                                 let values = (product.values || {})[shop.id];
+                                let log = product.log[shop.id];
+
+                                let hasError = log && (log.error || Object.entries(log.values).some(([_, l]) => l.error));
+
                                 return (
-                                    <Cell className="product-cell" key={ `${product.id}::${index}` }>
+                                    <Cell className={ classNames("product-cell", { "bg-danger": hasError }) }
+                                        key={ `${product.id}::${index}` }
+                                        title={ hasError ? "Error scraping product data. Please check product settings or contact developer." : (values && values.title) }>
                                         {
                                             values ? this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null
                                         }

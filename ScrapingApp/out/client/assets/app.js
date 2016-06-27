@@ -9329,8 +9329,8 @@
 	var React = __webpack_require__(50);
 	var react_router_1 = __webpack_require__(64);
 	var login_part_1 = __webpack_require__(102);
-	var product_list_part_1 = __webpack_require__(105);
-	var product_details_part_1 = __webpack_require__(109);
+	var product_list_part_1 = __webpack_require__(109);
+	var product_details_part_1 = __webpack_require__(111);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = function (loadProducts, loadProduct) { return (React.createElement(react_router_1.Router, {history: react_router_1.browserHistory}, React.createElement(react_router_1.Route, {component: login_part_1.default}, React.createElement(react_router_1.Route, {path: "/", component: product_list_part_1.default, onEnter: function () { return loadProducts(); }}), React.createElement(react_router_1.Route, {path: "/product/:productId", component: product_details_part_1.default, onEnter: function (_a) {
 	    var params = _a.params;
@@ -9356,7 +9356,7 @@
 	var react_redux_1 = __webpack_require__(53);
 	var Actions = __webpack_require__(77);
 	var header_1 = __webpack_require__(103);
-	var search_product_part_1 = __webpack_require__(113);
+	var search_product_part_1 = __webpack_require__(105);
 	var new_product_1 = __webpack_require__(108);
 	function loginPart(props) {
 	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props), React.createElement(search_product_part_1.default, {className: "navbar-form navbar-left"}), React.createElement(new_product_1.default, {className: "navbar-btn"})), React.createElement("div", {className: "container"}, props.children)));
@@ -9439,25 +9439,34 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var redux_utils_1 = __webpack_require__(112);
-	var product_grid_1 = __webpack_require__(107);
+	var redux_utils_1 = __webpack_require__(106);
+	var search_box_1 = __webpack_require__(107);
 	var Actions = __webpack_require__(67);
-	var ShopActions = __webpack_require__(98);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = redux_utils_1.connect(function (state) { return ({
-	    products: state.products.filteredProducts,
-	    shops: state.products.shops,
-	    isLoading: state.products.isLoading,
-	    shopEditing: state.shopEditing,
-	    updatedProductId: state.products.updatedProductId
+	    placeholder: "Search products..."
 	}); }, function (dispatch) { return ({
-	    onFilter: function (filter) { return dispatch(Actions.searchProducts(filter)); },
-	    onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice)); }
-	}); })(product_grid_1.ProductGrid);
+	    onFiltering: function (filter) {
+	        dispatch(Actions.searchProducts(filter));
+	    }
+	}); })(search_box_1.SearchBox);
 
 
 /***/ },
 /* 106 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="./typings/index.d.ts" />
+	"use strict";
+	var react_redux_1 = __webpack_require__(53);
+	function connect(mapState, mapHandlers) {
+	    return react_redux_1.connect(mapState, mapHandlers);
+	}
+	exports.connect = connect;
+
+
+/***/ },
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9490,7 +9499,46 @@
 
 
 /***/ },
-/* 107 */
+/* 108 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/// <reference path="./../../typings/index.d.ts" />
+	var React = __webpack_require__(50);
+	var react_router_1 = __webpack_require__(64);
+	var utils_1 = __webpack_require__(100);
+	function NewProduct(props) {
+	    return (React.createElement(react_router_1.Link, {to: "/product/new", className: utils_1.classNames("btn btn-default", props.className)}, "New Product > "));
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = NewProduct;
+
+
+/***/ },
+/* 109 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var redux_utils_1 = __webpack_require__(106);
+	var product_grid_1 = __webpack_require__(110);
+	var Actions = __webpack_require__(67);
+	var ShopActions = __webpack_require__(98);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = redux_utils_1.connect(function (state) { return ({
+	    products: state.products.filteredProducts,
+	    shops: state.products.shops,
+	    isLoading: state.products.isLoading,
+	    shopEditing: state.shopEditing,
+	    updatedProductId: state.products.updatedProductId
+	}); }, function (dispatch) { return ({
+	    onFilter: function (filter) { return dispatch(Actions.searchProducts(filter)); },
+	    onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice)); }
+	}); })(product_grid_1.ProductGrid);
+
+
+/***/ },
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9508,7 +9556,7 @@
 	    return (React.createElement("div", {className: utils_1.classNames("grid-row", props.className)}, props.children));
 	}
 	function Cell(props) {
-	    return (React.createElement("div", {className: utils_1.classNames("col-xs-2 grid-cell", props.className)}, props.children));
+	    return (React.createElement("div", {className: utils_1.classNames("col-xs-2 grid-cell", props.className), title: props.title}, props.children));
 	}
 	var ProductGrid = (function (_super) {
 	    __extends(ProductGrid, _super);
@@ -9537,7 +9585,12 @@
 	        return (this.props.products.map(function (product) {
 	            return (React.createElement(Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId }), key: product.id}, React.createElement(Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
 	                var values = (product.values || {})[shop.id];
-	                return (React.createElement(Cell, {className: "product-cell", key: product.id + "::" + index}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null));
+	                var log = product.log[shop.id];
+	                var hasError = log && (log.error || Object.entries(log.values).some(function (_a) {
+	                    var _ = _a[0], l = _a[1];
+	                    return l.error;
+	                }));
+	                return (React.createElement(Cell, {className: utils_1.classNames("product-cell", { "bg-danger": hasError }), key: product.id + "::" + index, title: hasError ? "Error scraping product data. Please check product settings or contact developer." : (values && values.title)}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null));
 	            })));
 	        }));
 	    };
@@ -9600,23 +9653,7 @@
 
 
 /***/ },
-/* 108 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/// <reference path="./../../typings/index.d.ts" />
-	var React = __webpack_require__(50);
-	var react_router_1 = __webpack_require__(64);
-	var utils_1 = __webpack_require__(100);
-	function NewProduct(props) {
-	    return (React.createElement(react_router_1.Link, {to: "/product/new", className: utils_1.classNames("btn btn-default", props.className)}, "New Product > "));
-	}
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = NewProduct;
-
-
-/***/ },
-/* 109 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9632,7 +9669,7 @@
 	var React = __webpack_require__(50);
 	var react_redux_1 = __webpack_require__(53);
 	var Actions = __webpack_require__(78);
-	var product_form_1 = __webpack_require__(110);
+	var product_form_1 = __webpack_require__(112);
 	function ProductDetailsPageComponent(props) {
 	    return (React.createElement(product_form_1.ProductForm, __assign({}, props)));
 	}
@@ -9653,7 +9690,7 @@
 
 
 /***/ },
-/* 110 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9666,7 +9703,7 @@
 	var React = __webpack_require__(50);
 	var react_router_1 = __webpack_require__(64);
 	var utils_1 = __webpack_require__(100);
-	var product_input_field_1 = __webpack_require__(111);
+	var product_input_field_1 = __webpack_require__(113);
 	var ProductForm = (function (_super) {
 	    __extends(ProductForm, _super);
 	    function ProductForm(props) {
@@ -9730,7 +9767,7 @@
 
 
 /***/ },
-/* 111 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9752,38 +9789,6 @@
 	    return ProductInputField;
 	}(React.Component));
 	exports.ProductInputField = ProductInputField;
-
-
-/***/ },
-/* 112 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// <reference path="./typings/index.d.ts" />
-	"use strict";
-	var react_redux_1 = __webpack_require__(53);
-	function connect(mapState, mapHandlers) {
-	    return react_redux_1.connect(mapState, mapHandlers);
-	}
-	exports.connect = connect;
-
-
-/***/ },
-/* 113 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// <reference path="../../typings/index.d.ts" />
-	"use strict";
-	var redux_utils_1 = __webpack_require__(112);
-	var search_box_1 = __webpack_require__(106);
-	var Actions = __webpack_require__(67);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = redux_utils_1.connect(function (state) { return ({
-	    placeholder: "Search products..."
-	}); }, function (dispatch) { return ({
-	    onFiltering: function (filter) {
-	        dispatch(Actions.searchProducts(filter));
-	    }
-	}); })(search_box_1.SearchBox);
 
 
 /***/ }
