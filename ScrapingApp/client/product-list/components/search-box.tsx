@@ -2,12 +2,15 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-interface SearchBoxProps {
-    onFiltering: (filter:string) => void;
+export interface SearchBoxProps {
     placeholder: string;
 }
 
-export default class SearchBox extends React.Component<SearchBoxProps, {}> {
+export interface SearchBoxHandlers {
+    onFiltering: (filter: string) => void;
+}
+
+export class SearchBox extends React.Component<SearchBoxProps & SearchBoxHandlers, {}> {
     onFormSubmit(e: React.FormEvent) {
         e.preventDefault();
 

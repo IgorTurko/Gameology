@@ -6,7 +6,7 @@ import {Link} from "react-router"
 
 import { classNames, getScrollbarWidth } from "../../utils";
 
-interface GridProps extends React.Props<any> {
+export interface ProductGridProps extends React.Props<any> {
     isLoading: boolean;
     products: Api.Product[];
     shops: Api.WebShop[];
@@ -14,7 +14,7 @@ interface GridProps extends React.Props<any> {
     updatedProductId: string;
 }
 
-export interface GridHandlers {
+export interface ProductGridHandlers {
     onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: string) => void;
 }
 
@@ -39,7 +39,7 @@ function Cell(props: PropsWithClassName): JSX.Element {
     );
 }
 
-export default class ProductsGrid extends React.Component<GridProps & GridHandlers, {}> {
+export class ProductGrid extends React.Component<ProductGridProps & ProductGridHandlers, {}> {
     private windowResizeHandler: () => void;
 
     constructor() {

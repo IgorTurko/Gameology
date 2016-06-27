@@ -9352,7 +9352,7 @@
 	var Actions = __webpack_require__(77);
 	var header_1 = __webpack_require__(103);
 	function loginPart(props) {
-	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props)), props.children));
+	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props)), React.createElement("div", {className: "container"}, props.children)));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(function (state) { return ({
@@ -9431,24 +9431,10 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var __assign = (this && this.__assign) || Object.assign || function(t) {
-	    for (var s, i = 1, n = arguments.length; i < n; i++) {
-	        s = arguments[i];
-	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-	            t[p] = s[p];
-	    }
-	    return t;
-	};
-	var React = __webpack_require__(50);
 	var redux_utils_1 = __webpack_require__(112);
-	var search_box_1 = __webpack_require__(106);
 	var product_grid_1 = __webpack_require__(107);
-	var new_product_1 = __webpack_require__(108);
 	var Actions = __webpack_require__(67);
 	var ShopActions = __webpack_require__(98);
-	function ProductListPart(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, __assign({}, props))));
-	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = redux_utils_1.connect(function (state) { return ({
 	    products: state.products.filteredProducts,
@@ -9459,44 +9445,11 @@
 	}); }, function (dispatch) { return ({
 	    onFilter: function (filter) { return dispatch(Actions.searchProducts(filter)); },
 	    onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice)); }
-	}); })(ProductListPart);
+	}); })(product_grid_1.ProductGrid);
 
 
 /***/ },
-/* 106 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	/// <reference path="./../../typings/index.d.ts" />
-	var React = __webpack_require__(50);
-	var SearchBox = (function (_super) {
-	    __extends(SearchBox, _super);
-	    function SearchBox() {
-	        _super.apply(this, arguments);
-	    }
-	    SearchBox.prototype.onFormSubmit = function (e) {
-	        e.preventDefault();
-	        var filter = e.target["filter"].value;
-	        if (this.props.onFiltering) {
-	            this.props.onFiltering(filter);
-	        }
-	    };
-	    SearchBox.prototype.render = function () {
-	        var _this = this;
-	        return (React.createElement("form", {onSubmit: function (e) { return _this.onFormSubmit(e); }}, React.createElement("div", {className: "search-box input-group"}, React.createElement("input", {name: "filter", type: "text", className: "form-control", placeholder: this.props.placeholder}), React.createElement("span", {className: "input-group-btn"}, React.createElement("button", {className: "btn btn-default", type: "submit"}, "Search")))));
-	    };
-	    return SearchBox;
-	}(React.Component));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = SearchBox;
-
-
-/***/ },
+/* 106 */,
 /* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -9517,29 +9470,29 @@
 	function Cell(props) {
 	    return (React.createElement("div", {className: utils_1.classNames("col-xs-2 grid-cell", props.className)}, props.children));
 	}
-	var ProductsGrid = (function (_super) {
-	    __extends(ProductsGrid, _super);
-	    function ProductsGrid() {
+	var ProductGrid = (function (_super) {
+	    __extends(ProductGrid, _super);
+	    function ProductGrid() {
 	        var _this = this;
 	        _super.call(this);
 	        this.windowResizeHandler = function () { return _this.onWindowResize(); };
 	    }
-	    ProductsGrid.prototype.onDeliveryPriceChanged = function (shopId, deliveryPrice) {
+	    ProductGrid.prototype.onDeliveryPriceChanged = function (shopId, deliveryPrice) {
 	        if (this.props.onShopDeliveryPriceUpdated) {
 	            this.props.onShopDeliveryPriceUpdated(shopId, deliveryPrice);
 	        }
 	    };
-	    ProductsGrid.prototype.renderHeader = function (className) {
+	    ProductGrid.prototype.renderHeader = function (className) {
 	        return (React.createElement(Row, {className: utils_1.classNames("header-row", className)}, React.createElement(Cell, {className: "header-cell"}, "Product"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: shop.id, className: "header"}, shop.title)); })));
 	    };
-	    ProductsGrid.prototype.renderDeliveryPrice = function () {
+	    ProductGrid.prototype.renderDeliveryPrice = function () {
 	        var _this = this;
 	        return (React.createElement(Row, {className: "delivery-price-row"}, React.createElement(Cell, {className: "delivery-price-cell"}, "Delivery price"), this.props.shops.map(function (shop) { return (React.createElement(Cell, {key: "$dp::" + shop.id, className: utils_1.classNames("delivery-price-cell", { "has-error": _this.props.shopEditing[shop.id].errorMessage })}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: _this.props.shopEditing[shop.id].deliveryPrice || "", onChange: function (e) { return _this.onDeliveryPriceChanged(shop.id, e.target["value"]); }}), React.createElement("p", {className: utils_1.classNames("help-block", { "hidden": !_this.props.shopEditing[shop.id].errorMessage })}, _this.props.shopEditing[shop.id].errorMessage))); })));
 	    };
-	    ProductsGrid.prototype.renderEmptyRow = function () {
+	    ProductGrid.prototype.renderEmptyRow = function () {
 	        return React.createElement("div", {className: "col-md-12"}, "No products");
 	    };
-	    ProductsGrid.prototype.renderData = function () {
+	    ProductGrid.prototype.renderData = function () {
 	        var _this = this;
 	        return (this.props.products.map(function (product) {
 	            return (React.createElement(Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId }), key: product.id}, React.createElement(Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
@@ -9548,17 +9501,17 @@
 	            })));
 	        }));
 	    };
-	    ProductsGrid.prototype.renderLoadingIndicator = function () {
+	    ProductGrid.prototype.renderLoadingIndicator = function () {
 	        return (React.createElement("div", {className: "row"}, "Loading..."));
 	    };
-	    ProductsGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
+	    ProductGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
 	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement("div", {className: "product-price"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price + shop.deliveryPrice)
 	            : this.formatPrice(values.price)), React.createElement("div", {className: "product-price delivery"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price) + " + " + this.formatPrice(shop.deliveryPrice)
 	            : '')));
 	    };
-	    ProductsGrid.prototype.render = function () {
+	    ProductGrid.prototype.render = function () {
 	        if (this.props.isLoading) {
 	            return (React.createElement("div", {className: "product-grid"}, this.renderLoadingIndicator()));
 	        }
@@ -9567,24 +9520,24 @@
 	        }
 	        return (React.createElement("div", {className: "product-grid row"}, React.createElement("div", {ref: "header", className: "product-grid-header"}, this.renderHeader(), this.renderDeliveryPrice()), React.createElement("div", {ref: "rows", className: "product-grid-rows"}, this.renderData())));
 	    };
-	    ProductsGrid.prototype.componentDidMount = function () {
+	    ProductGrid.prototype.componentDidMount = function () {
 	        window.removeEventListener("resize", this.windowResizeHandler);
 	        window.addEventListener("resize", this.windowResizeHandler);
 	        this.onWindowResize();
 	        this.alignHeaderWithRows();
 	    };
-	    ProductsGrid.prototype.componentDidUpdate = function () {
+	    ProductGrid.prototype.componentDidUpdate = function () {
 	        this.alignHeaderWithRows();
 	    };
-	    ProductsGrid.prototype.componentWillUnmount = function () {
+	    ProductGrid.prototype.componentWillUnmount = function () {
 	        window.removeEventListener("resize", this.windowResizeHandler);
 	    };
-	    ProductsGrid.prototype.formatPrice = function (price) {
+	    ProductGrid.prototype.formatPrice = function (price) {
 	        if (price == null || price === undefined || isNaN(price))
 	            return "";
 	        return "$" + price.toFixed(2);
 	    };
-	    ProductsGrid.prototype.alignHeaderWithRows = function () {
+	    ProductGrid.prototype.alignHeaderWithRows = function () {
 	        if (this.refs["header"]) {
 	            var scrollbarWidth = utils_1.getScrollbarWidth();
 	            var headerElement = ReactDOM.findDOMNode(this.refs["header"]);
@@ -9593,7 +9546,7 @@
 	            }
 	        }
 	    };
-	    ProductsGrid.prototype.onWindowResize = function () {
+	    ProductGrid.prototype.onWindowResize = function () {
 	        var element = ReactDOM.findDOMNode(this);
 	        if (element) {
 	            var top_1 = element.offsetTop;
@@ -9601,40 +9554,13 @@
 	            element.style.maxHeight = maxHeight + "px";
 	        }
 	    };
-	    return ProductsGrid;
+	    return ProductGrid;
 	}(React.Component));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProductsGrid;
+	exports.ProductGrid = ProductGrid;
 
 
 /***/ },
-/* 108 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	/// <reference path="./../../typings/index.d.ts" />
-	var React = __webpack_require__(50);
-	var react_router_1 = __webpack_require__(64);
-	var NewProduct = (function (_super) {
-	    __extends(NewProduct, _super);
-	    function NewProduct() {
-	        _super.apply(this, arguments);
-	    }
-	    NewProduct.prototype.render = function () {
-	        return (React.createElement("div", {className: "row add-product"}, React.createElement(react_router_1.Link, {to: "/product/new", className: "btn btn-default"}, "New Product >")));
-	    };
-	    return NewProduct;
-	}(React.Component));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = NewProduct;
-
-
-/***/ },
+/* 108 */,
 /* 109 */
 /***/ function(module, exports, __webpack_require__) {
 

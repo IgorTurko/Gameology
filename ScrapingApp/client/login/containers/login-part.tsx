@@ -13,7 +13,9 @@ function loginPart(props: React.Props<any> & HeaderProps & LoginFormHandlers) {
     return (
         <div>
             <Header {...props} />
-            {props.children}
+            <div className="container">
+                {props.children}
+            </div>
         </div>);
 }
 
@@ -24,7 +26,7 @@ export default connect(
     }),
 
     (dispatch: redux.IDispatch): LoginFormHandlers => ({
-        onLogin(credentials: Api.AuthenticationCredentials){
+        onLogin(credentials: Api.AuthenticationCredentials) {
             const action: Actions.LoginOnServerAction = {
                 type: Actions.LOGIN_ON_SERVER,
                 credentials: credentials
