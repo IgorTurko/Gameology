@@ -8308,6 +8308,13 @@
 	/// <reference path="../typings/index.d.ts" />
 	"use strict";
 	exports.PRODUCT_SEARCH = "product-list-search";
+	function searchProducts(filter) {
+	    return {
+	        type: exports.PRODUCT_SEARCH,
+	        filter: filter
+	    };
+	}
+	exports.searchProducts = searchProducts;
 	exports.PRODUCTS_LOADED = "product-list-loaded";
 	exports.PRODUCT_LOAD_REQUEST = "load-product-list-request";
 	function reloadProductList() {
@@ -9424,31 +9431,35 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
+	var __assign = (this && this.__assign) || Object.assign || function(t) {
+	    for (var s, i = 1, n = arguments.length; i < n; i++) {
+	        s = arguments[i];
+	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+	            t[p] = s[p];
+	    }
+	    return t;
+	};
 	var React = __webpack_require__(50);
-	var react_redux_1 = __webpack_require__(53);
+	var redux_utils_1 = __webpack_require__(112);
 	var search_box_1 = __webpack_require__(106);
 	var product_grid_1 = __webpack_require__(107);
 	var new_product_1 = __webpack_require__(108);
 	var Actions = __webpack_require__(67);
 	var ShopActions = __webpack_require__(98);
-	function ProductListPageComponent(props) {
-	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, {products: props.products, shops: props.shops, isLoading: props.isLoading, shopEditing: props.shopEditing, updatedProductId: props.updatedProductId, onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return props.onShopSave(shopId, deliveryPrice); }})));
+	function ProductListPart(props) {
+	    return (React.createElement("div", {className: "container"}, React.createElement(search_box_1.default, {placeholder: "Search products..", onFiltering: function (filter) { return props.onFilter(filter); }}), React.createElement(new_product_1.default, null), React.createElement(product_grid_1.default, __assign({}, props))));
 	}
-	var ProductListPart = react_redux_1.connect(function (state) { return ({
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = redux_utils_1.connect(function (state) { return ({
 	    products: state.products.filteredProducts,
 	    shops: state.products.shops,
 	    isLoading: state.products.isLoading,
 	    shopEditing: state.shopEditing,
 	    updatedProductId: state.products.updatedProductId
 	}); }, function (dispatch) { return ({
-	    onFilter: function (filter) { return dispatch({
-	        type: Actions.PRODUCT_SEARCH,
-	        filter: filter
-	    }); },
-	    onShopSave: function (shopId, deliveryPrice) { return dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice)); }
-	}); })(ProductListPageComponent);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProductListPart;
+	    onFilter: function (filter) { return dispatch(Actions.searchProducts(filter)); },
+	    onShopDeliveryPriceUpdated: function (shopId, deliveryPrice) { return dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice)); }
+	}); })(ProductListPart);
 
 
 /***/ },
@@ -9760,6 +9771,19 @@
 	    return ProductInputField;
 	}(React.Component));
 	exports.ProductInputField = ProductInputField;
+
+
+/***/ },
+/* 112 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="./typings/index.d.ts" />
+	"use strict";
+	var react_redux_1 = __webpack_require__(53);
+	function connect(mapState, mapHandlers) {
+	    return react_redux_1.connect(mapState, mapHandlers);
+	}
+	exports.connect = connect;
 
 
 /***/ }

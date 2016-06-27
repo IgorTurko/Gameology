@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import * as redux from "redux";
-import { connect } from "react-redux";
 
+import { connect } from "../../redux-utils";
 import SearchBox from "../components/search-box";
 import ProductGrid from "../components/product-grid";
 import NewProduct from "../components/new-product";
@@ -21,41 +21,33 @@ interface ProductListPageProps {
 
 interface ProductListPageHandlers {
     onFilter: (filter: string) => void;
-    onShopSave: (shopId: string, deliveryPrice: string) => void;
+    onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: string) => void;
 }
 
-function ProductListPageComponent(props: ProductListPageProps & ProductListPageHandlers) {
+function ProductListPart(props: ProductListPageProps & ProductListPageHandlers) {
     return (
         <div className="container">
             <SearchBox placeholder="Search products.." onFiltering={ filter => props.onFilter(filter) } />
             <NewProduct />
-            <ProductGrid products={ props.products }
-                shops={ props.shops }
-                isLoading={ props.isLoading }
-                shopEditing={ props.shopEditing }
-                updatedProductId = { props.updatedProductId }
-                onShopDeliveryPriceUpdated={(shopId, deliveryPrice) => props.onShopSave(shopId, deliveryPrice) } />
+            <ProductGrid {...props} />
         </div>
     );
 }
 
-const ProductListPart = connect(
+export default connect<AppState.App, ProductListPageProps, ProductListPageHandlers>(
 
-    (state: AppState.App) => ({
+    state => ({
         products: state.products.filteredProducts,
         shops: state.products.shops,
         isLoading: state.products.isLoading,
         shopEditing: state.shopEditing,
         updatedProductId: state.products.updatedProductId
-    } as ProductListPageProps),
+    }),
 
     (dispatch) => ({
-        onFilter: filter => dispatch({
-            type: Actions.PRODUCT_SEARCH,
-            filter: filter
-        } as Actions.ProductListSearchAction),
 
-        onShopSave: (shopId: string, deliveryPrice: string) => dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice))
-    }))(ProductListPageComponent);
+        onFilter: filter => dispatch(Actions.searchProducts(filter)),
 
-export default ProductListPart;
+        onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: string) => dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice))
+
+    }))(ProductListPart);
