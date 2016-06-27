@@ -12,6 +12,7 @@ export default class RoutingMiddleware extends MiddlewareBase<AppState.App> {
     }
 
     private navigate(url: string) {
+        console.log("Navigating to", url);
         browserHistory.push(url);
     }
 }

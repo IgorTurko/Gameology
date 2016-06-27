@@ -8244,6 +8244,7 @@
 	        this.navigate("/");
 	    };
 	    RoutingMiddleware.prototype.navigate = function (url) {
+	        console.log("Navigating to", url);
 	        react_router_1.browserHistory.push(url);
 	    };
 	    return RoutingMiddleware;
@@ -9729,7 +9730,7 @@
 	            if (errors.length > 0) {
 	                return (errors.map(function (error, index) { return (React.createElement("div", {key: "{index}", className: "alert alert-danger", role: "alert"}, error)); }));
 	            }
-	        })(), React.createElement(product_input_field_1.ProductInputField, {label: "Product", id: "title", errors: this.props.errors["title"]}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }})), this.props.shops.map(function (shop) { return (React.createElement(product_input_field_1.ProductInputField, {key: shop.id, label: "Url for " + shop.title, id: shop.id, errors: _this.props.errors[("scrapingUrls." + shop.id)]}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id] || '', id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }}))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement(react_router_1.Link, {to: "/", className: "btn btn-default"}, "< Back"), " ", React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save"), React.createElement("button", {type: "button", className: utils_1.classNames("btn btn-danger", { "hidden": !this.props.product.id }), onClick: function () { return _this.onDeleteProduct(); }}, "Delete")))));
+	        })(), React.createElement(product_input_field_1.ProductInputField, {label: "Product", id: "title", errors: this.props.errors["title"]}, React.createElement("input", {type: "text", className: "form-control", id: "title", name: "title", value: this.state.title, placeholder: "Product", onChange: function (e) { return _this.handleTitleChange(e); }})), this.props.shops.map(function (shop) { return (React.createElement(product_input_field_1.ProductInputField, {key: shop.id, label: "Url for " + shop.title, id: shop.id, errors: _this.props.errors[("scrapingUrls." + shop.id)]}, React.createElement("input", {type: "text", className: "form-control", value: _this.state.scrapingUrls[shop.id] || '', id: shop.id, name: shop.id, onChange: function (e) { return _this.handleUrlChange(e); }}))); }), React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "col-sm-offset-2 col-sm-10"}, React.createElement(react_router_1.Link, {to: "/", className: "btn btn-default"}, "< Back"), " ", React.createElement("button", {type: "submit", className: "btn btn-default"}, "Save"), " ", React.createElement("button", {type: "button", className: utils_1.classNames("btn btn-danger", { "hidden": !this.props.product.id }), onClick: function () { return _this.onDeleteProduct(); }}, "Delete")))));
 	    };
 	    return ProductForm;
 	}(React.Component));

@@ -106,7 +106,7 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                 <div className="form-group">
                     <div className="col-sm-offset-2 col-sm-10">
                         <Link to="/" className="btn btn-default">&lt; Back</Link>&nbsp;
-                        <button type="submit" className="btn btn-default">Save</button>
+                        <button type="submit" className="btn btn-default">Save</button>&nbsp;
                         <button type="button" className={  classNames("btn btn-danger", { "hidden": !this.props.product.id }) } onClick={ () => this.onDeleteProduct() }>Delete</button>
                     </div>
                 </div>

@@ -28,7 +28,7 @@ router.get("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-    const productId = req.param("id");
+    const productId = (req.params || {})["id"];
 
     if (!productId) {
         res.send(404, "Not found").end();
@@ -36,7 +36,7 @@ router.delete("/:id", (req, res) => {
     }
 
     productService.delete(productId)
-        .then(() => res.send(200, "OK").end())
+        .then(() => res.json(200, "OK").end())
         .catch(err => res.send(500, err).end());
 });
 
