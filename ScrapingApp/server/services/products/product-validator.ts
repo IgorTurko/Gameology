@@ -10,7 +10,8 @@ export default class ProductValidator {
             .notEmpty({ errorMessage: "Product title is required" })
             .must(t => t.length < 1024, { errorMessage: "Product title too long" }),
         scrapingUrls: rules.hash(
-            rules.str().must(url => !url || (url.indexOf("http://") === 0 || url.indexOf("https://") === 0), { errorMessage: "URL must starts from http:// or https:// " }))
+                rules.str().must(url => !url || (url.indexOf("http://") === 0 || url.indexOf("https://") === 0), { errorMessage: "URL must starts from http:// or https:// " }))
+            .filter((k, v) => v && v.trim().length > 0)
             .before(urls => Object.keys(urls)
                 .map(shopId => urls[shopId])
                 .filter((url: string) => url && url.trim().length > 0)

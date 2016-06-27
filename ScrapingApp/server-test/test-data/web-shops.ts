@@ -13,7 +13,8 @@ export const webShops: Api.WebShop[] =
             }],
             price: [{
                 type: "number",
-                elementSelector: "#ProductPrice"
+                elementSelector: "meta[property='og:price:amount']",
+                attribute: "content"
             }],
             image: [{
                 type: "string",
