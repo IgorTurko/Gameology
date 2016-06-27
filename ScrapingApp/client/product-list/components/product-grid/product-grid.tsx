@@ -10,7 +10,7 @@ import { Row } from "./row.tsx";
 import { Cell } from "./cell.tsx";
 
 
-import { classNames, getScrollbarWidth } from "../../../utils";
+import { classNames } from "../../../utils";
 
 export interface ProductGridProps extends React.Props<any> {
     isLoading: boolean;
