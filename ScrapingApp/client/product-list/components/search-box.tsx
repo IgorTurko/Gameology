@@ -2,8 +2,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
+import { classNames } from "../../utils";
+
 export interface SearchBoxProps {
     placeholder: string;
+    className?: string;
 }
 
 export interface SearchBoxHandlers {
@@ -23,16 +26,18 @@ export class SearchBox extends React.Component<SearchBoxProps & SearchBoxHandler
 
     render() {
         return (
-            <form onSubmit={e => this.onFormSubmit(e) }>
-                <div className="search-box input-group">
-                    <input
-                        name="filter"
-                        type="text"
-                        className="form-control"
-                        placeholder={this.props.placeholder} />
-                    <span className="input-group-btn">
-                        <button className="btn btn-default" type="submit">Search</button>
-                    </span>
+            <form className={ this.props.className } onSubmit={e => this.onFormSubmit(e) }>
+                <div className="form-group">
+                    <div className="search-box input-group">
+                        <input
+                            name="filter"
+                            type="text"
+                            className="form-control"
+                            placeholder={this.props.placeholder} />
+                        <span className="input-group-btn">
+                            <button className="btn btn-default" type="submit">Search</button>
+                        </span>
+                    </div>
                 </div>
             </form>);
     }

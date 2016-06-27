@@ -8401,6 +8401,7 @@
 	"use strict";
 	function searchProductList(state, action) {
 	    return Object.assign({}, state, {
+	        search: action.filter,
 	        filteredProducts: state.products
 	            .filter(function (p) { return !action.filter || p.title.toLowerCase().indexOf(action.filter.toLowerCase()) !== -1; })
 	    });
@@ -8467,6 +8468,7 @@
 	var Actions = __webpack_require__(67);
 	var LoginActions = __webpack_require__(77);
 	var ProductDetailsActions = __webpack_require__(78);
+	var RoutingActions = __webpack_require__(66);
 	var ProductListMiddleware = (function (_super) {
 	    __extends(ProductListMiddleware, _super);
 	    function ProductListMiddleware() {
@@ -8494,6 +8496,9 @@
 	            };
 	            dispatch(action);
 	        });
+	    };
+	    ProductListMiddleware.prototype[Actions.PRODUCT_SEARCH] = function (state, action, dispatch, store) {
+	        store.dispatch(RoutingActions.goToProductList());
 	    };
 	    ProductListMiddleware.prototype[LoginActions.LOGIN_SUCCESS] = function (state, action, dispatch, store) {
 	        var reloadProductList = Actions.reloadProductList();
@@ -9351,8 +9356,10 @@
 	var react_redux_1 = __webpack_require__(53);
 	var Actions = __webpack_require__(77);
 	var header_1 = __webpack_require__(103);
+	var search_product_part_1 = __webpack_require__(113);
+	var new_product_1 = __webpack_require__(108);
 	function loginPart(props) {
-	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props)), React.createElement("div", {className: "container"}, props.children)));
+	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props), React.createElement(search_product_part_1.default, {className: "navbar-form navbar-left"}), React.createElement(new_product_1.default, {className: "navbar-btn"})), React.createElement("div", {className: "container"}, props.children)));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(function (state) { return ({
@@ -9376,9 +9383,10 @@
 	///<reference path="../../typings/index.d.ts" />
 	"use strict";
 	var React = __webpack_require__(50);
+	var react_router_1 = __webpack_require__(64);
 	var login_form_1 = __webpack_require__(104);
 	function Header(props) {
-	    return (React.createElement("nav", {className: "navbar navbar-default navbar-fixed-top"}, React.createElement("div", {className: "container"}, React.createElement("div", {className: "navbar-left"}, React.createElement("h3", null, "Gameology")), React.createElement("div", {className: "navbar-right"}, props.isLoggedIn
+	    return (React.createElement("nav", {className: "navbar navbar-default navbar-fixed-top"}, React.createElement("div", {className: "container"}, React.createElement("div", {className: "navbar-header"}, React.createElement(react_router_1.Link, {to: "/", className: "navbar-brand"}, "Gameology")), props.children, React.createElement("div", {className: "navbar-right"}, props.isLoggedIn
 	        ? (React.createElement("div", {className: "navbar-text"}, "You are logged in"))
 	        : (React.createElement(login_form_1.LoginForm, {errorMessage: props.errorMessage, onLogin: function (c) { return props.onLogin(c); }}))))));
 	}
@@ -9449,7 +9457,39 @@
 
 
 /***/ },
-/* 106 */,
+/* 106 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	/// <reference path="./../../typings/index.d.ts" />
+	var React = __webpack_require__(50);
+	var SearchBox = (function (_super) {
+	    __extends(SearchBox, _super);
+	    function SearchBox() {
+	        _super.apply(this, arguments);
+	    }
+	    SearchBox.prototype.onFormSubmit = function (e) {
+	        e.preventDefault();
+	        var filter = e.target["filter"].value;
+	        if (this.props.onFiltering) {
+	            this.props.onFiltering(filter);
+	        }
+	    };
+	    SearchBox.prototype.render = function () {
+	        var _this = this;
+	        return (React.createElement("form", {className: this.props.className, onSubmit: function (e) { return _this.onFormSubmit(e); }}, React.createElement("div", {className: "form-group"}, React.createElement("div", {className: "search-box input-group"}, React.createElement("input", {name: "filter", type: "text", className: "form-control", placeholder: this.props.placeholder}), React.createElement("span", {className: "input-group-btn"}, React.createElement("button", {className: "btn btn-default", type: "submit"}, "Search"))))));
+	    };
+	    return SearchBox;
+	}(React.Component));
+	exports.SearchBox = SearchBox;
+
+
+/***/ },
 /* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -9560,7 +9600,22 @@
 
 
 /***/ },
-/* 108 */,
+/* 108 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/// <reference path="./../../typings/index.d.ts" />
+	var React = __webpack_require__(50);
+	var react_router_1 = __webpack_require__(64);
+	var utils_1 = __webpack_require__(100);
+	function NewProduct(props) {
+	    return (React.createElement(react_router_1.Link, {to: "/product/new", className: utils_1.classNames("btn btn-default", props.className)}, "New Product > "));
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = NewProduct;
+
+
+/***/ },
 /* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -9710,6 +9765,25 @@
 	    return react_redux_1.connect(mapState, mapHandlers);
 	}
 	exports.connect = connect;
+
+
+/***/ },
+/* 113 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	var redux_utils_1 = __webpack_require__(112);
+	var search_box_1 = __webpack_require__(106);
+	var Actions = __webpack_require__(67);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = redux_utils_1.connect(function (state) { return ({
+	    placeholder: "Search products..."
+	}); }, function (dispatch) { return ({
+	    onFiltering: function (filter) {
+	        dispatch(Actions.searchProducts(filter));
+	    }
+	}); })(search_box_1.SearchBox);
 
 
 /***/ }

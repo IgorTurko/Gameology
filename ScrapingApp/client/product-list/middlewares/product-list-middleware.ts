@@ -9,6 +9,7 @@ import ShopRepository from "../../data/shop-repo";
 import * as Actions from "../actions";
 import * as LoginActions from "../../login/actions";
 import * as ProductDetailsActions from "../../product-details/actions";
+import * as RoutingActions from "../../routing/actions";
 
 export default class ProductListMiddleware extends MiddlewareBase<AppState.App> {
     private productRepo = new ProductRepository();
@@ -37,6 +38,10 @@ export default class ProductListMiddleware extends MiddlewareBase<AppState.App> 
 
             dispatch(action);
         });
+    }
+
+    [Actions.PRODUCT_SEARCH](state, action, dispatch, store: redux.IMiddlewareStore<AppState.App>) {
+        store.dispatch(RoutingActions.goToProductList());
     }
 
     [LoginActions.LOGIN_SUCCESS](state, action, dispatch: redux.IDispatch, store: redux.IMiddlewareStore<AppState.App>) {

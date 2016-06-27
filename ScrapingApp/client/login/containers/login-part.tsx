@@ -8,11 +8,16 @@ import * as Actions from "../actions";
 
 import { LoginFormHandlers } from "../components/login-form";
 import { Header, HeaderProps } from "../components/header";
+import SearchBox from "../../product-list/containers/search-product-part";
+import NewProduct from "../../product-list/components/new-product";
 
 function loginPart(props: React.Props<any> & HeaderProps & LoginFormHandlers) {
     return (
         <div>
-            <Header {...props} />
+            <Header {...props}>
+                <SearchBox className="navbar-form navbar-left" />
+                <NewProduct className="navbar-btn" />
+            </Header>
             <div className="container">
                 {props.children}
             </div>

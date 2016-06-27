@@ -3,12 +3,10 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Link} from "react-router";
 
-export default class NewProduct extends React.Component<{}, {}> {
+import { classNames } from "../../utils";
 
-    render() {
-        return (
-                <div className="row add-product">
-                    <Link to="/product/new" className="btn btn-default">New Product &gt;</Link>
-                </div>);
-    }
+export default function NewProduct(props: { className?: string }) {
+    return (
+        <Link to="/product/new" className={ classNames("btn btn-default", props.className) }>New Product &gt; </Link>
+    );
 }
