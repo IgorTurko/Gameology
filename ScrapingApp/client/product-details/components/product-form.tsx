@@ -2,7 +2,10 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Link} from "react-router";
+
+import { classNames } from "../../utils";
 import {ProductInputField} from "./product-input-field";
+
 
 export interface ProductFormProps {
     product: Api.Product;
@@ -15,6 +18,7 @@ export interface ProductFormProps {
 
 export interface ProductFormHandlers {
     onSaveProduct: (product: Api.Product) => void;
+    onDeleteProduct: (productId: string) => void;
 }
 
 export class ProductForm extends React.Component<ProductFormProps & ProductFormHandlers, Api.Product> {
@@ -58,6 +62,16 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
         }
     }
 
+    onDeleteProduct() {
+        if (!this.props.product || !this.props.product.id || !this.props.onDeleteProduct) {
+            return;
+        }
+
+        if (confirm("Are you sure you want to delete product?")) {
+            this.props.onDeleteProduct(this.props.product.id);
+        }
+    }
+
     render() {
         return (
             <form onSubmit={e => this.onFormSubmit(e) } className="form-horizontal product-form">
@@ -65,7 +79,7 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                     if (this.props.saved) {
                         return (<div className="alert alert-success" role="alert">Product saved</div>);
                     }
-                })()}
+                })() }
 
                 {(() => {
                     const commonErrors = this.props.errors[""] || [];
@@ -77,7 +91,7 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                             <div key="{index}" className="alert alert-danger" role= "alert">{error}</div>)
                         ));
                     }
-                }) ()}
+                })() }
 
                 <ProductInputField label="Product" id="title" errors={this.props.errors["title"]}>
                     <input type="text" className="form-control" id="title" name="title" value={this.state.title} placeholder="Product" onChange={e => this.handleTitleChange(e) } />
@@ -93,6 +107,7 @@ export class ProductForm extends React.Component<ProductFormProps & ProductFormH
                     <div className="col-sm-offset-2 col-sm-10">
                         <Link to="/" className="btn btn-default">&lt; Back</Link>&nbsp;
                         <button type="submit" className="btn btn-default">Save</button>
+                        <button type="button" className={  classNames("btn btn-danger", { "hidden": !this.props.product.id }) } onClick={ () => this.onDeleteProduct() }>Delete</button>
                     </div>
                 </div>
             </form>);
