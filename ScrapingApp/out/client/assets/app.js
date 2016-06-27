@@ -8244,7 +8244,6 @@
 	        this.navigate("/");
 	    };
 	    RoutingMiddleware.prototype.navigate = function (url) {
-	        console.log("Navigating to", url);
 	        react_router_1.browserHistory.push(url);
 	    };
 	    return RoutingMiddleware;
@@ -8376,18 +8375,19 @@
 
 /***/ },
 /* 69 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
+	var Actions = __webpack_require__(67);
+	var search_product_list_1 = __webpack_require__(70);
 	function productListLoaded(state, action) {
-	    return Object.assign({}, state, {
+	    var newState = Object.assign({}, state, {
 	        isLoading: false,
 	        products: action.products,
-	        search: "",
-	        filteredProducts: action.products,
 	        shops: action.shops
 	    });
+	    return search_product_list_1.default(newState, Actions.searchProducts(state.search));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = productListLoaded;
