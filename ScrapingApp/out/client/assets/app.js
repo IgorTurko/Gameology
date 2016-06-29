@@ -9372,7 +9372,11 @@
 	var search_product_part_1 = __webpack_require__(105);
 	var new_product_1 = __webpack_require__(108);
 	function loginPart(props) {
-	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props), React.createElement(search_product_part_1.default, {className: "navbar-form navbar-left"}), React.createElement(new_product_1.default, {className: "navbar-btn"})), React.createElement("div", {className: "container"}, props.children)));
+	    return (React.createElement("div", null, React.createElement(header_1.Header, __assign({}, props), React.createElement(search_product_part_1.default, {className: "navbar-form navbar-left"}), (function () {
+	        if (props.isLoggedIn) {
+	            return (React.createElement(new_product_1.default, {className: "navbar-btn"}));
+	        }
+	    })()), React.createElement("div", {className: "container"}, props.children)));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(function (state) { return ({
