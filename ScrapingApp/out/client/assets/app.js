@@ -9607,8 +9607,8 @@
 	        return (this.props.products.map(function (product) {
 	            return (React.createElement(row_tsx_1.Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId }), key: product.id}, React.createElement(cell_tsx_1.Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
 	                var values = (product.values || {})[shop.id];
-	                var log = product.log[shop.id];
-	                var hasError = log && (log.error || Object.entries(log.values).some(function (_a) {
+	                var log = product.log ? product.log[shop.id] : null;
+	                var hasError = log && (log.error || Object.entries(log.values || {}).some(function (_a) {
 	                    var _ = _a[0], l = _a[1];
 	                    return l.error;
 	                }));

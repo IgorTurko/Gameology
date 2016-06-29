@@ -86,9 +86,9 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                         {
                             this.props.shops.map((shop, index) => {
                                 let values = (product.values || {})[shop.id];
-                                let log = product.log[shop.id];
+                                let log = product.log ? product.log[shop.id] : null;
 
-                                let hasError = log && (log.error || Object.entries(log.values).some(([_, l]) => l.error));
+                                let hasError = log && (log.error || Object.entries(log.values || {}).some(([_, l]) => l.error));
 
                                 return (
                                     <Cell className={ classNames("product-cell", { "bg-danger": hasError }) }
