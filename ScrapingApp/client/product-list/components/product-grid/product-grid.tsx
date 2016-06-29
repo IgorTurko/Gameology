@@ -59,10 +59,10 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                             <input type="text"
                                 name={shop.id}
                                 className="form-control"
-                                value={ this.props.shopEditing[shop.id].deliveryPrice || "" }
+                                value={ this.props.shopEditing[shop.id] ? (this.props.shopEditing[shop.id].deliveryPrice || "") : "" }
                                 onChange={ e => this.onDeliveryPriceChanged(shop.id, e.target["value"]) } />
                             <p className={ classNames("help-block", { "hidden": !this.props.shopEditing[shop.id] || !this.props.shopEditing[shop.id].errorMessage }) }>
-                                { this.props.shopEditing[shop.id].errorMessage }
+                                { this.props.shopEditing[shop.id] ? this.props.shopEditing[shop.id].errorMessage : "" }
                             </p>
                         </Cell>
                     ))
