@@ -55,7 +55,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                 {
                     this.props.shops.map(shop => (
                         <Cell key={ `$dp::${shop.id}` }
-                            className= { classNames("delivery-price-cell", { "has-error": this.props.shopEditing[shop.id].errorMessage }) }>
+                            className= { classNames("delivery-price-cell", { "has-error": this.props.shopEditing[shop.id] && this.props.shopEditing[shop.id].errorMessage }) }>
                             <input type="text"
                                 name={shop.id}
                                 className="form-control"
