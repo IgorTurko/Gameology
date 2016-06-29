@@ -40,12 +40,17 @@
     <Compile Include="out\test\run-page-parsing.js" />
     <Compile Include="webpack.config.js" />
     <Content Include="client\app.tsx" />
+    <Content Include="client\components\grid\grid.tsx" />
+    <Content Include="client\components\grid\header.tsx" />
+    <Content Include="client\components\grid\rows.tsx" />
     <Content Include="client\login\components\header.tsx" />
     <Content Include="client\login\components\login-form.tsx" />
     <Content Include="client\login\containers\login-part.tsx" />
     <Content Include="client\product-details\components\product-input-field.tsx" />
-    <Content Include="client\product-list\components\product-grid.tsx" />
     <Content Include="client\product-list\components\new-product.tsx" />
+    <Content Include="client\product-list\components\product-grid\cell.tsx" />
+    <Content Include="client\product-list\components\product-grid\product-grid.tsx" />
+    <Content Include="client\product-list\components\product-grid\row.tsx" />
     <Content Include="client\product-list\components\search-box.tsx" />
     <Content Include="client\product-list\containers\product-list-part.tsx" />
     <Content Include="client\product-details\components\product-form.tsx" />
@@ -93,6 +98,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
+    <Folder Include="client\components\" />
+    <Folder Include="client\components\grid\" />
     <Folder Include="client\data\" />
     <Folder Include="client\login\" />
     <Folder Include="client\login\components\" />
@@ -106,6 +113,7 @@
     <Folder Include="client\product-details\reducers\" />
     <Folder Include="client\product-list\" />
     <Folder Include="client\product-list\components\" />
+    <Folder Include="client\product-list\components\product-grid\" />
     <Folder Include="client\product-list\containers\" />
     <Folder Include="client\product-list\middlewares\" />
     <Folder Include="client\product-list\reducers\" />
@@ -169,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="api.d.ts" />
+    <TypeScriptCompile Include="client\components\grid\index.ts" />
     <TypeScriptCompile Include="client\data\http-client.ts" />
     <TypeScriptCompile Include="client\data\login-repo.ts" />
     <TypeScriptCompile Include="client\data\shop-repo.ts" />
@@ -192,6 +201,7 @@
     <TypeScriptCompile Include="client\product-details\reducers\save-product-error.ts" />
     <TypeScriptCompile Include="client\product-details\reducers\save-product.ts" />
     <TypeScriptCompile Include="client\product-list\actions.ts" />
+    <TypeScriptCompile Include="client\product-list\components\product-grid\index.ts" />
     <TypeScriptCompile Include="client\product-list\middlewares\product-list-middleware.ts" />
     <TypeScriptCompile Include="client\product-list\reducers\index.ts" />
     <TypeScriptCompile Include="client\product-list\reducers\load-product-list-request.ts" />

@@ -16,7 +16,13 @@ function loginPart(props: React.Props<any> & HeaderProps & LoginFormHandlers) {
         <div>
             <Header {...props}>
                 <SearchBox className="navbar-form navbar-left" />
-                <NewProduct className="navbar-btn" />
+                {
+                    (() => {
+                        if (props.isLoggedIn) {
+                            return (<NewProduct className="navbar-btn" />);
+                        }
+                    })()
+                }
             </Header>
             <div className="container">
                 {props.children}
