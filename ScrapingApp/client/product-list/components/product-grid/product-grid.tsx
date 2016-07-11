@@ -4,6 +4,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Link} from "react-router";
 
+import { IIf } from "../../../components/iif";
 import { Grid, Rows, Header } from "../../../components/grid";
 
 import { Row } from "./row.tsx";
@@ -120,20 +121,22 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                     <a href={ productUrl } target="_blank">{values.title}</a>
                 </div>
                 <img className="product-img" src={ values.image } />
-                <div className="product-price">
-                    {
-                        shop.deliveryPrice
-                            ? this.formatPrice(values.price + shop.deliveryPrice)
-                            : this.formatPrice(values.price)
-                    }
-                </div>
-                <div className="product-price delivery">
-                    {
-                        shop.deliveryPrice
-                            ? `${this.formatPrice(values.price)} + ${this.formatPrice(shop.deliveryPrice)}`
-                            : ''
-                    }
-                </div>
+                <IIf condition={ () => !!values.price }>
+                    <div className="product-price">
+                        {
+                            shop.deliveryPrice
+                                ? this.formatPrice(values.price + shop.deliveryPrice)
+                                : this.formatPrice(values.price)
+                        }
+                    </div>
+                    <div className="product-price delivery">
+                        {
+                            shop.deliveryPrice
+                                ? `${this.formatPrice(values.price)} + ${this.formatPrice(shop.deliveryPrice)}`
+                                : ''
+                        }
+                    </div>
+                </IIf>
             </div>
         );
     }

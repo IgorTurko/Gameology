@@ -9606,6 +9606,7 @@
 	};
 	var React = __webpack_require__(50);
 	var react_router_1 = __webpack_require__(64);
+	var iif_1 = __webpack_require__(121);
 	var grid_1 = __webpack_require__(112);
 	var row_tsx_1 = __webpack_require__(116);
 	var cell_tsx_1 = __webpack_require__(117);
@@ -9648,11 +9649,11 @@
 	        return (React.createElement("div", {className: "row"}, "Loading..."));
 	    };
 	    ProductGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
-	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement("div", {className: "product-price"}, shop.deliveryPrice
+	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement(iif_1.IIf, {condition: function () { return !!values.price; }}, React.createElement("div", {className: "product-price"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price + shop.deliveryPrice)
 	            : this.formatPrice(values.price)), React.createElement("div", {className: "product-price delivery"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price) + " + " + this.formatPrice(shop.deliveryPrice)
-	            : '')));
+	            : ''))));
 	    };
 	    ProductGrid.prototype.render = function () {
 	        if (this.props.isLoading) {
@@ -9949,6 +9950,36 @@
 	    return ProductInputField;
 	}(React.Component));
 	exports.ProductInputField = ProductInputField;
+
+
+/***/ },
+/* 121 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../typings/index.d.ts" />
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(50);
+	var IIf = (function (_super) {
+	    __extends(IIf, _super);
+	    function IIf() {
+	        _super.apply(this, arguments);
+	    }
+	    IIf.prototype.render = function () {
+	        if (this.props.condition && this.props.condition()) {
+	            return (React.createElement("div", null, this.props.children));
+	        }
+	        else {
+	            return null;
+	        }
+	    };
+	    return IIf;
+	}(React.Component));
+	exports.IIf = IIf;
 
 
 /***/ }
