@@ -102,7 +102,8 @@ export default class MongoProductStorage implements Products.IProductStorage {
                 { id: productId },
                 { 
                     $unset: {
-                        log: ""
+                        log: "",
+                        values: ""
                     }
                 }
             ));
