@@ -82,16 +82,14 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                 let isGameologyCheapest = true;
 
                 if (product.values) {
+
                     const [minShopId, minValues] = Object.entries(product.values)
                         .min(([shopId, values]) => {
+                            
                             const shop = this.props.shops.filter(s => s.id === shopId)[0];
-
-                            const deliveryPrice = (shop && shop.deliveryPrice) ? shop.deliveryPrice : 0;
-                            const price = (values && values.price) ? values.price : 0;
-
-                            const totalPrice = deliveryPrice + price;
-
-                            return totalPrice === 0 ? Number.MAX_VALUE : totalPrice;
+                            const deliveryPrice = (shop && shop.deliveryPrice) ? shop.deliveryPrice : 999999;
+                            const price = (values && values.price) ? values.price : 999999;
+                            return deliveryPrice + price;
                         });
 
                     isGameologyCheapest = minShopId === "gameology";

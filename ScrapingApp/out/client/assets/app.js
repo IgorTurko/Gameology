@@ -9681,10 +9681,9 @@
 	                    .min(function (_a) {
 	                    var shopId = _a[0], values = _a[1];
 	                    var shop = _this.props.shops.filter(function (s) { return s.id === shopId; })[0];
-	                    var deliveryPrice = (shop && shop.deliveryPrice) ? shop.deliveryPrice : 0;
-	                    var price = (values && values.price) ? values.price : 0;
-	                    var totalPrice = deliveryPrice + price;
-	                    return totalPrice === 0 ? Number.MAX_VALUE : totalPrice;
+	                    var deliveryPrice = (shop && shop.deliveryPrice) ? shop.deliveryPrice : 999999;
+	                    var price = (values && values.price) ? values.price : 999999;
+	                    return deliveryPrice + price;
 	                }), minShopId = _a[0], minValues = _a[1];
 	                isGameologyCheapest = minShopId === "gameology";
 	            }
