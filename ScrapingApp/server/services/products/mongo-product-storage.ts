@@ -95,17 +95,24 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(r => this.one(productId));
     }
 
-    discardScrapingLog(productId: string): Promise<any> {
+    discardScrapingData(productId: string, shops: string[]): Promise<any> {
+        if (!shops || !shops.length) {
+            return;
+        }
+
+        const unset = shops.reduce((val, shopId) => {
+            val[`log.${shopId}`] = "";
+            val[`values.${shopId}`] = "";
+
+            return val;
+        }, {});
+
+
         return this.db
             .collection(Database.Collections.products)
             .then(c => c.updateOne(
                 { id: productId },
-                { 
-                    $unset: {
-                        log: "",
-                        values: ""
-                    }
-                }
+                { $unset: unset }
             ));
     }
 }

@@ -172,9 +172,9 @@ declare namespace Products {
 
         setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues, log: Api.ScrapeLog): Promise<Api.Product>;
 
-        discardScrapingLog(productId: string): Promise<any>;
-
         delete(productId: string): Promise<any>;
+
+        discardScrapingData(productId: string, shops: string[]): Promise<any>
     }
 }
 

@@ -38,9 +38,7 @@ export default class ProductService {
                             };
                         }
                     })
-                    .then(() => this.storage.save(product))
-                    .then(() => this.storage.discardScrapingLog(product.id))
-                    .then(() => this.one(product.id))
+                    .then(() => this.writeProductAndDiscardScrapeData(product))
                     .then(product => {
                         eventBus.emit(EventNames.ProductUpdated, product.id);
                         return product;
@@ -118,5 +116,41 @@ export default class ProductService {
         if (!productId)
             throw new Error("Product ID is not defined.");
         return this.storage.delete(productId);
+    }
+
+    /**
+     * Writes validated product to storage and removes values and logs for changed URL.
+     */
+    writeProductAndDiscardScrapeData(product: Api.Product): Promise<Api.Product> {
+        return this.one(product.id)
+            .then(origin => {
+
+                return this.storage
+                    .save(product)
+                    .then(() => {
+                        if (origin) {
+                            const shops = Object.entries(product.scrapingUrls)
+                                .filter(([shop, url]) => {
+                                    const originUrl = origin.scrapingUrls[shop];
+
+                                    return url !== originUrl;
+                                })
+                                .map(([shop, url]) => shop);
+
+                            const removedShops = Object.keys(origin.scrapingUrls)
+                                .filter(shopId => !product.scrapingUrls[shopId]);
+
+                            shops.push(...removedShops);
+
+                            console.log(`Discard scraping data for product ${product.id} for shops: `, shops);
+
+                            return this.storage.discardScrapingData(product.id, shops);
+                        }
+                        else {
+                            return Promise.resolve();
+                        }
+                    })
+                    .then(() => this.storage.one(product.id))
+            });
     }
 }

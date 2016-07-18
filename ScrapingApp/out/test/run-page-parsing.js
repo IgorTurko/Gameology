@@ -439,15 +439,18 @@
 	        }); var _a; })
 	            .then(function (r) { return _this.one(productId); });
 	    };
-	    MongoProductStorage.prototype.discardScrapingLog = function (productId) {
+	    MongoProductStorage.prototype.discardScrapingData = function (productId, shops) {
+	        if (!shops || !shops.length) {
+	            return;
+	        }
+	        var unset = shops.reduce(function (val, shopId) {
+	            val[("log." + shopId)] = "";
+	            val[("values." + shopId)] = "";
+	            return val;
+	        }, {});
 	        return this.db
 	            .collection(db_1.default.Collections.products)
-	            .then(function (c) { return c.updateOne({ id: productId }, {
-	            $unset: {
-	                log: "",
-	                values: ""
-	            }
-	        }); });
+	            .then(function (c) { return c.updateOne({ id: productId }, { $unset: unset }); });
 	    };
 	    return MongoProductStorage;
 	}());
@@ -493,9 +496,7 @@
 	                    };
 	                }
 	            })
-	                .then(function () { return _this.storage.save(product); })
-	                .then(function () { return _this.storage.discardScrapingLog(product.id); })
-	                .then(function () { return _this.one(product.id); })
+	                .then(function () { return _this.writeProductAndDiscardScrapeData(product); })
 	                .then(function (product) {
 	                event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, product.id);
 	                return product;
@@ -560,6 +561,40 @@
 	        if (!productId)
 	            throw new Error("Product ID is not defined.");
 	        return this.storage.delete(productId);
+	    };
+	    /**
+	     * Writes validated product to storage and removes values and logs for changed URL.
+	     */
+	    ProductService.prototype.writeProductAndDiscardScrapeData = function (product) {
+	        var _this = this;
+	        return this.one(product.id)
+	            .then(function (origin) {
+	            return _this.storage
+	                .save(product)
+	                .then(function () {
+	                if (origin) {
+	                    var shops = Object.entries(product.scrapingUrls)
+	                        .filter(function (_a) {
+	                        var shop = _a[0], url = _a[1];
+	                        var originUrl = origin.scrapingUrls[shop];
+	                        return url !== originUrl;
+	                    })
+	                        .map(function (_a) {
+	                        var shop = _a[0], url = _a[1];
+	                        return shop;
+	                    });
+	                    var removedShops = Object.keys(origin.scrapingUrls)
+	                        .filter(function (shopId) { return !product.scrapingUrls[shopId]; });
+	                    shops.push.apply(shops, removedShops);
+	                    console.log("Discard scraping data for product " + product.id + " for shops: ", shops);
+	                    return _this.storage.discardScrapingData(product.id, shops);
+	                }
+	                else {
+	                    return Promise.resolve();
+	                }
+	            })
+	                .then(function () { return _this.storage.one(product.id); });
+	        });
 	    };
 	    return ProductService;
 	}());
