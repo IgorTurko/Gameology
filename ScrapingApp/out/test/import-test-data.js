@@ -605,8 +605,7 @@
 	            Object.keys(data.values)
 	                .forEach(function (name) {
 	                var value = data.values[name];
-	                if (value.isSuccessful)
-	                    values[name] = value.value;
+	                values[name] = value.isSuccessful ? value.value : null;
 	                log.values[name] = {
 	                    scrapedAt: now,
 	                    error: value.error
@@ -644,7 +643,6 @@
 	                    var removedShops = Object.keys(origin.scrapingUrls)
 	                        .filter(function (shopId) { return !product.scrapingUrls[shopId]; });
 	                    shops.push.apply(shops, removedShops);
-	                    console.log("Discard scraping data for product " + product.id + " for shops: ", shops);
 	                    return _this.storage.discardScrapingData(product.id, shops);
 	                }
 	                else {

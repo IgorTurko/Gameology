@@ -98,9 +98,7 @@ export default class ProductService {
                 Object.keys(data.values)
                     .forEach(name => {
                         const value = data.values[name];
-
-                        if (value.isSuccessful)
-                            values[name] = value.value;
+                        values[name] = value.isSuccessful ? value.value : null;
 
                         log.values[name] = {
                             scrapedAt: now,
@@ -141,8 +139,6 @@ export default class ProductService {
                                 .filter(shopId => !product.scrapingUrls[shopId]);
 
                             shops.push(...removedShops);
-
-                            console.log(`Discard scraping data for product ${product.id} for shops: `, shops);
 
                             return this.storage.discardScrapingData(product.id, shops);
                         }
