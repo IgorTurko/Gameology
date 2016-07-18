@@ -3,9 +3,12 @@
  */
 interface Array<T> {
     toHash<K>(keySelector: (elem: T) => string, valueSelector?: (elem: T) => K): { [key: string]: K; };
-    
+
     /** Combines arrays returned by function applied to each element into one array. */
     flattern<K>(selector: (elem: T) => K[]): K[];
+
+    min<K>(selector: (elem: T) => K): T;
+    max<K>(selector: (elem: T) => K): T;
 }
 
 interface ObjectConstructor {

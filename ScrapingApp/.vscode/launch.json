@@ -22,16 +22,16 @@
             "outDir": "${workspaceRoot}/out/server/"
         },
         {
-			"name": "Attach",
-			"type": "node",
-			"request": "attach",
-			"port": 5858,
-			"address": "localhost",
-			"restart": false,
-			"sourceMaps": true,
-			"outDir": "${workspaceRoot}/out/server/",
-			"localRoot": "${workspaceRoot}",
-			"remoteRoot": null
-		}
+            "name": "Attach",
+            "type": "node",
+            "request": "attach",
+            "port": 5858,
+            "address": "localhost",
+            "restart": false,
+            "sourceMaps": true,
+            "outDir": "${workspaceRoot}/out/server/",
+            "localRoot": "${workspaceRoot}",
+            "remoteRoot": null
+        }
     ]
 }

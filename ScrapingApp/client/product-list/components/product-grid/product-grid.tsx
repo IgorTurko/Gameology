@@ -79,8 +79,26 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
 
         return (
             this.props.products.map(product => {
+                let isGameologyCheapest = true;
+
+                if (product.values) {
+                    const [minShopId, minValues] = Object.entries(product.values)
+                        .min(([shopId, values]) => {
+                            const shop = this.props.shops.filter(s => s.id === shopId)[0];
+
+                            const deliveryPrice = (shop && shop.deliveryPrice) ? shop.deliveryPrice : 0;
+                            const price = (values && values.price) ? values.price : 0;
+
+                            const totalPrice = deliveryPrice + price;
+
+                            return totalPrice === 0 ? Number.MAX_VALUE : totalPrice;
+                        });
+
+                    isGameologyCheapest = minShopId === "gameology";
+                }
+
                 return (
-                    <Row className={ classNames("product-row", { "highlight": product.id == this.props.updatedProductId }) } key={product.id}>
+                    <Row className={ classNames("product-row", { "highlight": product.id == this.props.updatedProductId, "cheapest": isGameologyCheapest }) } key={product.id}>
                         <Cell className="product-cell product-title">
                             <Link to={`/product/${product.id}`}>{product.title}</Link>
                         </Cell>

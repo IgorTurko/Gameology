@@ -77,6 +77,44 @@
 	        return result;
 	    };
 	}
+	if (!Array.prototype.min) {
+	    Array.prototype.min = function min(selector) {
+	        var self = this;
+	        if (!self.length) {
+	            return null;
+	        }
+	        var minElement = self[0];
+	        var minValue = selector(minElement);
+	        for (var i = 1; i < self.length; i++) {
+	            var element = self[i];
+	            var value = selector(element);
+	            if (value < minValue) {
+	                minValue = value;
+	                minElement = element;
+	            }
+	        }
+	        return minElement;
+	    };
+	}
+	if (!Array.prototype.max) {
+	    Array.prototype.max = function min(selector) {
+	        var self = this;
+	        if (!self.length) {
+	            return null;
+	        }
+	        var maxElement = self[0];
+	        var maxValue = selector(maxElement);
+	        for (var i = 1; i < self.length; i++) {
+	            var element = self[i];
+	            var value = selector(element);
+	            if (value > maxValue) {
+	                maxValue = value;
+	                maxElement = element;
+	            }
+	        }
+	        return maxElement;
+	    };
+	}
 	if (!Object.entries) {
 	    Object.entries = function (obj) { return Object.keys(obj)
 	        .map(function (key) { return ([key, obj[key]]); }); };
@@ -8616,6 +8654,9 @@
 	            options.body = JSON.stringify(body);
 	            options.headers = { "Content-Type": "application/json" };
 	        }
+	        if (options.method === "GET") {
+	            url = (url.indexOf("?") === -1 ? url + "?rid=" : url + "&rid=") + new Date().getTime();
+	        }
 	        return new Promise(function (resolve, reject) {
 	            fetch(url, options).then(function (response) {
 	                if (response.status >= 200 && response.status < 300) {
@@ -9371,7 +9412,7 @@
 	var react_router_1 = __webpack_require__(64);
 	var login_part_1 = __webpack_require__(102);
 	var product_list_part_1 = __webpack_require__(109);
-	var product_details_part_1 = __webpack_require__(118);
+	var product_details_part_1 = __webpack_require__(119);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = function (loadProducts, loadProduct) { return (React.createElement(react_router_1.Router, {history: react_router_1.browserHistory}, React.createElement(react_router_1.Route, {component: login_part_1.default}, React.createElement(react_router_1.Route, {path: "/", component: product_list_part_1.default, onEnter: function () { return loadProducts(); }}), React.createElement(react_router_1.Route, {path: "/product/:productId", component: product_details_part_1.default, onEnter: function (_a) {
 	    var params = _a.params;
@@ -9606,10 +9647,10 @@
 	};
 	var React = __webpack_require__(50);
 	var react_router_1 = __webpack_require__(64);
-	var iif_1 = __webpack_require__(121);
-	var grid_1 = __webpack_require__(112);
-	var row_tsx_1 = __webpack_require__(116);
-	var cell_tsx_1 = __webpack_require__(117);
+	var iif_1 = __webpack_require__(112);
+	var grid_1 = __webpack_require__(113);
+	var row_tsx_1 = __webpack_require__(117);
+	var cell_tsx_1 = __webpack_require__(118);
 	var utils_1 = __webpack_require__(100);
 	var ProductGrid = (function (_super) {
 	    __extends(ProductGrid, _super);
@@ -9634,7 +9675,20 @@
 	    ProductGrid.prototype.renderData = function () {
 	        var _this = this;
 	        return (this.props.products.map(function (product) {
-	            return (React.createElement(row_tsx_1.Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId }), key: product.id}, React.createElement(cell_tsx_1.Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
+	            var isGameologyCheapest = true;
+	            if (product.values) {
+	                var _a = Object.entries(product.values)
+	                    .min(function (_a) {
+	                    var shopId = _a[0], values = _a[1];
+	                    var shop = _this.props.shops.filter(function (s) { return s.id === shopId; })[0];
+	                    var deliveryPrice = (shop && shop.deliveryPrice) ? shop.deliveryPrice : 0;
+	                    var price = (values && values.price) ? values.price : 0;
+	                    var totalPrice = deliveryPrice + price;
+	                    return totalPrice === 0 ? Number.MAX_VALUE : totalPrice;
+	                }), minShopId = _a[0], minValues = _a[1];
+	                isGameologyCheapest = minShopId === "gameology";
+	            }
+	            return (React.createElement(row_tsx_1.Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId, "cheapest": isGameologyCheapest }), key: product.id}, React.createElement(cell_tsx_1.Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
 	                var values = (product.values || {})[shop.id];
 	                var log = product.log ? product.log[shop.id] : null;
 	                var hasError = log && (log.error || Object.entries(log.values || {}).some(function (_a) {
@@ -9678,17 +9732,47 @@
 /* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/// <reference path="../typings/index.d.ts" />
 	"use strict";
-	function __export(m) {
-	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-	}
-	__export(__webpack_require__(113));
-	__export(__webpack_require__(114));
-	__export(__webpack_require__(115));
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(50);
+	var IIf = (function (_super) {
+	    __extends(IIf, _super);
+	    function IIf() {
+	        _super.apply(this, arguments);
+	    }
+	    IIf.prototype.render = function () {
+	        if (this.props.condition && this.props.condition()) {
+	            return (React.createElement("div", null, this.props.children));
+	        }
+	        else {
+	            return null;
+	        }
+	    };
+	    return IIf;
+	}(React.Component));
+	exports.IIf = IIf;
 
 
 /***/ },
 /* 113 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	function __export(m) {
+	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+	}
+	__export(__webpack_require__(114));
+	__export(__webpack_require__(115));
+	__export(__webpack_require__(116));
+
+
+/***/ },
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9701,7 +9785,7 @@
 
 
 /***/ },
-/* 114 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9714,7 +9798,7 @@
 
 
 /***/ },
-/* 115 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9727,8 +9811,8 @@
 	var React = __webpack_require__(50);
 	var ReactDOM = __webpack_require__(51);
 	var utils_1 = __webpack_require__(100);
-	var header_1 = __webpack_require__(113);
-	var rows_1 = __webpack_require__(114);
+	var header_1 = __webpack_require__(114);
+	var rows_1 = __webpack_require__(115);
 	var Grid = (function (_super) {
 	    __extends(Grid, _super);
 	    function Grid() {
@@ -9786,7 +9870,7 @@
 
 
 /***/ },
-/* 116 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../../typings/index.d.ts" />
@@ -9800,7 +9884,7 @@
 
 
 /***/ },
-/* 117 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../../typings/index.d.ts" />
@@ -9814,7 +9898,7 @@
 
 
 /***/ },
-/* 118 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -9830,7 +9914,7 @@
 	var React = __webpack_require__(50);
 	var react_redux_1 = __webpack_require__(53);
 	var Actions = __webpack_require__(78);
-	var product_form_1 = __webpack_require__(119);
+	var product_form_1 = __webpack_require__(120);
 	function ProductDetailsPageComponent(props) {
 	    return (React.createElement(product_form_1.ProductForm, __assign({}, props)));
 	}
@@ -9851,7 +9935,7 @@
 
 
 /***/ },
-/* 119 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9864,7 +9948,7 @@
 	var React = __webpack_require__(50);
 	var react_router_1 = __webpack_require__(64);
 	var utils_1 = __webpack_require__(100);
-	var product_input_field_1 = __webpack_require__(120);
+	var product_input_field_1 = __webpack_require__(121);
 	var ProductForm = (function (_super) {
 	    __extends(ProductForm, _super);
 	    function ProductForm(props) {
@@ -9928,7 +10012,7 @@
 
 
 /***/ },
-/* 120 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9950,36 +10034,6 @@
 	    return ProductInputField;
 	}(React.Component));
 	exports.ProductInputField = ProductInputField;
-
-
-/***/ },
-/* 121 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// <reference path="../typings/index.d.ts" />
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var React = __webpack_require__(50);
-	var IIf = (function (_super) {
-	    __extends(IIf, _super);
-	    function IIf() {
-	        _super.apply(this, arguments);
-	    }
-	    IIf.prototype.render = function () {
-	        if (this.props.condition && this.props.condition()) {
-	            return (React.createElement("div", null, this.props.children));
-	        }
-	        else {
-	            return null;
-	        }
-	    };
-	    return IIf;
-	}(React.Component));
-	exports.IIf = IIf;
 
 
 /***/ }

@@ -16,7 +16,6 @@ export default class ShopEditingMiddleware extends MiddlewareBase<AppState.App> 
 
     [Actions.SHOP_SAVE](state, action: Actions.ShopSaveAction, dispatch, store: redux.IMiddlewareStore<AppState.App>) {
         this.debouncer(() => {
-
             this.shopRepo
                 .saveShop(action.shop)
                 .then(res => {

@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "es6-shim": "^0.35.1",
-    "typescript": "^1.8.10"
+    "typescript": "^1.8.10",
+    "vs-fix-sourcemaps": "^1.0.1"
   }
 }

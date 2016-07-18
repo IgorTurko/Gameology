@@ -21,10 +21,13 @@ interface Configuration {
  */
 interface Array<T> {
     toHash<K>(keySelector: (elem: T) => string, valueSelector?: (elem: T) => K): { [key: string]: K; };
+    min<K>(selector: (elem: T) => K): T;
+    max<K>(selector: (elem: T) => K): T;
 }
 
 interface ObjectConstructor {
     entries(obj: any): any[][];
+    assign(target: any, ...sources: any[]): any;
 }
 
 

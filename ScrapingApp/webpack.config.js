@@ -1,5 +1,6 @@
 ﻿var path = require("path");
 var fs = require("fs");
+var VSFixSourceMapsPlugin = require('vs-fix-sourcemaps').default;
 
 var nodeModules = {};
 
@@ -41,7 +42,10 @@ module.exports = [
             compilerOptions: {
                 noEmit: false
             }
-        }
+        },
+        plugins: [
+            new VSFixSourceMapsPlugin()
+        ]
     },
     // Server
     {
@@ -69,7 +73,10 @@ module.exports = [
             compilerOptions: {
                 noEmit: false
             }
-        }
+        },
+        plugins: [
+            new VSFixSourceMapsPlugin()
+        ]
     },
     // Server-Test
     {
@@ -100,6 +107,9 @@ module.exports = [
             compilerOptions: {
                 noEmit: false
             }
-        }
+        },
+        plugins: [
+            new VSFixSourceMapsPlugin()
+        ]
     }
 ];

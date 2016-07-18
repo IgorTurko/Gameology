@@ -25,6 +25,10 @@ export default class HttpClient {
             options.headers = { "Content-Type": "application/json" }
         }
 
+        if (options.method === "GET") {
+            url = (url.indexOf("?") === -1 ? url + "?rid=" : url + "&rid=") + new Date().getTime();
+        }
+
         return new Promise((resolve, reject) => {
             fetch(url, options).then(response => {
                 if (response.status >= 200 && response.status < 300) {
