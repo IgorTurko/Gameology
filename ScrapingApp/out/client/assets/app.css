@@ -8,6 +8,7 @@
 .product-url {
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: center;
     line-height: 1.2em;
     height: 3.6em;
 }
@@ -19,16 +20,16 @@
 .product-price {
     text-align: center;
     font-weight: bold;
-    color: #ff0000;
-}
-
-.cheapest .product-price {
-    color: #000;
 }
 
 .product-price.delivery {
     color: #cecece;
     font-weight: normal;
+}
+
+.product-scraping-error-mark {
+    color: red;
+    margin-right: 1em;
 }
 
 /* PRODUCT GRID */
@@ -122,4 +123,12 @@
     .navbar-fixed-top {
         position: static;
     }
+}
+
+.product-row {
+    background: #fee;
+}
+
+.product-row.cheapest {
+    background: #fff;
 }

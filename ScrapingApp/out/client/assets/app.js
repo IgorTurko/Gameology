@@ -9694,15 +9694,15 @@
 	                    var _ = _a[0], l = _a[1];
 	                    return l.error;
 	                }));
-	                return (React.createElement(cell_tsx_1.Cell, {className: utils_1.classNames("product-cell", { "bg-danger": hasError }), key: product.id + "::" + index, title: hasError ? "Error scraping product data. Please check product settings or contact developer." : (values && values.title)}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null));
+	                return (React.createElement(cell_tsx_1.Cell, {className: utils_1.classNames("product-cell", { "product-scraping-error": hasError }), key: product.id + "::" + index, title: hasError ? "Error scraping product data. Please check product settings or contact developer." : (values && values.title)}, values ? _this.renderProductDetails(values, product.scrapingUrls[shop.id], shop, hasError) : null));
 	            })));
 	        }));
 	    };
 	    ProductGrid.prototype.renderLoadingIndicator = function () {
 	        return (React.createElement("div", {className: "row"}, "Loading..."));
 	    };
-	    ProductGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
-	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement(iif_1.IIf, {condition: function () { return !!values.price; }}, React.createElement("div", {className: "product-price"}, shop.deliveryPrice
+	    ProductGrid.prototype.renderProductDetails = function (values, productUrl, shop, hasError) {
+	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, hasError ? (React.createElement("span", {className: "glyphicon glyphicon-warning-sign product-scraping-error-mark"})) : null, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement(iif_1.IIf, {condition: function () { return !!values.price; }}, React.createElement("div", {className: "product-price"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price + shop.deliveryPrice)
 	            : this.formatPrice(values.price)), React.createElement("div", {className: "product-price delivery"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price) + " + " + this.formatPrice(shop.deliveryPrice)

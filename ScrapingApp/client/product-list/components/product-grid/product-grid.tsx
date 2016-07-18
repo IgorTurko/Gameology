@@ -85,7 +85,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
 
                     const [minShopId, minValues] = Object.entries(product.values)
                         .min(([shopId, values]) => {
-                            
+
                             const shop = this.props.shops.filter(s => s.id === shopId)[0];
                             const deliveryPrice = (shop && shop.deliveryPrice) ? shop.deliveryPrice : 999999;
                             const price = (values && values.price) ? values.price : 999999;
@@ -98,7 +98,9 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                 return (
                     <Row className={ classNames("product-row", { "highlight": product.id == this.props.updatedProductId, "cheapest": isGameologyCheapest }) } key={product.id}>
                         <Cell className="product-cell product-title">
-                            <Link to={`/product/${product.id}`}>{product.title}</Link>
+                            <Link to={`/product/${product.id}`}>
+                                {product.title}
+                            </Link>
                         </Cell>
                         {
                             this.props.shops.map((shop, index) => {
@@ -108,11 +110,11 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                                 let hasError = log && (log.error || Object.entries(log.values || {}).some(([_, l]) => l.error));
 
                                 return (
-                                    <Cell className={ classNames("product-cell", { "bg-danger": hasError }) }
+                                    <Cell className={ classNames("product-cell", { "product-scraping-error": hasError }) }
                                         key={ `${product.id}::${index}` }
                                         title={ hasError ? "Error scraping product data. Please check product settings or contact developer." : (values && values.title) }>
                                         {
-                                            values ? this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null
+                                            values ? this.renderProductDetails(values, product.scrapingUrls[shop.id], shop, hasError) : null
                                         }
                                     </Cell>)
                             })
@@ -130,11 +132,14 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
         );
     }
 
-    renderProductDetails(values: Api.ScrapedValues, productUrl: string, shop: Api.WebShop) {
+    renderProductDetails(values: Api.ScrapedValues, productUrl: string, shop: Api.WebShop, hasError: boolean) {
         return (
             <div>
                 <div className="product-url">
-                    <a href={ productUrl } target="_blank">{values.title}</a>
+                    <a href={ productUrl } target="_blank">
+                        { hasError ? (<span className="glyphicon glyphicon-warning-sign product-scraping-error-mark"></span>   ) : null }
+                        {values.title}
+                    </a>
                 </div>
                 <img className="product-img" src={ values.image } />
                 <IIf condition={ () => !!values.price }>
