@@ -29,14 +29,15 @@ app.use("/", function (req, res) {
     res.sendfile("./out/client" + '/index.html');
 });
 
-const port = process.env.PORT || config.fallbackPort;
+const port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+const ipAddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 export function run(): http.Server {
     
     const server = http.createServer(app);
-
-    server.listen(port, () => {
-        console.info(`Web server started at http://localhost:${port}/`);
+    
+    server.listen(port, ipAddress, () => {
+        console.info(`Web server started at ${ipAddress}:${port}/`);
     });
 
     return server;
