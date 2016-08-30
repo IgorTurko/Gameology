@@ -117,13 +117,21 @@
 	/// <reference path="../typings/index.d.ts" />
 	var mongo = __webpack_require__(4);
 	var config_1 = __webpack_require__(5);
+	var connectionString = config_1.default.mongoUrl;
 	var db = new Promise(function (resolve, reject) {
-	    mongo.MongoClient.connect(config_1.default.mongoUrl, function (err, db) {
+	    if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
+	        connectionString = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
+	            process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
+	            process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+	            process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
+	            process.env.OPENSHIFT_APP_NAME;
+	    }
+	    mongo.MongoClient.connect('mongodb://' + connectionString, function (err, db) {
 	        if (err) {
 	            reject(err);
 	        }
 	        else {
-	            console.info("Connected to Mongo server at " + config_1.default.mongoUrl);
+	            console.info("Connected to Mongo server at " + connectionString);
 	            resolve(db);
 	        }
 	    });

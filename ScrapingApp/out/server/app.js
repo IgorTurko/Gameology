@@ -132,8 +132,7 @@
 	var express = __webpack_require__(5);
 	var bodyparser = __webpack_require__(6);
 	var cookieparser = __webpack_require__(7);
-	var config_1 = __webpack_require__(8);
-	var authentication_route_1 = __webpack_require__(10);
+	var authentication_route_1 = __webpack_require__(8);
 	var product_route_1 = __webpack_require__(20);
 	var web_shop_route_1 = __webpack_require__(28);
 	var app = express();
@@ -146,11 +145,12 @@
 	app.use("/", function (req, res) {
 	    res.sendfile("./out/client" + '/index.html');
 	});
-	var port = process.env.PORT || config_1.default.fallbackPort;
+	var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+	var ipAddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 	function run() {
 	    var server = http.createServer(app);
-	    server.listen(port, function () {
-	        console.info("Web server started at http://localhost:" + port + "/");
+	    server.listen(port, ipAddress, function () {
+	        console.info("Web server started at " + ipAddress + ":" + port + "/");
 	    });
 	    return server;
 	}
@@ -186,28 +186,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	/// <reference path="typings/index.d.ts"/>
-	var fs = __webpack_require__(9);
-	var configContent = fs.readFileSync("./config.json", "utf8");
-	var configuration = JSON.parse(configContent);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = configuration;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	module.exports = require("fs");
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
 	/// <reference path="../../typings/index.d.ts" />
 	var express = __webpack_require__(5);
-	var db_1 = __webpack_require__(11);
+	var db_1 = __webpack_require__(9);
 	var mongo_authentication_token_storage_1 = __webpack_require__(13);
 	var authentication_token_provider_1 = __webpack_require__(14);
 	var mongo_user_account_storage_1 = __webpack_require__(17);
@@ -244,20 +225,28 @@
 
 
 /***/ },
-/* 11 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts" />
-	var mongo = __webpack_require__(12);
-	var config_1 = __webpack_require__(8);
+	var mongo = __webpack_require__(10);
+	var config_1 = __webpack_require__(11);
+	var connectionString = config_1.default.mongoUrl;
 	var db = new Promise(function (resolve, reject) {
-	    mongo.MongoClient.connect(config_1.default.mongoUrl, function (err, db) {
+	    if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
+	        connectionString = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
+	            process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
+	            process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+	            process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
+	            process.env.OPENSHIFT_APP_NAME;
+	    }
+	    mongo.MongoClient.connect('mongodb://' + connectionString, function (err, db) {
 	        if (err) {
 	            reject(err);
 	        }
 	        else {
-	            console.info("Connected to Mongo server at " + config_1.default.mongoUrl);
+	            console.info("Connected to Mongo server at " + connectionString);
 	            resolve(db);
 	        }
 	    });
@@ -289,10 +278,29 @@
 
 
 /***/ },
-/* 12 */
+/* 10 */
 /***/ function(module, exports) {
 
 	module.exports = require("mongodb");
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/// <reference path="typings/index.d.ts"/>
+	var fs = __webpack_require__(12);
+	var configContent = fs.readFileSync("./config.json", "utf8");
+	var configuration = JSON.parse(configContent);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = configuration;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = require("fs");
 
 /***/ },
 /* 13 */
@@ -300,7 +308,7 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(11);
+	var db_1 = __webpack_require__(9);
 	var MongoAuthenticationTokenStorage = (function () {
 	    function MongoAuthenticationTokenStorage(db) {
 	        this.db = db;
@@ -417,7 +425,7 @@
 
 	/// <reference path="../../typings/index.d.ts"/>
 	"use strict";
-	var db_1 = __webpack_require__(11);
+	var db_1 = __webpack_require__(9);
 	var MongoUserAccountStorage = (function () {
 	    function MongoUserAccountStorage(db) {
 	        this.db = db;
@@ -529,7 +537,7 @@
 	/// <reference path="../../typings/index.d.ts"/>
 	"use strict";
 	var express = __webpack_require__(5);
-	var db_1 = __webpack_require__(11);
+	var db_1 = __webpack_require__(9);
 	var mongo_product_storage_1 = __webpack_require__(21);
 	var product_service_1 = __webpack_require__(22);
 	var db = new db_1.default();
@@ -589,7 +597,7 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(11);
+	var db_1 = __webpack_require__(9);
 	var MongoProductStorage = (function () {
 	    function MongoProductStorage(db) {
 	        this.db = db;
@@ -940,7 +948,7 @@
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var express = __webpack_require__(5);
-	var db_1 = __webpack_require__(11);
+	var db_1 = __webpack_require__(9);
 	var mongo_web_shop_storage_1 = __webpack_require__(29);
 	var web_shop_service_1 = __webpack_require__(30);
 	var db = new db_1.default();
@@ -992,7 +1000,7 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var db_1 = __webpack_require__(11);
+	var db_1 = __webpack_require__(9);
 	var MongoWebShopStorage = (function () {
 	    function MongoWebShopStorage(db) {
 	        this.db = db;
@@ -1130,8 +1138,8 @@
 
 	/// <reference path="typings/index.d.ts"/>
 	"use strict";
-	var config_1 = __webpack_require__(8);
-	var db_1 = __webpack_require__(11);
+	var config_1 = __webpack_require__(11);
+	var db_1 = __webpack_require__(9);
 	var mongo_web_shop_storage_1 = __webpack_require__(29);
 	var web_shop_service_1 = __webpack_require__(30);
 	var mongo_product_storage_1 = __webpack_require__(21);

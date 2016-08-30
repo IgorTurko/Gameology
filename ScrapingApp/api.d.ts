@@ -78,7 +78,7 @@
          *
          * Default mode is queryselector.
          */
-        extract?: "queryselector" | "regex";
+        extract?: "queryselector" | "regex";        
     }
 
     interface QuerySelectorExtractSettings {
