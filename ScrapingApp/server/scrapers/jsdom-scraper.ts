@@ -32,7 +32,7 @@ export default class JsdomScraper implements Scraping.IScraper {
                     if ((err && err.length) || !window || !window.document) {
                         result.isSuccessful = false;
                         result.error = err || "Loading document failed.";
-
+                        console.error(`Error loading url ${url}`, err);    
                         resolve(result);
 
                         return;
@@ -46,6 +46,9 @@ export default class JsdomScraper implements Scraping.IScraper {
                         result.isSuccessful = Object.keys(result.values)
                             .map(valueName => result.values[valueName])
                             .every(v => v.isSuccessful);
+
+                        console.log(`Scraping data from ${url} completed with result ${result.isSuccessful}`);
+                        console.log(result.values);
 
                         resolve(result);
                     }
