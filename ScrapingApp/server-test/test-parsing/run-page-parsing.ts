@@ -20,29 +20,7 @@ const productService = new ProductService(new MongoProductStorage(db));
 const scrapeService = new ScrapeService(productService, webShopService);
 
 function outputProductScrapeResult(scrapeResult: Scraping.ProductScrapeResult, product: Api.Product, shops: Api.WebShop[]) {
-    Object.keys(scrapeResult)
-        .forEach(shopId => {
-            const shop = shops.filter(s => s.id === shopId)[0];
-            const result = scrapeResult[shopId];
-
-            console.log(`Scrapping of ${product.title} successful for shop ${shop.title}`);
-
-            const out = {};
-            Object.keys(result.values)
-                .forEach(k => {
-                    const v = result.values[k];
-                    if (v.isSuccessful) {
-                        out[k] = v.value;
-                    } else {
-                        out[k] = {
-                            error: v.error
-                        };
-                    }
-                });
-
-            console.dir(out);
-        });
-
+    console.dir(scrapeResult);
 }
 
 webShopService.all()

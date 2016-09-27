@@ -666,26 +666,7 @@
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
 	var scrapeService = new scrape_service_1.default(productService, webShopService);
 	function outputProductScrapeResult(scrapeResult, product, shops) {
-	    Object.keys(scrapeResult)
-	        .forEach(function (shopId) {
-	        var shop = shops.filter(function (s) { return s.id === shopId; })[0];
-	        var result = scrapeResult[shopId];
-	        console.log("Scrapping of " + product.title + " successful for shop " + shop.title);
-	        var out = {};
-	        Object.keys(result.values)
-	            .forEach(function (k) {
-	            var v = result.values[k];
-	            if (v.isSuccessful) {
-	                out[k] = v.value;
-	            }
-	            else {
-	                out[k] = {
-	                    error: v.error
-	                };
-	            }
-	        });
-	        console.dir(out);
-	    });
+	    console.dir(scrapeResult);
 	}
 	webShopService.all()
 	    .then(function (shops) {

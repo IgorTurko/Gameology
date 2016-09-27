@@ -1,8 +1,14 @@
 ﻿/// <reference path="../../typings/index.d.ts"/>
 
 import * as async from "async";
+import createDebugger from "debug";
 
 import ScrapeService from "./scrape-service";
+
+const log = {
+    debug: createDebugger("shoop:scrape-queue:debug"),
+    error: createDebugger("shoop:scrape-queue:error")
+};
 
 export default class ScrapeQueueService {
     private queue: AsyncQueue<string>;
@@ -12,31 +18,29 @@ export default class ScrapeQueueService {
             throw new Error("scrapeService is missing");
 
         this.queue = async.queue((productId: string, callback) => {
-            console.log(`Scraping data for product ${productId}`);
+            log.debug(`Scraping data for product ${productId}`);
 
             this.scrapeService.scrapeProductData(productId)
                 .then(res => {
                     Object.keys(res)
                         .forEach(webShop => {
                             const result = res[webShop];
-                            if (result.isSuccessful)
-                                console.log(`Scraping product ${productId} from shop ${webShop} completed successfuly`);
-                            else {
-                                console.error(`Scraping product ${productId} from shop ${webShop} failed`);
-                                console.error(result.error);
-                            }
+                            log.debug(`Scraping product ${productId} from shop ${webShop} completed successfuly`);
                         });
 
                     setTimeout(callback, delayBetweenProductScraping);
                 })
-                .catch(err => callback(err));
+                .catch(err => {
+                    log.error(`Error occured due scraping, ${err}`);
+                    callback(err);
+                });
 
         }, scrapingThreads);
     }
 
     /**
      * Enqueues scraping data and saving results for a product.
-     * Method returns a promise which will be resolved when processing finishes.     
+     * Method returns a promise which will be resolved when processing finishes.
      */
     enqueue(productId: string): Promise<string> {
         if (!productId)
@@ -54,7 +58,7 @@ export default class ScrapeQueueService {
 
     /**
      * Enqueues scraping data and saving results for a product before other enqueued products.
-     * Method returns a promise which will be resolved when processing finishes.     
+     * Method returns a promise which will be resolved when processing finishes.
      */
     enqueuePriore(productId: string) {
         if (!productId)

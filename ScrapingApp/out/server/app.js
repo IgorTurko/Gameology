@@ -1384,6 +1384,11 @@
 	/// <reference path="../../typings/index.d.ts"/>
 	"use strict";
 	var async = __webpack_require__(40);
+	var debug_1 = __webpack_require__(36);
+	var log = {
+	    debug: debug_1.default("shoop:scrape-queue:debug"),
+	    error: debug_1.default("shoop:scrape-queue:error")
+	};
 	var ScrapeQueueService = (function () {
 	    function ScrapeQueueService(scrapeService, scrapingThreads, delayBetweenProductScraping) {
 	        var _this = this;
@@ -1391,22 +1396,20 @@
 	        if (!scrapeService)
 	            throw new Error("scrapeService is missing");
 	        this.queue = async.queue(function (productId, callback) {
-	            console.log("Scraping data for product " + productId);
+	            log.debug("Scraping data for product " + productId);
 	            _this.scrapeService.scrapeProductData(productId)
 	                .then(function (res) {
 	                Object.keys(res)
 	                    .forEach(function (webShop) {
 	                    var result = res[webShop];
-	                    if (result.isSuccessful)
-	                        console.log("Scraping product " + productId + " from shop " + webShop + " completed successfuly");
-	                    else {
-	                        console.error("Scraping product " + productId + " from shop " + webShop + " failed");
-	                        console.error(result.error);
-	                    }
+	                    log.debug("Scraping product " + productId + " from shop " + webShop + " completed successfuly");
 	                });
 	                setTimeout(callback, delayBetweenProductScraping);
 	            })
-	                .catch(function (err) { return callback(err); });
+	                .catch(function (err) {
+	                log.error("Error occured due scraping, " + err);
+	                callback(err);
+	            });
 	        }, scrapingThreads);
 	    }
 	    /**
