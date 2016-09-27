@@ -135,7 +135,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
             <div>
                 <div className="product-url">
                     <a href={ productUrl } target="_blank">
-                        values.title
+                        { values.title }
                     </a>
                 </div>
                 <img className="product-img" src={ values.image } />

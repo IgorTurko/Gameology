@@ -38,7 +38,7 @@ export default class JsdomScraper implements Scraping.IScraper {
                 },
                 done: (err, window) => {
                     if (err) {
-                        log.error(`Error occured on scraping URL ${url}.\r\n${err}`);
+                        log.error(`Error occured on scraping URL ${url}.\r\n${JSON.stringify(err)}`);
                         reject(err);
                         return;
                     }
@@ -55,7 +55,7 @@ export default class JsdomScraper implements Scraping.IScraper {
                             result[valueName] = this.scrapeValue(window.document, settings);
                         });
 
-                    log.debug(`Scraping data from ${url} completed with values ${result}`);
+                    log.debug(`Scraping data from ${url} completed with values ${JSON.stringify(result)}`);
 
                     resolve(result);
                 }

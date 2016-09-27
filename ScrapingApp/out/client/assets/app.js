@@ -9776,7 +9776,7 @@
 	        return (React.createElement("div", {className: "row"}, "Loading..."));
 	    };
 	    ProductGrid.prototype.renderProductDetails = function (values, productUrl, shop) {
-	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, "values.title")), React.createElement("img", {className: "product-img", src: values.image}), React.createElement(iif_1.IIf, {condition: function () { return !!values.price; }}, React.createElement("div", {className: "product-price"}, shop.deliveryPrice
+	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement(iif_1.IIf, {condition: function () { return !!values.price; }}, React.createElement("div", {className: "product-price"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price + shop.deliveryPrice)
 	            : this.formatPrice(values.price)), React.createElement("div", {className: "product-price delivery"}, shop.deliveryPrice
 	            ? this.formatPrice(values.price) + " + " + this.formatPrice(shop.deliveryPrice)
