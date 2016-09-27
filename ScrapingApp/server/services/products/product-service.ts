@@ -57,56 +57,17 @@ export default class ProductService {
         return this.storage.findByTitle(title);
     }
 
-    updateScrapedData(productId: string, webshopId: string, data: Scraping.WebShopScrapingResult): Promise<Api.Product> {
+    updateScrapedData(productId: string, webshopId: string, data: Api.ScrapedValues): Promise<Api.Product> {
         if (!productId)
             throw new Error("productId is undefined");
         if (!webshopId)
             throw new Error("webShopId is undefined");
         if (!data)
             throw new Error("data is undefined");
-        const now = moment.utc().toDate();
 
         return this.one(productId)
             .then(product => {
-                if (!product.values)
-                    product.values = {};
-
-                const values = product.values[webshopId] ||
-                    {
-                        title: null,
-                        price: null,
-                        image: null
-                    };
-                product.values[webshopId] = values;
-
-                if (!product.log)
-                    product.log = {};
-
-                const log = product.log[webshopId] ||
-                    {
-                        url: null,
-                        scrapedAt: null,
-                        error: data.error,
-                        values: {}
-                    };
-                product.log[webshopId] = log;
-
-                log.url = product.scrapingUrls[webshopId];
-                log.scrapedAt = now;
-                log.error = data.error;
-
-                Object.keys(data.values)
-                    .forEach(name => {
-                        const value = data.values[name];
-                        values[name] = value.isSuccessful ? value.value : null;
-
-                        log.values[name] = {
-                            scrapedAt: now,
-                            error: value.error
-                        };
-                    });
-
-                return this.storage.setScrapingData(product.id, webshopId, values, log);
+                return this.storage.setScrapingData(product.id, webshopId, data);
             });
     }
 

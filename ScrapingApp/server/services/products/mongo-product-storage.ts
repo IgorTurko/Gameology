@@ -69,7 +69,7 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(c => true);
     }
 
-    setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues, log: Api.ScrapeLog): Promise<Api.Product> {
+    setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues): Promise<Api.Product> {
         if (!productId)
             throw new Error("productId is undefined");
         if (!webShopId)
@@ -85,8 +85,7 @@ export default class MongoProductStorage implements Products.IProductStorage {
                 },
                 {
                     $set: {
-                        [`values.${webShopId}`]: values,
-                        [`log.${webShopId}`]: log
+                        [`values.${webShopId}`]: values
                     }
                 },
                 {

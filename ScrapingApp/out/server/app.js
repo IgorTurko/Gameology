@@ -116,7 +116,7 @@
 	"use strict";
 	var webServer = __webpack_require__(3);
 	var scrapeServer = __webpack_require__(32);
-	var socket_server_1 = __webpack_require__(42);
+	var socket_server_1 = __webpack_require__(43);
 	scrapeServer.run();
 	var httpServer = webServer.run();
 	socket_server_1.default(httpServer, scrapeServer.productService);
@@ -654,7 +654,7 @@
 	            .then(function (c) { return c.deleteOne({ id: productId }); })
 	            .then(function (c) { return true; });
 	    };
-	    MongoProductStorage.prototype.setScrapingData = function (productId, webShopId, values, log) {
+	    MongoProductStorage.prototype.setScrapingData = function (productId, webShopId, values) {
 	        var _this = this;
 	        if (!productId)
 	            throw new Error("productId is undefined");
@@ -669,7 +669,6 @@
 	        }, {
 	            $set: (_a = {},
 	                _a["values." + webShopId] = values,
-	                _a["log." + webShopId] = log,
 	                _a
 	            )
 	        }, {
@@ -702,7 +701,6 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var moment = __webpack_require__(16);
 	var uuid = __webpack_require__(15);
 	var event_bus_1 = __webpack_require__(23);
 	var product_validator_1 = __webpack_require__(25);
@@ -757,41 +755,9 @@
 	            throw new Error("webShopId is undefined");
 	        if (!data)
 	            throw new Error("data is undefined");
-	        var now = moment.utc().toDate();
 	        return this.one(productId)
 	            .then(function (product) {
-	            if (!product.values)
-	                product.values = {};
-	            var values = product.values[webshopId] ||
-	                {
-	                    title: null,
-	                    price: null,
-	                    image: null
-	                };
-	            product.values[webshopId] = values;
-	            if (!product.log)
-	                product.log = {};
-	            var log = product.log[webshopId] ||
-	                {
-	                    url: null,
-	                    scrapedAt: null,
-	                    error: data.error,
-	                    values: {}
-	                };
-	            product.log[webshopId] = log;
-	            log.url = product.scrapingUrls[webshopId];
-	            log.scrapedAt = now;
-	            log.error = data.error;
-	            Object.keys(data.values)
-	                .forEach(function (name) {
-	                var value = data.values[name];
-	                values[name] = value.isSuccessful ? value.value : null;
-	                log.values[name] = {
-	                    scrapedAt: now,
-	                    error: value.error
-	                };
-	            });
-	            return _this.storage.setScrapingData(product.id, webshopId, values, log);
+	            return _this.storage.setScrapingData(product.id, webshopId, data);
 	        });
 	    };
 	    ProductService.prototype.delete = function (productId) {
@@ -1145,8 +1111,8 @@
 	var mongo_product_storage_1 = __webpack_require__(21);
 	var product_service_1 = __webpack_require__(22);
 	var scrape_service_1 = __webpack_require__(33);
-	var scrape_queue_service_1 = __webpack_require__(38);
-	var scrape_scheduler_service_1 = __webpack_require__(40);
+	var scrape_queue_service_1 = __webpack_require__(39);
+	var scrape_scheduler_service_1 = __webpack_require__(41);
 	var event_bus_1 = __webpack_require__(23);
 	var db = new db_1.default();
 	exports.productService = new product_service_1.default(new mongo_product_storage_1.default(db));
@@ -1171,10 +1137,14 @@
 /* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var jsdom_scraper_1 = __webpack_require__(34);
 	var event_bus_1 = __webpack_require__(23);
+	var emptyScrapedValues = {
+	    title: null,
+	    price: null,
+	    image: null
+	};
 	var ScrapeService = (function () {
 	    function ScrapeService(productService, webShopService) {
 	        this.productService = productService;
@@ -1192,32 +1162,35 @@
 	        var _this = this;
 	        if (!productId)
 	            throw new Error("productId is undefined");
-	        return this.webShops.then(function (shops) {
-	            return _this.productService.one(productId)
-	                .then(function (product) { return Promise.all(_this.scrapeProduct(product, shops))
-	                .then(function (results) { return results.toHash(function (e) { return e.webShopId; }, function (e) { return e.scrapingResult; }); }); })
-	                .then(function (r) {
-	                event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductScraped, productId);
-	                return r;
-	            });
+	        return Promise.all([
+	            this.webShops,
+	            this.productService.one(productId)
+	        ])
+	            .then(function (_a) {
+	            var shops = _a[0], product = _a[1];
+	            return Promise.all(_this.scrapeProduct(product, shops));
+	        })
+	            .then(function (r) { return r.toHash(function (e) { return e.webShopId; }, function (e) { return e.scrapedValues; }); })
+	            .then(function (hash) {
+	            event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductScraped, productId);
+	            return hash;
 	        });
 	    };
 	    ScrapeService.prototype.scrapeProduct = function (product, shops) {
 	        var _this = this;
 	        return Object.keys(product.scrapingUrls)
 	            .map(function (webShopId) { return _this.scrapeProductFromShopAndSave(product, webShopId, shops)
-	            .then(function (productScrapeResult) { return ({
-	            webShopId: webShopId,
-	            scrapingResult: productScrapeResult
-	        }); }); });
+	            .then(function (scrapedValues) { return ({ webShopId: webShopId, scrapedValues: scrapedValues }); }); });
 	    };
 	    ScrapeService.prototype.scrapeProductFromShopAndSave = function (product, webShopId, shops) {
 	        var _this = this;
 	        return this.scraper
 	            .scrape(product.scrapingUrls[webShopId], shops[webShopId].scrapingSettings)
-	            .then(function (result) { return _this.productService
-	            .updateScrapedData(product.id, webShopId, result)
-	            .then(function () { return result; }); });
+	            .then(function (scrapedValues) { return _this.productService
+	            .updateScrapedData(product.id, webShopId, scrapedValues)
+	            .then(function () { return scrapedValues; }); }, function (err) { return _this.productService
+	            .updateScrapedData(product.id, webShopId, emptyScrapedValues)
+	            .then(function () { return emptyScrapedValues; }); });
 	    };
 	    return ScrapeService;
 	}());
@@ -1232,7 +1205,12 @@
 	/// <reference path="../typings/index.d.ts" />
 	"use strict";
 	var jsdom = __webpack_require__(35);
-	var value_parser_1 = __webpack_require__(36);
+	var debug_1 = __webpack_require__(36);
+	var value_parser_1 = __webpack_require__(37);
+	var log = {
+	    error: debug_1.default("gameology:jsdom:error"),
+	    debug: debug_1.default("gameology:jsdom:debug")
+	};
 	var JsdomScraper = (function () {
 	    function JsdomScraper() {
 	        this.valueParser = new value_parser_1.default();
@@ -1246,12 +1224,12 @@
 	        if (!Object.keys(values).length)
 	            throw new Error("No values to extract");
 	        var result = {
-	            isSuccessful: false,
-	            error: null,
-	            values: {}
+	            title: null,
+	            price: null,
+	            image: null
 	        };
 	        // "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
-	        return new Promise(function (resolve) {
+	        return new Promise(function (resolve, reject) {
 	            jsdom.env({
 	                url: url,
 	                userAgent: "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36",
@@ -1260,26 +1238,23 @@
 	                    ProcessExternalResources: false
 	                },
 	                done: function (err, window) {
-	                    if ((err && err.length) || !window || !window.document) {
-	                        result.isSuccessful = false;
-	                        result.error = err || "Loading document failed.";
-	                        console.error("Error loading url " + url, err);
-	                        resolve(result);
+	                    if (err) {
+	                        log.error("Error occured on scraping URL " + url + ".\r\n" + err);
+	                        reject(err);
 	                        return;
 	                    }
-	                    else {
-	                        Object.keys(values)
-	                            .forEach(function (valueName) {
-	                            var settings = values[valueName];
-	                            result.values[valueName] = _this.scrapeValue(window.document, settings);
-	                        });
-	                        result.isSuccessful = Object.keys(result.values)
-	                            .map(function (valueName) { return result.values[valueName]; })
-	                            .every(function (v) { return v.isSuccessful; });
-	                        console.log("Scraping data from " + url + " completed with result " + result.isSuccessful);
-	                        console.log(result.values);
-	                        resolve(result);
+	                    if (!window || !window.document) {
+	                        log.error("Error occured on scraping URL " + url + ". HTML data are not received.");
+	                        reject(new Error("HTML is not received."));
+	                        return;
 	                    }
+	                    Object.keys(values)
+	                        .forEach(function (valueName) {
+	                        var settings = values[valueName];
+	                        result[valueName] = _this.scrapeValue(window.document, settings);
+	                    });
+	                    log.debug("Scraping data from " + url + " completed with values " + result);
+	                    resolve(result);
 	                }
 	            });
 	        });
@@ -1292,27 +1267,20 @@
 	        var parsingContext = {
 	            location: document.location
 	        };
-	        var result = this.emptyValueScrapingResult();
 	        for (var _i = 0, valueScrapingSettings_1 = valueScrapingSettings; _i < valueScrapingSettings_1.length; _i++) {
 	            var scrapingSetting = valueScrapingSettings_1[_i];
 	            try {
 	                var rawValue = this.extractRawValueFromDocument(document, scrapingSetting);
 	                var parsedValue = this.valueParser[scrapingSetting.type](rawValue, parsingContext);
-	                result.isSuccessful = true;
-	                result.error = null;
-	                result.settings = scrapingSetting;
-	                result.value = parsedValue;
-	                return result;
+	                return parsedValue;
 	            }
 	            catch (error) {
-	                result.isSuccessful = false;
-	                result.error = error;
-	                result.settings = scrapingSetting;
+	                log.error("The error occured due parsing value. " + error);
 	                if (scrapingSetting.failOnError)
-	                    return result;
+	                    return null;
 	            }
 	        }
-	        return result;
+	        return null;
 	    };
 	    JsdomScraper.prototype.extractRawValueFromDocument = function (document, valueScrapingSetting) {
 	        var extractMethod = valueScrapingSetting.extract || "queryselector";
@@ -1350,14 +1318,6 @@
 	                throw new Error("Unknown extract method");
 	        }
 	    };
-	    JsdomScraper.prototype.emptyValueScrapingResult = function () {
-	        return {
-	            value: null,
-	            isSuccessful: true,
-	            error: null,
-	            settings: null
-	        };
-	    };
 	    return JsdomScraper;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -1372,11 +1332,17 @@
 
 /***/ },
 /* 36 */
+/***/ function(module, exports) {
+
+	module.exports = require("debug");
+
+/***/ },
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../typings/index.d.ts"/>
-	var path = __webpack_require__(37);
+	var path = __webpack_require__(38);
 	var ValueParserHash = (function () {
 	    function ValueParserHash() {
 	        this.parsers = {};
@@ -1406,18 +1372,18 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	module.exports = require("path");
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts"/>
 	"use strict";
-	var async = __webpack_require__(39);
+	var async = __webpack_require__(40);
 	var ScrapeQueueService = (function () {
 	    function ScrapeQueueService(scrapeService, scrapingThreads, delayBetweenProductScraping) {
 	        var _this = this;
@@ -1484,18 +1450,18 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	module.exports = require("async");
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var schedule = __webpack_require__(41);
+	var schedule = __webpack_require__(42);
 	var uuid = __webpack_require__(15);
 	var ScrapeSchedulerService = (function () {
 	    function ScrapeSchedulerService(queue, productService, schedules) {
@@ -1531,18 +1497,18 @@
 
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	module.exports = require("node-schedule");
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="./typings/index.d.ts"/>
 	"use strict";
-	var io = __webpack_require__(43);
+	var io = __webpack_require__(44);
 	var event_bus_1 = __webpack_require__(23);
 	var PRODUCT_DATA_RECEIVED_FROM_SERVER = "product-data-received-from-server";
 	function run(server, productService) {
@@ -1571,7 +1537,7 @@
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	module.exports = require("socket.io");

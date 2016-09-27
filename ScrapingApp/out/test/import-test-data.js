@@ -119,8 +119,8 @@
 	var web_shop_service_1 = __webpack_require__(8);
 	var mongo_product_storage_1 = __webpack_require__(12);
 	var product_service_1 = __webpack_require__(13);
-	var web_shops_1 = __webpack_require__(19);
-	var products_1 = __webpack_require__(20);
+	var web_shops_1 = __webpack_require__(18);
+	var products_1 = __webpack_require__(19);
 	var db = new db_1.default();
 	var webShopService = new web_shop_service_1.default(new mongo_web_shop_storage_1.default(db));
 	var productService = new product_service_1.default(new mongo_product_storage_1.default(db));
@@ -482,7 +482,7 @@
 	            .then(function (c) { return c.deleteOne({ id: productId }); })
 	            .then(function (c) { return true; });
 	    };
-	    MongoProductStorage.prototype.setScrapingData = function (productId, webShopId, values, log) {
+	    MongoProductStorage.prototype.setScrapingData = function (productId, webShopId, values) {
 	        var _this = this;
 	        if (!productId)
 	            throw new Error("productId is undefined");
@@ -497,7 +497,6 @@
 	        }, {
 	            $set: (_a = {},
 	                _a["values." + webShopId] = values,
-	                _a["log." + webShopId] = log,
 	                _a
 	            )
 	        }, {
@@ -530,10 +529,9 @@
 
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
-	var moment = __webpack_require__(14);
-	var uuid = __webpack_require__(15);
-	var event_bus_1 = __webpack_require__(16);
-	var product_validator_1 = __webpack_require__(18);
+	var uuid = __webpack_require__(14);
+	var event_bus_1 = __webpack_require__(15);
+	var product_validator_1 = __webpack_require__(17);
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
@@ -585,41 +583,9 @@
 	            throw new Error("webShopId is undefined");
 	        if (!data)
 	            throw new Error("data is undefined");
-	        var now = moment.utc().toDate();
 	        return this.one(productId)
 	            .then(function (product) {
-	            if (!product.values)
-	                product.values = {};
-	            var values = product.values[webshopId] ||
-	                {
-	                    title: null,
-	                    price: null,
-	                    image: null
-	                };
-	            product.values[webshopId] = values;
-	            if (!product.log)
-	                product.log = {};
-	            var log = product.log[webshopId] ||
-	                {
-	                    url: null,
-	                    scrapedAt: null,
-	                    error: data.error,
-	                    values: {}
-	                };
-	            product.log[webshopId] = log;
-	            log.url = product.scrapingUrls[webshopId];
-	            log.scrapedAt = now;
-	            log.error = data.error;
-	            Object.keys(data.values)
-	                .forEach(function (name) {
-	                var value = data.values[name];
-	                values[name] = value.isSuccessful ? value.value : null;
-	                log.values[name] = {
-	                    scrapedAt: now,
-	                    error: value.error
-	                };
-	            });
-	            return _this.storage.setScrapingData(product.id, webshopId, values, log);
+	            return _this.storage.setScrapingData(product.id, webshopId, data);
 	        });
 	    };
 	    ProductService.prototype.delete = function (productId) {
@@ -670,21 +636,15 @@
 /* 14 */
 /***/ function(module, exports) {
 
-	module.exports = require("moment");
-
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
-
 	module.exports = require("node-uuid");
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../typings/index.d.ts"/>
 	"use strict";
-	var events_1 = __webpack_require__(17);
+	var events_1 = __webpack_require__(16);
 	var EventNames = (function () {
 	    function EventNames() {
 	    }
@@ -706,13 +666,13 @@
 
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports) {
 
 	module.exports = require("events");
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/index.d.ts" />
@@ -746,7 +706,7 @@
 
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../server/typings/index.d.ts" />
@@ -883,7 +843,7 @@
 
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../server/typings/index.d.ts" />

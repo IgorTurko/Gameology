@@ -1,12 +1,19 @@
 ﻿/// <reference path="../typings/index.d.ts" />
 
 import * as jsdom from "jsdom";
+import createDebugger from "debug";
+
 import ValueParserHash from "./value-parser";
+
+const log = {
+    error: createDebugger("gameology:jsdom:error"),
+    debug: createDebugger("gameology:jsdom:debug")
+};
 
 export default class JsdomScraper implements Scraping.IScraper {
     private valueParser = new ValueParserHash();
 
-    scrape(url: string, values: Api.ScrapingSettings): Promise<Scraping.WebShopScrapingResult> {
+    scrape(url: string, values: Api.ScrapingSettings): Promise<Api.ScrapedValues> {
         if (!url)
             throw new Error("url is undefined");
         if (!values)
@@ -14,13 +21,14 @@ export default class JsdomScraper implements Scraping.IScraper {
         if (!Object.keys(values).length)
             throw new Error("No values to extract");
 
-        const result: Scraping.WebShopScrapingResult = {
-            isSuccessful: false,
-            error: null,
-            values: {}
+        const result: Api.ScrapedValues = {
+            title: null,
+            price: null,
+            image: null
         };
+
         // "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             jsdom.env({
                 url: url,
                 userAgent: "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36",
@@ -29,35 +37,33 @@ export default class JsdomScraper implements Scraping.IScraper {
                     ProcessExternalResources: false
                 },
                 done: (err, window) => {
-                    if ((err && err.length) || !window || !window.document) {
-                        result.isSuccessful = false;
-                        result.error = err || "Loading document failed.";
-                        console.error(`Error loading url ${url}`, err);    
-                        resolve(result);
-
+                    if (err) {
+                        log.error(`Error occured on scraping URL ${url}.\r\n${err}`);
+                        reject(err);
                         return;
-                    } else {
-                        Object.keys(values)
-                            .forEach(valueName => {
-                                const settings = values[valueName];
-                                result.values[valueName] = this.scrapeValue(window.document, settings);
-                            });
-
-                        result.isSuccessful = Object.keys(result.values)
-                            .map(valueName => result.values[valueName])
-                            .every(v => v.isSuccessful);
-
-                        console.log(`Scraping data from ${url} completed with result ${result.isSuccessful}`);
-                        console.log(result.values);
-
-                        resolve(result);
                     }
+
+                    if (!window || !window.document) {
+                        log.error(`Error occured on scraping URL ${url}. HTML data are not received.`);
+                        reject(new Error("HTML is not received."));
+                        return;
+                    }
+
+                    Object.keys(values)
+                        .forEach(valueName => {
+                            const settings = values[valueName];
+                            result[valueName] = this.scrapeValue(window.document, settings);
+                        });
+
+                    log.debug(`Scraping data from ${url} completed with values ${result}`);
+
+                    resolve(result);
                 }
             });
         });
     }
 
-    private scrapeValue(document: Document, valueScrapingSettings: Api.ValueScrapingSettings[]): Scraping.ValueScrapingResult {
+    private scrapeValue(document: Document, valueScrapingSettings: Api.ValueScrapingSettings[]): string | number {
         if (!document)
             throw new Error("document is undefined");
         if (!valueScrapingSettings)
@@ -67,30 +73,21 @@ export default class JsdomScraper implements Scraping.IScraper {
             location: document.location
         };
 
-        const result = this.emptyValueScrapingResult();
-
         for (let scrapingSetting of valueScrapingSettings) {
             try {
                 const rawValue = this.extractRawValueFromDocument(document, scrapingSetting);
                 const parsedValue = this.valueParser[scrapingSetting.type](rawValue, parsingContext);
 
-                result.isSuccessful = true;
-                result.error = null;
-                result.settings = scrapingSetting;
-                result.value = parsedValue;
-
-                return result;
+                return parsedValue;
             } catch (error) {
-                result.isSuccessful = false;
-                result.error = error;
-                result.settings = scrapingSetting;
+                log.error(`The error occured due parsing value. ${error}`);
 
                 if (scrapingSetting.failOnError)
-                    return result;
+                    return null;
             }
         }
 
-        return result;
+        return null;
     }
 
     private extractRawValueFromDocument(document: Document, valueScrapingSetting: Api.ValueScrapingSettings): string {
@@ -134,14 +131,5 @@ export default class JsdomScraper implements Scraping.IScraper {
             default:
                 throw new Error("Unknown extract method");
         }
-    }
-
-    private emptyValueScrapingResult(): Scraping.ValueScrapingResult {
-        return {
-            value: null,
-            isSuccessful: true,
-            error: null,
-            settings: null
-        };
     }
 }

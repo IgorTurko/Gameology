@@ -43,13 +43,13 @@ declare namespace Authentication {
         /**
          * Validates given authentication token and returns authentication information.
          * If token is not valid resulting promise will be rejected.
-         * 
+         *
          */
         validate(authenticationToken: string): Promise<AuthenticationInfo>;
 
         /**
          * Generates and stores authentication info for specified user.
-         * 
+         *
          */
         generate(userId: string): Promise<AuthenticationInfo>;
     }
@@ -86,24 +86,6 @@ declare namespace Scraping {
         attemptedValue: string;
     }
 
-    interface ValueScrapingResult {
-        value: any;
-        isSuccessful: boolean;
-        error: any;
-        /**
-         * First setting correctly parses a document.
-         */
-        settings: Api.ValueScrapingSettings;
-    }
-
-    interface WebShopScrapingResult {
-        isSuccessful: boolean;
-        error: any;
-        values: {
-            [valueName: string]: ValueScrapingResult;
-        };
-    }
-
     /**
      * Scraper contract.
      */
@@ -113,16 +95,16 @@ declare namespace Scraping {
          * Method returns a promise which resolves or rejects with ScrapingResult.
          * Promise resolves if scraping on success or rejects on scraping error with the same value.
          * Scraping fails if error occured or if any non-optional value scraping fails.
-         * 
+         *
          * @param url Url to scrape data from.
          * @param values Settings for scraping individual values from the page.
          * @returns Promise which resolves or rejects with ScrapingResult.
          */
-        scrape(url: string, values: Api.ScrapingSettings): Promise<WebShopScrapingResult>;
+        scrape(url: string, values: Api.ScrapingSettings): Promise<Api.ScrapedValues>;
     }
 
     interface ProductScrapeResult {
-        [webShopId: string]: WebShopScrapingResult;
+        [webShopId: string]: Api.ScrapedValues;
     }
 
     interface IScrapeService {
@@ -170,7 +152,7 @@ declare namespace Products {
 
         save(product: Api.Product): Promise<Api.Product>;
 
-        setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues, log: Api.ScrapeLog): Promise<Api.Product>;
+        setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues): Promise<Api.Product>;
 
         delete(productId: string): Promise<any>;
 
