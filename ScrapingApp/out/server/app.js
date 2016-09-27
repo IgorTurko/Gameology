@@ -1205,11 +1205,11 @@
 	/// <reference path="../typings/index.d.ts" />
 	"use strict";
 	var jsdom = __webpack_require__(35);
-	var debug_1 = __webpack_require__(36);
+	var createDebugger = __webpack_require__(36);
 	var value_parser_1 = __webpack_require__(37);
 	var log = {
-	    error: debug_1.default("gameology:jsdom:error"),
-	    debug: debug_1.default("gameology:jsdom:debug")
+	    error: createDebugger("gameology:jsdom:error"),
+	    debug: createDebugger("gameology:jsdom:debug")
 	};
 	var JsdomScraper = (function () {
 	    function JsdomScraper() {
@@ -1384,10 +1384,10 @@
 	/// <reference path="../../typings/index.d.ts"/>
 	"use strict";
 	var async = __webpack_require__(40);
-	var debug_1 = __webpack_require__(36);
+	var createDebugger = __webpack_require__(36);
 	var log = {
-	    debug: debug_1.default("shoop:scrape-queue:debug"),
-	    error: debug_1.default("shoop:scrape-queue:error")
+	    debug: createDebugger("shoop:scrape-queue:debug"),
+	    error: createDebugger("shoop:scrape-queue:error")
 	};
 	var ScrapeQueueService = (function () {
 	    function ScrapeQueueService(scrapeService, scrapingThreads, delayBetweenProductScraping) {

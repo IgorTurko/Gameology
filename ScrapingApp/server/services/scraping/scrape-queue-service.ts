@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../typings/index.d.ts"/>
 
 import * as async from "async";
-import createDebugger from "debug";
+import * as createDebugger  from "debug";
 
 import ScrapeService from "./scrape-service";
 

@@ -1,7 +1,7 @@
 ﻿/// <reference path="../typings/index.d.ts" />
 
 import * as jsdom from "jsdom";
-import createDebugger from "debug";
+import * as createDebugger from "debug";
 
 import ValueParserHash from "./value-parser";
 

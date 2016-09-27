@@ -105,17 +105,15 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                         {
                             this.props.shops.map((shop, index) => {
                                 let values = (product.values || {})[shop.id];
-                                let log = product.log ? product.log[shop.id] : null;
 
-                                let hasError = log && (log.error || Object.entries(log.values || {}).some(([_, l]) => l.error));
 
                                 return (
-                                    <Cell className={ classNames("product-cell", { "product-scraping-error": hasError }) }
-                                        key={ `${product.id}::${index}` }
-                                        title={ hasError ? "Error scraping product data. Please check product settings or contact developer." : (values && values.title) }>
-                                        {
-                                            values ? this.renderProductDetails(values, product.scrapingUrls[shop.id], shop, hasError) : null
-                                        }
+                                    <Cell className="product-cell"
+                                          key={ `${product.id}::${index}` }
+                                          title={ values && values.title }>
+                                            {
+                                                values ? this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null
+                                            }
                                     </Cell>)
                             })
                         }
@@ -132,13 +130,12 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
         );
     }
 
-    renderProductDetails(values: Api.ScrapedValues, productUrl: string, shop: Api.WebShop, hasError: boolean) {
+    renderProductDetails(values: Api.ScrapedValues, productUrl: string, shop: Api.WebShop) {
         return (
             <div>
                 <div className="product-url">
                     <a href={ productUrl } target="_blank">
-                        { hasError ? (<span className="glyphicon glyphicon-warning-sign product-scraping-error-mark"></span>   ) : null }
-                        {values.title}
+                        values.title
                     </a>
                 </div>
                 <img className="product-img" src={ values.image } />
@@ -208,4 +205,4 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
 
         return `$${price.toFixed(2)}`;
     }
-} 
+}

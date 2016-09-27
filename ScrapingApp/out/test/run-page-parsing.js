@@ -762,11 +762,11 @@
 	/// <reference path="../typings/index.d.ts" />
 	"use strict";
 	var jsdom = __webpack_require__(23);
-	var debug_1 = __webpack_require__(24);
+	var createDebugger = __webpack_require__(24);
 	var value_parser_1 = __webpack_require__(25);
 	var log = {
-	    error: debug_1.default("gameology:jsdom:error"),
-	    debug: debug_1.default("gameology:jsdom:debug")
+	    error: createDebugger("gameology:jsdom:error"),
+	    debug: createDebugger("gameology:jsdom:debug")
 	};
 	var JsdomScraper = (function () {
 	    function JsdomScraper() {
