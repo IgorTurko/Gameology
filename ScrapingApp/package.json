@@ -8,6 +8,9 @@
     "name": "admin",
     "email": "sales@rd-dev.net"
   },
+  "scripts": {
+    "nodemon": "set DEBUG=gameology:* && nodemon out/server/app.js"
+  },
   "dependencies": {
     "async": "^2.0.0-rc.6",
     "body-parser": "^1.15.1",

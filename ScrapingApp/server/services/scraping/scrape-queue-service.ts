@@ -6,8 +6,8 @@ import * as createDebugger  from "debug";
 import ScrapeService from "./scrape-service";
 
 const log = {
-    debug: createDebugger("shoop:scrape-queue:debug"),
-    error: createDebugger("shoop:scrape-queue:error")
+    debug: createDebugger("gameology:scrape-queue:debug"),
+    error: createDebugger("gameology:scrape-queue:error")
 };
 
 export default class ScrapeQueueService {

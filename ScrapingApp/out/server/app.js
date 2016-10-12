@@ -1248,6 +1248,8 @@
 	                        reject(new Error("HTML is not received."));
 	                        return;
 	                    }
+	                    var html = window.document.getElementsByTagName("html")[0];
+	                    log.debug(html.innerHTML);
 	                    Object.keys(values)
 	                        .forEach(function (valueName) {
 	                        var settings = values[valueName];
@@ -1386,8 +1388,8 @@
 	var async = __webpack_require__(40);
 	var createDebugger = __webpack_require__(36);
 	var log = {
-	    debug: createDebugger("shoop:scrape-queue:debug"),
-	    error: createDebugger("shoop:scrape-queue:error")
+	    debug: createDebugger("gameology:scrape-queue:debug"),
+	    error: createDebugger("gameology:scrape-queue:error")
 	};
 	var ScrapeQueueService = (function () {
 	    function ScrapeQueueService(scrapeService, scrapingThreads, delayBetweenProductScraping) {

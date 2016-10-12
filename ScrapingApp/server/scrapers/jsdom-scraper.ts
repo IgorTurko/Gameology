@@ -49,6 +49,10 @@ export default class JsdomScraper implements Scraping.IScraper {
                         return;
                     }
 
+                    const html = window.document.getElementsByTagName("html")[0];
+
+                    log.debug(html.innerHTML);
+
                     Object.keys(values)
                         .forEach(valueName => {
                             const settings = values[valueName];
