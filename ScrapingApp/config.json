@@ -2,6 +2,6 @@
   "fallbackPort": 3000,
   "mongoUrl": "localhost:27017/gameology",
   "scrapingThreads": 3,
-  "schedules": [ "0 0 */3 * * *" ],
+  "schedules": [ "0 0 0 */1 * *" ],
   "delayBetweenShopScrapingMs": 1000
 }
