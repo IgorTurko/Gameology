@@ -49,9 +49,15 @@ export default class JsdomScraper implements Scraping.IScraper {
                         return;
                     }
 
-                    const html = window.document.getElementsByTagName("html")[0];
 
-                    log.debug(html.innerHTML);
+                    const tags = window.document.getElementsByTagName("html");
+
+                    if (!tags || !tags.length) {
+                        log.debug("HTML element is missing in document.");
+                    } else {
+                        log.debug(tags[0].innerHTML);
+                    }
+
 
                     Object.keys(values)
                         .forEach(valueName => {

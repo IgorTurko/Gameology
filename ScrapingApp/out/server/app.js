@@ -1248,8 +1248,13 @@
 	                        reject(new Error("HTML is not received."));
 	                        return;
 	                    }
-	                    var html = window.document.getElementsByTagName("html")[0];
-	                    log.debug(html.innerHTML);
+	                    var tags = window.document.getElementsByTagName("html");
+	                    if (!tags || !tags.length) {
+	                        log.debug("HTML element is missing in document.");
+	                    }
+	                    else {
+	                        log.debug(tags[0].innerHTML);
+	                    }
 	                    Object.keys(values)
 	                        .forEach(function (valueName) {
 	                        var settings = values[valueName];
