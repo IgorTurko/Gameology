@@ -742,7 +742,7 @@
 	    ScrapeService.prototype.scrapeProductFromShopAndSave = function (product, webShopId, shops) {
 	        var _this = this;
 	        return this.scraper
-	            .scrape(product.scrapingUrls[webShopId], shops[webShopId].scrapingSettings)
+	            .scrape(product.scrapingUrls[webShopId], shops[webShopId].scrapingSettings, webShopId)
 	            .then(function (scrapedValues) { return _this.productService
 	            .updateScrapedData(product.id, webShopId, scrapedValues)
 	            .then(function () { return scrapedValues; }); }, function (err) { return _this.productService
@@ -764,15 +764,11 @@
 	var jsdom = __webpack_require__(23);
 	var createDebugger = __webpack_require__(24);
 	var value_parser_1 = __webpack_require__(25);
-	var log = {
-	    error: createDebugger("gameology:jsdom:error"),
-	    debug: createDebugger("gameology:jsdom:debug")
-	};
 	var JsdomScraper = (function () {
 	    function JsdomScraper() {
 	        this.valueParser = new value_parser_1.default();
 	    }
-	    JsdomScraper.prototype.scrape = function (url, values) {
+	    JsdomScraper.prototype.scrape = function (url, values, webShopId) {
 	        var _this = this;
 	        if (!url)
 	            throw new Error("url is undefined");
@@ -780,6 +776,12 @@
 	            throw new Error("values is undefined.");
 	        if (!Object.keys(values).length)
 	            throw new Error("No values to extract");
+	        webShopId = webShopId || "unknown-web-shop";
+	        var log = {
+	            error: createDebugger("gameology:error:jsdom:" + webShopId),
+	            debug: createDebugger("gameology:debug:jsdom:" + webShopId),
+	            dump: createDebugger("gameology:dump:jsdom:" + webShopId)
+	        };
 	        var result = {
 	            title: null,
 	            price: null,
@@ -807,15 +809,15 @@
 	                    }
 	                    var tags = window.document.getElementsByTagName("html");
 	                    if (!tags || !tags.length) {
-	                        log.debug("HTML element is missing in document.");
+	                        log.dump("HTML element is missing in document.");
 	                    }
 	                    else {
-	                        log.debug(tags[0].innerHTML);
+	                        log.dump(tags[0].innerHTML);
 	                    }
 	                    Object.keys(values)
 	                        .forEach(function (valueName) {
 	                        var settings = values[valueName];
-	                        result[valueName] = _this.scrapeValue(window.document, settings);
+	                        result[valueName] = _this.scrapeValue(window.document, settings, log);
 	                    });
 	                    log.debug("Scraping data from " + url + " completed with values " + JSON.stringify(result));
 	                    resolve(result);
@@ -823,7 +825,7 @@
 	            });
 	        });
 	    };
-	    JsdomScraper.prototype.scrapeValue = function (document, valueScrapingSettings) {
+	    JsdomScraper.prototype.scrapeValue = function (document, valueScrapingSettings, log) {
 	        if (!document)
 	            throw new Error("document is undefined");
 	        if (!valueScrapingSettings)

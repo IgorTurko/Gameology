@@ -13,14 +13,14 @@ let db: Promise<mongo.Db> = new Promise((resolve, reject) => {
             process.env.OPENSHIFT_APP_NAME;
     }
     mongo.MongoClient.connect('mongodb://' + connectionString,
-    (err, db) => {
-        if (err) {
-            reject(err);
-        } else {
-            console.info(`Connected to Mongo server at ${connectionString}`);
-            resolve(db);
-        }
-    });
+        (err, db) => {
+            if (err) {
+                reject(err);
+            } else {
+                console.info(`Connected to Mongo server at ${connectionString}`);
+                resolve(db);
+            }
+        });
 });
 
 export default class Database {

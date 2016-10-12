@@ -57,7 +57,7 @@ export default class ScrapeService implements Scraping.IScrapeService {
 
     private scrapeProductFromShopAndSave(product: Api.Product, webShopId: string, shops: WebShopHash): Promise<Api.ScrapedValues> {
         return this.scraper
-            .scrape(product.scrapingUrls[webShopId], shops[webShopId].scrapingSettings)
+            .scrape(product.scrapingUrls[webShopId], shops[webShopId].scrapingSettings, webShopId)
             .then(scrapedValues => this.productService
                                         .updateScrapedData(product.id, webShopId, scrapedValues)
                                         .then(() => scrapedValues),

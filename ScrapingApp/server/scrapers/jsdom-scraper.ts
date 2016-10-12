@@ -5,21 +5,32 @@ import * as createDebugger from "debug";
 
 import ValueParserHash from "./value-parser";
 
-const log = {
-    error: createDebugger("gameology:jsdom:error"),
-    debug: createDebugger("gameology:jsdom:debug")
-};
+interface Logger {
+    error: debug.IDebugger;
+    debug: debug.IDebugger;
+    dump: debug.IDebugger;
+}
+
 
 export default class JsdomScraper implements Scraping.IScraper {
     private valueParser = new ValueParserHash();
 
-    scrape(url: string, values: Api.ScrapingSettings): Promise<Api.ScrapedValues> {
+    scrape(url: string, values: Api.ScrapingSettings, webShopId?: string): Promise<Api.ScrapedValues> {
         if (!url)
             throw new Error("url is undefined");
         if (!values)
             throw new Error("values is undefined.");
         if (!Object.keys(values).length)
             throw new Error("No values to extract");
+
+        webShopId = webShopId || "unknown-web-shop";
+
+        const log = {
+            error: createDebugger(`gameology:error:jsdom:${webShopId}`),
+            debug: createDebugger(`gameology:debug:jsdom:${webShopId}`),
+            dump: createDebugger(`gameology:dump:jsdom:${webShopId}`)
+        };
+
 
         const result: Api.ScrapedValues = {
             title: null,
@@ -53,16 +64,16 @@ export default class JsdomScraper implements Scraping.IScraper {
                     const tags = window.document.getElementsByTagName("html");
 
                     if (!tags || !tags.length) {
-                        log.debug("HTML element is missing in document.");
+                        log.dump("HTML element is missing in document.");
                     } else {
-                        log.debug(tags[0].innerHTML);
+                        log.dump(tags[0].innerHTML);
                     }
 
 
                     Object.keys(values)
                         .forEach(valueName => {
                             const settings = values[valueName];
-                            result[valueName] = this.scrapeValue(window.document, settings);
+                            result[valueName] = this.scrapeValue(window.document, settings, log);
                         });
 
                     log.debug(`Scraping data from ${url} completed with values ${JSON.stringify(result)}`);
@@ -73,7 +84,7 @@ export default class JsdomScraper implements Scraping.IScraper {
         });
     }
 
-    private scrapeValue(document: Document, valueScrapingSettings: Api.ValueScrapingSettings[]): string | number {
+    private scrapeValue(document: Document, valueScrapingSettings: Api.ValueScrapingSettings[], log: Logger): string | number {
         if (!document)
             throw new Error("document is undefined");
         if (!valueScrapingSettings)
@@ -90,6 +101,7 @@ export default class JsdomScraper implements Scraping.IScraper {
 
                 return parsedValue;
             } catch (error) {
+
                 log.error(`The error occured due parsing value. ${error}`);
 
                 if (scrapingSetting.failOnError)

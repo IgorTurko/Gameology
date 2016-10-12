@@ -98,9 +98,10 @@ declare namespace Scraping {
          *
          * @param url Url to scrape data from.
          * @param values Settings for scraping individual values from the page.
+         * @param [webShop] Optional web shop identifier for logger.
          * @returns Promise which resolves or rejects with ScrapingResult.
          */
-        scrape(url: string, values: Api.ScrapingSettings): Promise<Api.ScrapedValues>;
+        scrape(url: string, values: Api.ScrapingSettings, webShop?: string): Promise<Api.ScrapedValues>;
     }
 
     interface ProductScrapeResult {
