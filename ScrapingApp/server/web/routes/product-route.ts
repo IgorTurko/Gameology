@@ -46,6 +46,24 @@ router.get("/", (req, res) => {
         .catch(err => res.send(500, err).end());
 });
 
+router.post("/price", (request, response) => {
+    
+    const productId = request.body.productId;
+    const shopId = request.body.shopId;
+    const price = request.body.price;
+
+    productService.savePrice(productId, shopId, price)
+        .then(result => {
+            response.json(result).end();
+        })
+        .catch(err => {
+            response.json({
+                ok: false,
+                errors: err
+            }).end();
+        });
+});
+
 router.post("/", (request, response) => {
     const product = request.body;
 

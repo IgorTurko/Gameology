@@ -18,6 +18,10 @@ export default class ProductRepository {
         return this.httpClient.post("/api/products", product);
     };
 
+    saveProductPrice(productId: string, shopId: string, price: string): Promise<Api.IPostResponse<Product>> {
+        return this.httpClient.post("/api/products/price", { productId: productId, shopId: shopId, price: price });
+    };
+
     deleteProduct(id: string): Promise<any> {
         return this.httpClient.delete(`/api/products/${id}`);
     }

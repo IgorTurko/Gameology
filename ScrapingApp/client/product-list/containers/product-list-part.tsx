@@ -18,12 +18,15 @@ export default connect<AppState.App, ProductGridProps, ProductGridHandlers>(
         shops: state.products.shops,
         isLoading: state.products.isLoading,
         shopEditing: state.shopEditing,
-        updatedProductId: state.products.updatedProductId
+        updatedProductId: state.products.updatedProductId,
+        errors: state.products.errors
     }),
 
     (dispatch) => ({
 
         onFilter: filter => dispatch(Actions.searchProducts(filter)),
+
+        onProductPriceUpdated: (productId: string, shopId: string, price: string) => dispatch(Actions.productSavePrice(productId, shopId, price)),
 
         onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: string) => dispatch(ShopActions.updateShopDeliveryPrice(shopId, deliveryPrice))
 

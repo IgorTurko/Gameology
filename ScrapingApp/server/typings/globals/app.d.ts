@@ -153,6 +153,8 @@ declare namespace Products {
 
         save(product: Api.Product): Promise<Api.Product>;
 
+        savePrice(productId: string, shopId: string, price: number): Promise<Api.IResponse>;
+
         setScrapingData(productId: string, webShopId: string, values: Api.ScrapedValues): Promise<Api.Product>;
 
         delete(productId: string): Promise<any>;

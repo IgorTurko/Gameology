@@ -5,7 +5,7 @@ import * as uuid from "node-uuid";
 
 import { eventBus, EventNames } from "../event-bus";
 
-import ProductValidator from "./product-validator";
+import { ProductValidator, PriceValidator } from "./product-validator";
 
 export default class ProductService {
     private validator = new ProductValidator();
@@ -43,6 +43,22 @@ export default class ProductService {
                         eventBus.emit(EventNames.ProductUpdated, product.id);
                         return product;
                     });
+            });
+    }
+
+    savePrice(productId: string, shopId: string, price: string): Promise<Api.IResponse> {
+        if (!productId)
+            throw new Error("product id is undefined");
+        
+        if (!shopId)
+            throw new Error("shop id is undefined");
+
+        let priceValidator = new PriceValidator();    
+
+        return priceValidator
+            .validate(price)
+            .then(r => {
+                return this.storage.savePrice(productId, shopId, r);
             });
     }
 

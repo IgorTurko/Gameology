@@ -41,6 +41,9 @@ declare namespace AppState {
         search: string;
         filteredProducts: Api.Product[];
         updatedProductId: string;
+        errors: {
+            [name: string]: string;
+        };
     }
 
     interface ShopEditing {

@@ -1,1 +1,1 @@
-export * from "./product-grid.tsx";
+export * from "./product-grid";

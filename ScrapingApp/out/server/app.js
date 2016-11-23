@@ -569,6 +569,21 @@
 	        .then(function (products) { return res.json(products); })
 	        .catch(function (err) { return res.send(500, err).end(); });
 	});
+	router.post("/price", function (request, response) {
+	    var productId = request.body.productId;
+	    var shopId = request.body.shopId;
+	    var price = request.body.price;
+	    productService.savePrice(productId, shopId, price)
+	        .then(function (result) {
+	        response.json(result).end();
+	    })
+	        .catch(function (err) {
+	        response.json({
+	            ok: false,
+	            errors: err
+	        }).end();
+	    });
+	});
 	router.post("/", function (request, response) {
 	    var product = request.body;
 	    productService.save(product)
@@ -646,6 +661,28 @@
 	        }); })
 	            .then(function () { return product; });
 	    };
+	    MongoProductStorage.prototype.savePrice = function (productId, shopId, price) {
+	        if (!productId)
+	            throw new Error("product id is undefined");
+	        if (!productId)
+	            throw new Error("product id is undefined");
+	        return this.db
+	            .collection(db_1.default.Collections.products)
+	            .then(function (c) {
+	            c.update({
+	                id: productId
+	            }, {
+	                $set: (_a = {},
+	                    _a["values." + shopId + ".manualPrice"] = price,
+	                    _a
+	                )
+	            }, {
+	                upsert: true
+	            });
+	            var _a;
+	        })
+	            .then(function () { return ({ ok: true }); });
+	    };
 	    MongoProductStorage.prototype.delete = function (productId) {
 	        if (!productId)
 	            throw new Error("Product ID is not defined.");
@@ -707,7 +744,7 @@
 	var ProductService = (function () {
 	    function ProductService(storage) {
 	        this.storage = storage;
-	        this.validator = new product_validator_1.default();
+	        this.validator = new product_validator_1.ProductValidator();
 	        if (!storage)
 	            throw new Error("storage is undefined");
 	    }
@@ -737,6 +774,19 @@
 	                event_bus_1.eventBus.emit(event_bus_1.EventNames.ProductUpdated, product.id);
 	                return product;
 	            });
+	        });
+	    };
+	    ProductService.prototype.savePrice = function (productId, shopId, price) {
+	        var _this = this;
+	        if (!productId)
+	            throw new Error("product id is undefined");
+	        if (!shopId)
+	            throw new Error("shop id is undefined");
+	        var priceValidator = new product_validator_1.PriceValidator();
+	        return priceValidator
+	            .validate(price)
+	            .then(function (r) {
+	            return _this.storage.savePrice(productId, shopId, r);
 	        });
 	    };
 	    ProductService.prototype.one = function (productId) {
@@ -867,8 +917,21 @@
 	    };
 	    return ProductValidator;
 	}());
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ProductValidator;
+	exports.ProductValidator = ProductValidator;
+	var PriceValidator = (function () {
+	    function PriceValidator() {
+	        this.validator = pojo_fluent_validator_1.rules
+	            .num(true, { stopOnFailure: true, errorMessage: "Manual price is not recognized as number" })
+	            .must(function (price) { return !price || price > 0; }, { stopOnFailure: true, errorMessage: "Manual price must be greater than zero" });
+	    }
+	    PriceValidator.prototype.validate = function (price) {
+	        if (!price)
+	            throw new Error("Price is undefined");
+	        return utils_1.validate(price, this.validator);
+	    };
+	    return PriceValidator;
+	}());
+	exports.PriceValidator = PriceValidator;
 
 
 /***/ },

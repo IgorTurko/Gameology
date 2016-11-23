@@ -2,13 +2,14 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Link} from "react-router";
+import { Link } from "react-router";
 
 import { IIf } from "../../../components/iif";
 import { Grid, Rows, Header } from "../../../components/grid";
 
-import { Row } from "./row.tsx";
-import { Cell } from "./cell.tsx";
+import { Row } from "./row";
+import { Cell } from "./cell";
+import { formatPrice } from "../../../libs/parser";
 
 
 import { classNames } from "../../../utils";
@@ -19,10 +20,14 @@ export interface ProductGridProps extends React.Props<any> {
     shops: Api.WebShop[];
     shopEditing: AppState.ShopEditing;
     updatedProductId: string;
+    errors: {
+        [name: string]: string;
+    }
 }
 
 export interface ProductGridHandlers {
     onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: string) => void;
+    onProductPriceUpdated: (productId: string, shopId: string, price: string) => void;
 }
 
 export class ProductGrid extends React.Component<ProductGridProps & ProductGridHandlers, {}> {
@@ -33,14 +38,20 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
         }
     }
 
+    onProductPriceChanged(e: React.FormEvent, productId: string, shopId: string, price: string) {
+        if (this.props.onProductPriceUpdated) {
+             this.props.onProductPriceUpdated(productId, shopId, price);
+        }
+    }
+
     renderHeader(className?: string) {
         return (
-            <Row className={ classNames("header-row", className) }>
+            <Row className={classNames("header-row", className)}>
                 <Cell className="header-cell">Product</Cell>
                 {
                     this.props.shops.map(shop => (
                         <Cell key={shop.id} className="header">
-                            { shop.title }
+                            {shop.title}
                         </Cell>
                     ))
                 }
@@ -55,15 +66,15 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                 </Cell>
                 {
                     this.props.shops.map(shop => (
-                        <Cell key={ `$dp::${shop.id}` }
-                            className= { classNames("delivery-price-cell", { "has-error": this.props.shopEditing[shop.id] && this.props.shopEditing[shop.id].errorMessage }) }>
+                        <Cell key={`$dp::${shop.id}`}
+                            className={classNames("delivery-price-cell", { "has-error": this.props.shopEditing[shop.id] && this.props.shopEditing[shop.id].errorMessage })}>
                             <input type="text"
                                 name={shop.id}
                                 className="form-control"
-                                value={ this.props.shopEditing[shop.id] ? (this.props.shopEditing[shop.id].deliveryPrice || "") : "" }
-                                onChange={ e => this.onDeliveryPriceChanged(shop.id, e.target["value"]) } />
-                            <p className={ classNames("help-block", { "hidden": !this.props.shopEditing[shop.id] || !this.props.shopEditing[shop.id].errorMessage }) }>
-                                { this.props.shopEditing[shop.id] ? this.props.shopEditing[shop.id].errorMessage : "" }
+                                value={this.props.shopEditing[shop.id] ? (this.props.shopEditing[shop.id].deliveryPrice || "") : ""}
+                                onChange={e => this.onDeliveryPriceChanged(shop.id, e.target["value"])} />
+                            <p className={classNames("help-block", { "hidden": !this.props.shopEditing[shop.id] || !this.props.shopEditing[shop.id].errorMessage })}>
+                                {this.props.shopEditing[shop.id] ? this.props.shopEditing[shop.id].errorMessage : ""}
                             </p>
                         </Cell>
                     ))
@@ -96,7 +107,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                 }
 
                 return (
-                    <Row className={ classNames("product-row", { "highlight": product.id == this.props.updatedProductId, "cheapest": isGameologyCheapest }) } key={product.id}>
+                    <Row className={classNames("product-row", { "highlight": product.id == this.props.updatedProductId, "cheapest": isGameologyCheapest })} key={product.id}>
                         <Cell className="product-cell product-title">
                             <Link to={`/product/${product.id}`}>
                                 {product.title}
@@ -105,15 +116,15 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                         {
                             this.props.shops.map((shop, index) => {
                                 let values = (product.values || {})[shop.id];
-
+                                
 
                                 return (
-                                    <Cell className="product-cell"
-                                          key={ `${product.id}::${index}` }
-                                          title={ values && values.title }>
-                                            {
-                                                values ? this.renderProductDetails(values, product.scrapingUrls[shop.id], shop) : null
-                                            }
+                                    <Cell className={ classNames("product-cell", { "has-error": this.props.errors["price"] }) }
+                                        key={`${product.id}::${index}`}
+                                        title={values && values.title}>
+                                        {
+                                            values ? this.renderProductDetails(product, shop, values, product.scrapingUrls[shop.id], shop.id == 'dungeoncrawl') : null
+                                        }
                                     </Cell>)
                             })
                         }
@@ -130,30 +141,47 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
         );
     }
 
-    renderProductDetails(values: Api.ScrapedValues, productUrl: string, shop: Api.WebShop) {
+    renderManualPrice(product: Api.Product, shop: Api.WebShop, values: Api.ScrapedValues) {
+        const price = values.manualPrice || values.price || 0;
+
+        return (
+            <div className="product-price">
+                <input type="text"
+                    name={shop.id}
+                    className="form-control"
+                    value={ `${price}` }
+                    onChange={e => this.onProductPriceChanged(e, product.id, shop.id, e.target["value"])} />
+            </div>
+        );
+    }
+
+    renderProductDetails(product: Api.Product, shop: Api.WebShop, values: Api.ScrapedValues, productUrl: string, allowManualPrice: boolean = false) {
+        const price = values.manualPrice || values.price || 0;
+
         return (
             <div>
                 <div className="product-url">
-                    <a href={ productUrl } target="_blank">
-                        { values.title }
+                    <a href={productUrl} target="_blank">
+                        {values.title}
                     </a>
                 </div>
-                <img className="product-img" src={ values.image } />
-                <IIf condition={ () => !!values.price }>
-                    <div className="product-price">
-                        {
-                            shop.deliveryPrice
-                                ? this.formatPrice(values.price + shop.deliveryPrice)
-                                : this.formatPrice(values.price)
-                        }
-                    </div>
-                    <div className="product-price delivery">
-                        {
-                            shop.deliveryPrice
-                                ? `${this.formatPrice(values.price)} + ${this.formatPrice(shop.deliveryPrice)}`
-                                : ''
-                        }
-                    </div>
+                <img className="product-img" src={values.image} />
+                <div className="product-price">
+                    {
+                        shop.deliveryPrice
+                            ? formatPrice(+price + shop.deliveryPrice)
+                            : formatPrice(price)
+                    }
+                </div>
+                <div className="product-price delivery">
+                    {
+                        shop.deliveryPrice
+                            ? `${formatPrice(price)} + ${formatPrice(shop.deliveryPrice)}`
+                            : ''
+                    }
+                </div>
+                <IIf condition={() => allowManualPrice}>
+                    {this.renderManualPrice(product, shop, values)}
                 </IIf>
             </div>
         );
@@ -164,9 +192,9 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
             return (
                 <Grid>
                     <Header>
-                    </Header>
+                    </Header>               
                     <Rows>
-                        { this.renderLoadingIndicator() }
+                        {this.renderLoadingIndicator()}
                     </Rows>
                 </Grid>
             );
@@ -176,10 +204,10 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
             return (
                 <Grid>
                     <Header>
-                        { this.props.shops != null && this.props.shops.length ? this.renderHeader() : null }
+                        {this.props.shops != null && this.props.shops.length ? this.renderHeader() : null}
                     </Header>
                     <Rows>
-                        { this.renderEmptyRow() }
+                        {this.renderEmptyRow()}
                     </Rows>
                 </Grid>
             );
@@ -188,21 +216,13 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
         return (
             <Grid>
                 <Header>
-                    { this.renderHeader() }
-                    { this.renderDeliveryPrice() }
+                    {this.renderHeader()}
+                    {this.renderDeliveryPrice()}
                 </Header>
                 <Rows>
-                    { this.renderData() }
+                    {this.renderData()}
                 </Rows>
             </Grid>
         );
-    }
-
-    private formatPrice(price: number): string {
-        if (price == null || price === undefined || isNaN(price))
-            return "";
-
-
-        return `$${price.toFixed(2)}`;
     }
 }

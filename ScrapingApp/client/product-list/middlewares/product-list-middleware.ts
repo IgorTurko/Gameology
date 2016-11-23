@@ -44,6 +44,19 @@ export default class ProductListMiddleware extends MiddlewareBase<AppState.App> 
         store.dispatch(RoutingActions.goToProductList());
     }
 
+    [Actions.PRODUCT_SAVE_PRICE](state, action, dispatch, store: redux.IMiddlewareStore<AppState.App>) {
+        this.productRepo.saveProductPrice(action.productId, action.shopId, action.price).then(res => {
+            if (res.ok) {
+                store.dispatch(Actions.productSavePriceSuccess(action.productId, action.shopId, action.price));
+            }
+            else {
+                const response = <Api.IFailResponse>res;
+                const errorMessage = (response.errors[""] || [])[0];
+                store.dispatch(Actions.productSavePriceError(action.productId, { price: errorMessage }));
+            }
+        });
+    }
+
     [LoginActions.LOGIN_SUCCESS](state, action, dispatch: redux.IDispatch, store: redux.IMiddlewareStore<AppState.App>) {
         const reloadProductList = Actions.reloadProductList();
         store.dispatch(reloadProductList);

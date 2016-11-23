@@ -46,17 +46,42 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(c => c.updateOne({
                 id: product.id
             },
+            {
+                $set: {
+                    id: product.id,
+                    title: product.title,
+                    scrapingUrls: product.scrapingUrls
+                }
+            },
+            {
+                upsert: true
+            }))
+            .then(() => product);
+    }
+
+    savePrice(productId: string, shopId: string, price: number): Promise<Api.IResponse> {
+        if (!productId)
+            throw new Error("product id is undefined");
+
+        if (!productId)
+            throw new Error("product id is undefined");
+
+        return this.db
+            .collection(Database.Collections.products)
+            .then(c => {
+                c.update({
+                    id: productId
+                },
                 {
                     $set: {
-                        id: product.id,
-                        title: product.title,
-                        scrapingUrls: product.scrapingUrls
+                        [`values.${shopId}.manualPrice`]: price
                     }
                 },
                 {
                     upsert: true
-                }))
-            .then(() => product);
+                });
+            })
+            .then(() => ({ ok: true }));
     }
 
     delete(productId: string): Promise<any> {

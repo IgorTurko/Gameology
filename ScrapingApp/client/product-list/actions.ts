@@ -45,3 +45,64 @@ export function productDataReceivedFromServer(product: Api.Product): ProductData
         product: product
     };
 }
+
+export const PRODUCT_SAVE_PRICE = "product-save-price";
+export interface ProductSaveAction extends redux.IAction {
+    productId: string,
+    shopId: string,
+    price: string
+}
+export function productSavePrice(productId: string, shopId: string, price: string): ProductSaveAction {
+    if (!productId) {
+        throw new Error("Product ID is required");
+    }
+
+    if (!shopId) {
+        throw new Error("Shop ID is required");
+    }
+
+    return {
+        type: PRODUCT_SAVE_PRICE,
+        productId: productId,
+        shopId: shopId,
+        price: price
+    };
+}
+
+
+export const PRODUCT_SAVE_PRICE_SUCCESS = "product-save-price-success";
+export interface ProductSavePriceSuccessAction extends redux.IAction {
+    productId: string;
+    shopId: string;
+    price: number;
+}
+export function productSavePriceSuccess(productId: string, shopId: string, price: number): ProductSavePriceSuccessAction {
+    if (!productId) {
+        throw new Error("ProductId is required.");
+    }
+    return {
+        type: PRODUCT_SAVE_PRICE_SUCCESS,
+        productId: productId,
+        shopId: shopId,
+        price: price
+    };
+}
+
+export const PRODUCT_SAVE_PRICE_ERROR = "product-save-price-error";
+export interface ProductSavePriceErrorAction extends redux.IAction {
+    productId: string;
+    errors: {
+        [name: string]: string;
+    };
+}
+
+export function productSavePriceError(productId: string, errors: any): ProductSavePriceErrorAction {
+    if (!productId) {
+        throw new Error("ProductId is required.");
+    }
+    return {
+        type: PRODUCT_SAVE_PRICE_ERROR,
+        productId: productId,
+        errors: errors
+    };
+}

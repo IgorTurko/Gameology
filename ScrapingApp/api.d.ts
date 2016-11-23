@@ -16,6 +16,7 @@
     interface ScrapedValues {
         title: string;
         price: number;
+        manualPrice?: number;
         image: string;
         [key: string]: any;
     }
