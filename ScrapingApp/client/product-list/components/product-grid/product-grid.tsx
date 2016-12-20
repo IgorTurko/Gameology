@@ -100,7 +100,8 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                             const shop = this.props.shops.filter(s => s.id === shopId)[0];
                             const deliveryPrice = (shop && shop.deliveryPrice) ? shop.deliveryPrice : 999999;
                             const price = (values && values.price) ? values.price : 999999;
-                            return deliveryPrice + price;
+                            const manualPrice = (values && values.manualPrice) ? values.manualPrice : null;
+                            return deliveryPrice + (manualPrice || price);
                         });
 
                     isGameologyCheapest = minShopId === "gameology";
@@ -123,7 +124,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                                         key={`${product.id}::${index}`}
                                         title={values && values.title}>
                                         {
-                                            values ? this.renderProductDetails(product, shop, values, product.scrapingUrls[shop.id], shop.id == 'dungeoncrawl') : null
+                                            values ? this.renderProductDetails(product, shop, values) : null
                                         }
                                     </Cell>)
                             })
@@ -142,7 +143,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
     }
 
     renderManualPrice(product: Api.Product, shop: Api.WebShop, values: Api.ScrapedValues) {
-        const price = values.manualPrice || values.price || 0;
+        const price = values.manualPrice || '';
 
         return (
             <div className="product-price">
@@ -155,8 +156,10 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
         );
     }
 
-    renderProductDetails(product: Api.Product, shop: Api.WebShop, values: Api.ScrapedValues, productUrl: string, allowManualPrice: boolean = false) {
+    renderProductDetails(product: Api.Product, shop: Api.WebShop, values: Api.ScrapedValues) {
         const price = values.manualPrice || values.price || 0;
+        const productUrl = product.scrapingUrls ? product.scrapingUrls[shop.id] : "#";
+        const allowManualPrice = shop.id == 'dungeoncrawl';
 
         return (
             <div>

@@ -9840,13 +9840,14 @@
 	                    var shop = _this.props.shops.filter(function (s) { return s.id === shopId; })[0];
 	                    var deliveryPrice = (shop && shop.deliveryPrice) ? shop.deliveryPrice : 999999;
 	                    var price = (values && values.price) ? values.price : 999999;
-	                    return deliveryPrice + price;
+	                    var manualPrice = (values && values.manualPrice) ? values.manualPrice : null;
+	                    return deliveryPrice + (manualPrice || price);
 	                }), minShopId = _a[0], minValues = _a[1];
 	                isGameologyCheapest = minShopId === "gameology";
 	            }
 	            return (React.createElement(row_1.Row, {className: utils_1.classNames("product-row", { "highlight": product.id == _this.props.updatedProductId, "cheapest": isGameologyCheapest }), key: product.id}, React.createElement(cell_1.Cell, {className: "product-cell product-title"}, React.createElement(react_router_1.Link, {to: "/product/" + product.id}, product.title)), _this.props.shops.map(function (shop, index) {
 	                var values = (product.values || {})[shop.id];
-	                return (React.createElement(cell_1.Cell, {className: utils_1.classNames("product-cell", { "has-error": _this.props.errors["price"] }), key: product.id + "::" + index, title: values && values.title}, values ? _this.renderProductDetails(product, shop, values, product.scrapingUrls[shop.id], shop.id == 'dungeoncrawl') : null));
+	                return (React.createElement(cell_1.Cell, {className: utils_1.classNames("product-cell", { "has-error": _this.props.errors["price"] }), key: product.id + "::" + index, title: values && values.title}, values ? _this.renderProductDetails(product, shop, values) : null));
 	            })));
 	        }));
 	    };
@@ -9855,12 +9856,13 @@
 	    };
 	    ProductGrid.prototype.renderManualPrice = function (product, shop, values) {
 	        var _this = this;
-	        var price = values.manualPrice || values.price || 0;
+	        var price = values.manualPrice || '';
 	        return (React.createElement("div", {className: "product-price"}, React.createElement("input", {type: "text", name: shop.id, className: "form-control", value: "" + price, onChange: function (e) { return _this.onProductPriceChanged(e, product.id, shop.id, e.target["value"]); }})));
 	    };
-	    ProductGrid.prototype.renderProductDetails = function (product, shop, values, productUrl, allowManualPrice) {
-	        if (allowManualPrice === void 0) { allowManualPrice = false; }
+	    ProductGrid.prototype.renderProductDetails = function (product, shop, values) {
 	        var price = values.manualPrice || values.price || 0;
+	        var productUrl = product.scrapingUrls ? product.scrapingUrls[shop.id] : "#";
+	        var allowManualPrice = shop.id == 'dungeoncrawl';
 	        return (React.createElement("div", null, React.createElement("div", {className: "product-url"}, React.createElement("a", {href: productUrl, target: "_blank"}, values.title)), React.createElement("img", {className: "product-img", src: values.image}), React.createElement("div", {className: "product-price"}, shop.deliveryPrice
 	            ? parser_1.formatPrice(+price + shop.deliveryPrice)
 	            : parser_1.formatPrice(price)), React.createElement("div", {className: "product-price delivery"}, shop.deliveryPrice
