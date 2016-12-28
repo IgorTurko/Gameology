@@ -8561,7 +8561,7 @@
 	    return Object.assign({}, state, {
 	        search: action.filter,
 	        filteredProducts: state.products
-	            .filter(function (p) { return !action.filter || p.title.toLowerCase().indexOf(action.filter.toLowerCase()) !== -1; })
+	            .filter(function (p) { return p.title && (!action.filter || p.title.toLowerCase().indexOf(action.filter.toLowerCase()) !== -1); })
 	    });
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });

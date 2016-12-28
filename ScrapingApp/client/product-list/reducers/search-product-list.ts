@@ -8,6 +8,6 @@ export default function searchProductList(state: AppState.Products, action: Acti
     return Object.assign({}, state, {
         search: action.filter,
         filteredProducts: state.products
-            .filter(p => !action.filter || p.title.toLowerCase().indexOf(action.filter.toLowerCase()) !== -1)
+            .filter(p => p.title && (!action.filter || p.title.toLowerCase().indexOf(action.filter.toLowerCase()) !== -1))
     });
 }
