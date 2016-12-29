@@ -39,7 +39,8 @@ declare namespace AppState {
         products: Api.Product[];
         shops: Api.WebShop[];
         search: string;
-        filteredProducts: Api.Product[];
+        page: number;
+        totalPages: number;
         updatedProductId: string;
         errors: {
             [name: string]: string;

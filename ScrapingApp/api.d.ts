@@ -45,6 +45,8 @@
         log?: IWebShopHash<ScrapeLog>;
     }
 
+    type ProductPage = { items: Product[], totalPages: number, currentPage: number };
+
     /**
      * **********************************
      * WEB SHOPS
@@ -79,7 +81,7 @@
          *
          * Default mode is queryselector.
          */
-        extract?: "queryselector" | "regex";        
+        extract?: "queryselector" | "regex";
     }
 
     interface QuerySelectorExtractSettings {

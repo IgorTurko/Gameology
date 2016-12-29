@@ -565,8 +565,8 @@
 	        .catch(function (err) { return res.send(500, err).end(); });
 	});
 	router.get("/", function (req, res) {
-	    productService.all()
-	        .then(function (products) { return res.json(products); })
+	    productService.paginate(req.query.search, +req.query.page, +req.query.perPage)
+	        .then(function (productPage) { return res.json(productPage); })
 	        .catch(function (err) { return res.send(500, err).end(); });
 	});
 	router.post("/price", function (request, response) {
@@ -610,7 +610,6 @@
 /* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var db_1 = __webpack_require__(9);
 	var MongoProductStorage = (function () {
@@ -624,6 +623,18 @@
 	            .collection(db_1.default.Collections.products)
 	            .then(function (c) { return c.find({}, { _id: 0 }); })
 	            .then(function (c) { return c.toArray(); });
+	    };
+	    MongoProductStorage.prototype.search = function (search) {
+	        return this.db
+	            .collection(db_1.default.Collections.products)
+	            .then(function (c) { return c.find({ title: { $regex: search, $options: "i" } }, { _id: 0 }); });
+	    };
+	    MongoProductStorage.prototype.paginate = function (search, page, perPage) {
+	        return this.search(search).then(function (c) { return c.skip(page > 1 ? (page - 1) * perPage : 0).limit(perPage); })
+	            .then(function (c) { return c.toArray(); });
+	    };
+	    MongoProductStorage.prototype.count = function (search) {
+	        return this.search(search).then(function (c) { return c.count(false); });
 	    };
 	    MongoProductStorage.prototype.one = function (id) {
 	        if (!id)
@@ -750,6 +761,17 @@
 	    }
 	    ProductService.prototype.all = function () {
 	        return this.storage.all();
+	    };
+	    ProductService.prototype.paginate = function (search, page, perPage) {
+	        var _this = this;
+	        if (search === void 0) { search = ""; }
+	        if (page === void 0) { page = 1; }
+	        if (perPage === void 0) { perPage = 20; }
+	        return this.storage.count(search).then(function (count) {
+	            var totalPages = count % perPage ? Math.floor(count / perPage) + 1 : count / perPage;
+	            var currentPage = page > totalPages ? totalPages : page;
+	            return _this.storage.paginate(search, currentPage, perPage).then(function (items) { return ({ items: items, totalPages: totalPages, currentPage: currentPage }); });
+	        });
 	    };
 	    ProductService.prototype.save = function (product) {
 	        var _this = this;

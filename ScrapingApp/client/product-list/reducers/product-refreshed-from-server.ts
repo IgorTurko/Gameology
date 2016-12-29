@@ -21,8 +21,7 @@ export default function productRefreshedFromServer(state: AppState.Products, act
         state,
         {
             updatedProductId: action.product.id,
-            products: updateProducts(state.products),
-            filteredProducts: updateProducts(state.filteredProducts)
+            products: updateProducts(state.products)
         });
 
     return newState;

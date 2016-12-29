@@ -19,6 +19,14 @@ export default class ProductService {
         return this.storage.all();
     }
 
+    paginate(search: string = "", page: number = 1, perPage: number = 20): Promise<Api.ProductPage> {
+        return this.storage.count(search).then(count => {
+            const totalPages = count % perPage ? Math.floor(count / perPage) + 1 : count / perPage;
+            const currentPage = page > totalPages ? totalPages : page;
+            return this.storage.paginate(search, currentPage, perPage).then(items => ({ items, totalPages, currentPage }));
+        })
+    }
+
     save(product: Api.Product): Promise<Api.Product> {
         if (!product)
             throw new Error("product is undefined");
@@ -49,11 +57,11 @@ export default class ProductService {
     savePrice(productId: string, shopId: string, price: string): Promise<Api.IResponse> {
         if (!productId)
             throw new Error("product id is undefined");
-        
+
         if (!shopId)
             throw new Error("shop id is undefined");
 
-        let priceValidator = new PriceValidator();    
+        let priceValidator = new PriceValidator();
 
         return priceValidator
             .validate(price)

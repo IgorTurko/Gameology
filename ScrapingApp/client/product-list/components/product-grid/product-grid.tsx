@@ -10,13 +10,16 @@ import { Grid, Rows, Header } from "../../../components/grid";
 import { Row } from "./row";
 import { Cell } from "./cell";
 import { formatPrice } from "../../../libs/parser";
-
+import { Pagination } from "./pagination";
+import { PerPage } from '../../reducers';
 
 import { classNames } from "../../../utils";
 
 export interface ProductGridProps extends React.Props<any> {
     isLoading: boolean;
     products: Api.Product[];
+    currentPage: number;
+    totalPages: number;
     shops: Api.WebShop[];
     shopEditing: AppState.ShopEditing;
     updatedProductId: string;
@@ -28,6 +31,7 @@ export interface ProductGridProps extends React.Props<any> {
 export interface ProductGridHandlers {
     onShopDeliveryPriceUpdated: (shopId: string, deliveryPrice: string) => void;
     onProductPriceUpdated: (productId: string, shopId: string, price: string) => void;
+    onPageChanged: (page: number) => void;
 }
 
 export class ProductGrid extends React.Component<ProductGridProps & ProductGridHandlers, {}> {
@@ -40,7 +44,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
 
     onProductPriceChanged(e: React.FormEvent, productId: string, shopId: string, price: string) {
         if (this.props.onProductPriceUpdated) {
-             this.props.onProductPriceUpdated(productId, shopId, price);
+            this.props.onProductPriceUpdated(productId, shopId, price);
         }
     }
 
@@ -117,10 +121,10 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                         {
                             this.props.shops.map((shop, index) => {
                                 let values = (product.values || {})[shop.id];
-                                
+
 
                                 return (
-                                    <Cell className={ classNames("product-cell", { "has-error": this.props.errors["price"] }) }
+                                    <Cell className={classNames("product-cell", { "has-error": this.props.errors["price"] })}
                                         key={`${product.id}::${index}`}
                                         title={values && values.title}>
                                         {
@@ -150,7 +154,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
                 <input type="text"
                     name={shop.id}
                     className="form-control"
-                    value={ `${price}` }
+                    value={`${price}`}
                     onChange={e => this.onProductPriceChanged(e, product.id, shop.id, e.target["value"])} />
             </div>
         );
@@ -195,7 +199,7 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
             return (
                 <Grid>
                     <Header>
-                    </Header>               
+                    </Header>
                     <Rows>
                         {this.renderLoadingIndicator()}
                     </Rows>
@@ -217,15 +221,21 @@ export class ProductGrid extends React.Component<ProductGridProps & ProductGridH
         }
 
         return (
-            <Grid>
-                <Header>
-                    {this.renderHeader()}
-                    {this.renderDeliveryPrice()}
-                </Header>
-                <Rows>
-                    {this.renderData()}
-                </Rows>
-            </Grid>
+            <div>
+                <Grid>
+                    <Header>
+                        {this.renderHeader()}
+                        {this.renderDeliveryPrice()}
+                    </Header>
+                    <Rows>
+                        {this.renderData()}
+                    </Rows>
+                </Grid>
+                <div className="row">
+                    <Pagination currentPage={this.props.currentPage} totalPages={this.props.totalPages} onPageChange={page => this.props.onPageChanged(page)}></Pagination>
+                </div>
+            </div>
+
         );
     }
 }

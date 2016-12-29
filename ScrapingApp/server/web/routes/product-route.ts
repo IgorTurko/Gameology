@@ -41,8 +41,8 @@ router.delete("/:id", (req, res) => {
 });
 
 router.get("/", (req, res) => {
-    productService.all()
-        .then(products => res.json(products))
+    productService.paginate(req.query.search, +req.query.page, +req.query.perPage)
+        .then(productPage => res.json(productPage))
         .catch(err => res.send(500, err).end());
 });
 

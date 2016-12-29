@@ -3,7 +3,7 @@
 import * as redux from "redux";
 
 import productListLoaded from "./product-list-loaded";
-import searchProductList from "./search-product-list";
+import filterProductList from "./filter-product-list";
 import loadProductListRequest from "./load-product-list-request";
 import productRefereshedFromServer from "./product-refreshed-from-server";
 import priceSave from "./product-save-price";
@@ -16,14 +16,17 @@ const productInitialState: AppState.Products = {
     isLoading: false,
     products: [],
     shops: [],
-    filteredProducts: [],
     search: "",
     updatedProductId: null,
-    errors: {}
+    errors: {},
+    page: 1,
+    totalPages: 1
 };
 
+export const PerPage = 2;
+
 const actionMap = {
-    [Actions.PRODUCT_SEARCH]: searchProductList,
+    [Actions.PRODUCT_FILTER]: filterProductList,
     [Actions.PRODUCTS_LOADED]: productListLoaded,
     [Actions.PRODUCT_LOAD_REQUEST]: loadProductListRequest,
     [Actions.PRODUCT_DATA_RECEIVED_FROM_SERVER]: productRefereshedFromServer,

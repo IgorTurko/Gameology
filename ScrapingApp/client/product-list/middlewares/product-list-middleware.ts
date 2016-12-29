@@ -15,16 +15,18 @@ export default class ProductListMiddleware extends MiddlewareBase<AppState.App> 
     private productRepo = new ProductRepository();
     private shopRepo = new ShopRepository();
 
-    [Actions.PRODUCT_LOAD_REQUEST](state, action, dispatch: redux.IDispatch) {
+    [Actions.PRODUCT_LOAD_REQUEST](state: AppState.App, action, dispatch: redux.IDispatch) {
         Promise.all([
-            this.productRepo.getAllProducts(),
+            this.productRepo.getAllProducts(state.products.search, state.products.page),
             this.shopRepo.getAllShops()
         ]).then(([products, shops]) => {
 
             const action: Actions.ProductListLoadedAction = {
                 type: Actions.PRODUCTS_LOADED,
-                products: products,
-                shops: shops
+                products: products.items,
+                totalPages: products.totalPages,
+                shops: shops,
+                currentPage: products.currentPage
             };
 
             dispatch(action);
@@ -33,7 +35,9 @@ export default class ProductListMiddleware extends MiddlewareBase<AppState.App> 
             const action: Actions.ProductListLoadedAction = {
                 type: Actions.PRODUCTS_LOADED,
                 products: [],
-                shops: []
+                totalPages: 1,
+                shops: [],
+                currentPage: 1
             };
 
             dispatch(action);
@@ -42,6 +46,13 @@ export default class ProductListMiddleware extends MiddlewareBase<AppState.App> 
 
     [Actions.PRODUCT_SEARCH](state, action, dispatch, store: redux.IMiddlewareStore<AppState.App>) {
         store.dispatch(RoutingActions.goToProductList());
+        dispatch(Actions.filterProducts(action.search));
+        store.dispatch(Actions.reloadProductList());
+    }
+
+    [Actions.PRODUCT_PAGINATE](state, action, dispatch, store: redux.IMiddlewareStore<AppState.App>) {
+        dispatch(Actions.filterProducts(undefined, action.page));
+        store.dispatch(Actions.reloadProductList());
     }
 
     [Actions.PRODUCT_SAVE_PRICE](state, action, dispatch, store: redux.IMiddlewareStore<AppState.App>) {

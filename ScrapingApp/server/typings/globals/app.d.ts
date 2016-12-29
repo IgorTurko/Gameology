@@ -147,6 +147,12 @@ declare namespace Products {
     interface IProductStorage {
         all(): Promise<Api.Product[]>;
 
+        paginate(search?: string, page?: number, perPage?: number): Promise<Api.Product[]>;
+
+        search(search?: string): Promise<any>;
+
+        count(search?: string): Promise<number>;
+
         one(id: string): Promise<Api.Product>;
 
         findByTitle(title: string): Promise<Api.Product>;

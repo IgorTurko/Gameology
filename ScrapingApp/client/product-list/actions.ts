@@ -4,13 +4,39 @@ import * as redux from "redux";
 
 export const PRODUCT_SEARCH = "product-list-search";
 export interface ProductListSearchAction extends redux.IAction {
-    filter: string;
+    search: string;
 }
 
-export function searchProducts(filter: string): ProductListSearchAction {
+export const PRODUCT_PAGINATE = "product-list-paginate";
+export interface ProductListPaginateAction extends redux.IAction {
+    page: number;
+}
+
+export const PRODUCT_FILTER = "product-list-filter";
+export interface ProductListFilterAction extends redux.IAction {
+    search?: string;
+    page?: number;
+}
+
+export function searchProducts(search: string): ProductListSearchAction {
     return {
         type: PRODUCT_SEARCH,
-        filter: filter
+        search
+    };
+}
+
+export function paginateProducts(page: number): ProductListPaginateAction {
+    return {
+        type: PRODUCT_PAGINATE,
+        page
+    };
+}
+
+export function filterProducts(search?: string, page?: number): ProductListFilterAction {
+    return {
+        type: PRODUCT_FILTER,
+        page,
+        search
     };
 }
 
@@ -18,6 +44,8 @@ export const PRODUCTS_LOADED = "product-list-loaded";
 export interface ProductListLoadedAction extends redux.IAction {
     products: Api.Product[];
     shops: Api.WebShop[];
+    totalPages: number;
+    currentPage: number;
 }
 
 export const PRODUCT_LOAD_REQUEST = "load-product-list-request";

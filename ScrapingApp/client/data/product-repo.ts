@@ -3,11 +3,13 @@
 import Product = Api.Product;
 import HttpClient from './http-client';
 
+
 export default class ProductRepository {
     private httpClient = new HttpClient();
+    private perPage = 2;
 
-    getAllProducts(): Promise<Product[]> {
-        return this.httpClient.get<Product[]>('/api/products');
+    getAllProducts(search: string, page: number): Promise<Api.ProductPage> {
+        return this.httpClient.get<Api.ProductPage>(`/api/products?search=${search}&page=${page}&perPage=${this.perPage}`);
     };
 
     getProductById(id): Promise<Product> {

@@ -1,4 +1,5 @@
 ﻿/// <reference path="../../typings/index.d.ts" />
+import { Cursor } from "mongodb";
 
 import Database from "../../data-access/db";
 
@@ -13,6 +14,21 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .collection(Database.Collections.products)
             .then(c => c.find({}, { _id: 0 }))
             .then(c => c.toArray());
+    }
+
+    search(search?: string): Promise<Cursor> {
+        return this.db
+            .collection(Database.Collections.products)
+            .then(c => c.find({ title: { $regex: search, $options: "i" } }, { _id: 0 }));
+    }
+
+    paginate(search?: string, page?: number, perPage?: number): Promise<Api.Product[]> {
+        return this.search(search).then(c => c.skip(page > 1 ? (page - 1) * perPage : 0).limit(perPage))
+            .then(c => c.toArray())
+    }
+
+    count(search?: string): Promise<number> {
+        return this.search(search).then(c => c.count(false));
     }
 
     one(id: string): Promise<Api.Product> {
@@ -46,16 +62,16 @@ export default class MongoProductStorage implements Products.IProductStorage {
             .then(c => c.updateOne({
                 id: product.id
             },
-            {
-                $set: {
-                    id: product.id,
-                    title: product.title,
-                    scrapingUrls: product.scrapingUrls
-                }
-            },
-            {
-                upsert: true
-            }))
+                {
+                    $set: {
+                        id: product.id,
+                        title: product.title,
+                        scrapingUrls: product.scrapingUrls
+                    }
+                },
+                {
+                    upsert: true
+                }))
             .then(() => product);
     }
 
@@ -72,14 +88,14 @@ export default class MongoProductStorage implements Products.IProductStorage {
                 c.update({
                     id: productId
                 },
-                {
-                    $set: {
-                        [`values.${shopId}.manualPrice`]: price
-                    }
-                },
-                {
-                    upsert: true
-                });
+                    {
+                        $set: {
+                            [`values.${shopId}.manualPrice`]: price
+                        }
+                    },
+                    {
+                        upsert: true
+                    });
             })
             .then(() => ({ ok: true }));
     }

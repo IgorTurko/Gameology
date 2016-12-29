@@ -20,7 +20,6 @@ export default function priceSave(state: AppState.Products, action: Actions.Prod
         {},
         state,
         {
-            products: state.products.map(map),
-            filteredProducts: state.filteredProducts.map(map)
+            products: state.products.map(map)
         });
 }
