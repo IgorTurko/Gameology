@@ -9997,9 +9997,9 @@
 	            var action = {
 	                type: Actions.PRODUCTS_LOADED,
 	                products: products.items,
-	                totalPages: products.totalPages,
+	                totalPages: products.totalPages || 1,
 	                shops: shops,
-	                currentPage: products.currentPage
+	                currentPage: products.currentPage || 1
 	            };
 	            dispatch(action);
 	        }).catch(function (err) {

@@ -523,8 +523,9 @@
 	        if (page === void 0) { page = 1; }
 	        if (perPage === void 0) { perPage = 20; }
 	        return this.storage.count(search).then(function (count) {
+	            var realPage = page >= 1 ? page : 1;
 	            var totalPages = count % perPage ? Math.floor(count / perPage) + 1 : count / perPage;
-	            var currentPage = page > totalPages ? totalPages : page;
+	            var currentPage = realPage > totalPages ? totalPages : realPage;
 	            return _this.storage.paginate(search, currentPage, perPage).then(function (items) { return ({ items: items, totalPages: totalPages, currentPage: currentPage }); });
 	        });
 	    };

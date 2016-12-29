@@ -24,9 +24,9 @@ export default class ProductListMiddleware extends MiddlewareBase<AppState.App> 
             const action: Actions.ProductListLoadedAction = {
                 type: Actions.PRODUCTS_LOADED,
                 products: products.items,
-                totalPages: products.totalPages,
+                totalPages: products.totalPages || 1,
                 shops: shops,
-                currentPage: products.currentPage
+                currentPage: products.currentPage || 1
             };
 
             dispatch(action);

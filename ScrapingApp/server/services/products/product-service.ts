@@ -21,8 +21,9 @@ export default class ProductService {
 
     paginate(search: string = "", page: number = 1, perPage: number = 20): Promise<Api.ProductPage> {
         return this.storage.count(search).then(count => {
+            const realPage = page >= 1 ? page : 1;
             const totalPages = count % perPage ? Math.floor(count / perPage) + 1 : count / perPage;
-            const currentPage = page > totalPages ? totalPages : page;
+            const currentPage = realPage > totalPages ? totalPages : realPage;
             return this.storage.paginate(search, currentPage, perPage).then(items => ({ items, totalPages, currentPage }));
         })
     }
