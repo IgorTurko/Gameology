@@ -6,7 +6,7 @@ import HttpClient from './http-client';
 
 export default class ProductRepository {
     private httpClient = new HttpClient();
-    private perPage = 2;
+    private perPage = 5;
 
     getAllProducts(search: string, page: number): Promise<Api.ProductPage> {
         return this.httpClient.get<Api.ProductPage>(`/api/products?search=${search}&page=${page}&perPage=${this.perPage}`);

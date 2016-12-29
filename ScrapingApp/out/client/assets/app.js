@@ -9810,7 +9810,7 @@
 	/// <reference path="../../typings/index.d.ts" />
 	"use strict";
 	var product_list_loaded_1 = __webpack_require__(76);
-	var filter_product_list_1 = __webpack_require__(134);
+	var filter_product_list_1 = __webpack_require__(77);
 	var load_product_list_request_1 = __webpack_require__(78);
 	var product_refreshed_from_server_1 = __webpack_require__(79);
 	var product_save_price_1 = __webpack_require__(80);
@@ -9870,7 +9870,24 @@
 
 
 /***/ },
-/* 77 */,
+/* 77 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/index.d.ts" />
+	"use strict";
+	function filterProductList(state, action) {
+	    var search = action.search === undefined ? state.search : action.search;
+	    var page = action.page === undefined ? state.page : action.page;
+	    return Object.assign({}, state, {
+	        search: search,
+	        page: page
+	    });
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = filterProductList;
+
+
+/***/ },
 /* 78 */
 /***/ function(module, exports) {
 
@@ -10057,7 +10074,7 @@
 	var ProductRepository = (function () {
 	    function ProductRepository() {
 	        this.httpClient = new http_client_1.default();
-	        this.perPage = 2;
+	        this.perPage = 5;
 	    }
 	    ProductRepository.prototype.getAllProducts = function (search, page) {
 	        return this.httpClient.get("/api/products?search=" + search + "&page=" + page + "&perPage=" + this.perPage);
@@ -11555,24 +11572,6 @@
 	    return ProductInputField;
 	}(React.Component));
 	exports.ProductInputField = ProductInputField;
-
-
-/***/ },
-/* 134 */
-/***/ function(module, exports) {
-
-	/// <reference path="../../typings/index.d.ts" />
-	"use strict";
-	function filterProductList(state, action) {
-	    var search = action.search === undefined ? state.search : action.search;
-	    var page = action.page === undefined ? state.page : action.page;
-	    return Object.assign({}, state, {
-	        search: search,
-	        page: page
-	    });
-	}
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = filterProductList;
 
 
 /***/ }
